@@ -1,0 +1,12 @@
+pub const Cascadia_Mono_Bold = @embedFile("CascadiaMono-Bold.ttf");
+pub const Cascadia_Mono_BoldItalic = @embedFile("CascadiaMono-BoldItalic.ttf");
+pub const Cascadia_Mono_ExtraLight = @embedFile("CascadiaMono-ExtraLight.ttf");
+pub const Cascadia_Mono_ExtraLightItalic = @embedFile("CascadiaMono-ExtraLightItalic.ttf");
+pub const Cascadia_Mono_Italic = @embedFile("CascadiaMono-Italic.ttf");
+pub const Cascadia_Mono_Light = @embedFile("CascadiaMono-Light.ttf");
+pub const Cascadia_Mono_LightItalic = @embedFile("CascadiaMono-LightItalic.ttf");
+pub const Cascadia_Mono_Medium = @embedFile("CascadiaMono-Medium.ttf");
+pub const Cascadia_Mono_MediumItalic = @embedFile("CascadiaMono-MediumItalic.ttf");
+pub const Cascadia_Mono_Regular = @embedFile("CascadiaMono-Regular.ttf");
+pub const Cascadia_Mono_SemiBold = @embedFile("CascadiaMono-SemiBold.ttf");
+pub const Cascadia_Mono_SemiBoldItalic = @embedFile("CascadiaMono-SemiBoldItalic.ttf");
