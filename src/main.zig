@@ -2,10 +2,11 @@ const std = @import("std");
 const builtin = @import("builtin");
 const dvui = @import("dvui");
 const zqlite = @import("zqlite");
-const log = std.log.scoped(.aei_main);
+const log = std.log.scoped(.ae_main);
 
-pub const Rect = dvui.Rect;
-pub const Size = dvui.Size;
+const Rect = dvui.Rect;
+const Size = dvui.Size;
+const Color = dvui.Color;
 
 // user {
 const fonts = @import("fonts");
@@ -18,9 +19,15 @@ const customers = @import("db/customers.zig");
 
 const window_icon_png = @embedFile("assets/achal-logo.png");
 
-pub var ae_db: Db = undefined;
 var customer: customers.Customer = .init();
+pub var ae_db: Db = undefined;
 pub var should_reset_form: bool = false;
+
+// max-width of main container
+pub const max_width = util.win_init_size.w * 0.75;
+
+pub var item_list: std.ArrayList(invoice_item) = undefined;
+
 // }
 
 pub const dvui_app: dvui.App = .{
@@ -43,14 +50,16 @@ pub const std_options: std.Options = .{
     .logFn = dvui.App.logFn,
 };
 
+// init app state
 var gpa_instance = std.heap.GeneralPurposeAllocator(.{}){};
 pub const gpa = gpa_instance.allocator();
 
 var orig_content_scale: f32 = 1.0;
 
-// init app state
 pub fn AppInit(win: *dvui.Window) !void {
     ae_db = try Db.init(gpa);
+    item_list = try .initCapacity(gpa, 10);
+    try item_list.append(gpa, .{ .key = 123 });
 
     orig_content_scale = win.content_scale;
 
@@ -71,7 +80,7 @@ pub fn AppInit(win: *dvui.Window) !void {
     var theme = win.theme;
     defer dvui.themeSet(theme);
 
-    theme.window.fill = dvui.Color.fromHex("#141312ff");
+    theme.window.fill = util.Color.layer0.get();
 }
 
 // deinit app
@@ -79,6 +88,7 @@ pub fn AppDeinit() void {
     util.dumpStruct(customers.Customer, customer, null);
     customer.deinit(gpa);
     ae_db.deinit();
+    item_list.deinit(gpa);
 
     const leaked = gpa_instance.deinit();
     if (leaked == .leak) {
@@ -95,7 +105,12 @@ pub fn AppFrame() !dvui.App.Result {
 pub fn frame() !dvui.App.Result {
 
     // idk what this is
-    var scaler = dvui.scale(@src(), .{ .scale = &dvui.currentWindow().content_scale, .pinch_zoom = .global }, .{ .rect = .cast(dvui.windowRect()) });
+    var scaler = dvui.scale(@src(), .{
+        .scale = &dvui.currentWindow().content_scale,
+        .pinch_zoom = .global,
+    }, .{
+        .rect = .cast(dvui.windowRect()),
+    });
     scaler.deinit();
 
     // menu
@@ -115,7 +130,7 @@ pub fn frame() !dvui.App.Result {
 
             if (dvui.menuItemLabel(@src(), "File", .{ .submenu = true }, .{
                 .tag = "first-focusable",
-                .font = util.font(util.text.xs, "Cascadia_Mono_ExtraLight"),
+                .font = util.Font.extra_light.xs(),
             })) |r| {
                 var fw = dvui.floatingMenu(@src(), .{ .from = r }, .{});
                 defer fw.deinit();
@@ -150,7 +165,7 @@ pub fn frame() !dvui.App.Result {
 
             var line = dvui.box(@src(), .{}, .{
                 .background = true,
-                .color_fill = dvui.Color.gray,
+                .color_fill = Color.gray,
                 .min_size_content = dvui.Size{ .w = dvui.windowRectPixels().w, .h = 1 },
             });
             defer line.deinit();
@@ -164,9 +179,6 @@ pub fn frame() !dvui.App.Result {
     // scrollable area below the menu
     var scroll = dvui.scrollArea(@src(), .{}, .{ .expand = .both, .style = .window });
     defer scroll.deinit();
-
-    // max-width of main container
-    const max_width = util.win_init_size.w * 0.75;
 
     var main_container = dvui.box(@src(), .{}, .{
         .max_size_content = .{ .w = max_width, .h = dvui.currentWindow().rect_pixels.h },
@@ -182,6 +194,7 @@ pub fn frame() !dvui.App.Result {
     {
         var field_container = dvui.box(@src(), .{ .dir = .vertical }, .{
             .min_size_content = .{ .w = max_width },
+            .padding = .{ .h = util.gap.xxl },
         });
         defer field_container.deinit();
 
@@ -249,29 +262,26 @@ pub fn frame() !dvui.App.Result {
                 }
             }
         }
+    }
 
-        // invoice item
-        {
-            const seed = rand.int(usize);
-            invoice_item.render(seed);
-        }
+    // invoice item
+    {
+        const seed = rand.int(usize);
+        invoice_item.render(seed);
+    }
 
-        // generate invoice button
-        {
-            const font = util.font(util.text.md, "Cascadia_Mono_Light");
-            var btn_container = dvui.box(@src(), .{ .dir = .horizontal }, .{
-                .expand = .horizontal,
-                .max_size_content = .{ .w = max_width / 2, .h = font.size * util.scale_h.x8 },
-            });
-            defer btn_container.deinit();
-
-            if (dvui.button(@src(), "Generate Invoice", .{ .draw_focus = true }, .{
-                .tag = "btn-save",
-                .expand = .both,
-                .font = font,
-            })) {
-                log.info("button clicked", .{});
-            }
+    // generate invoice button
+    {
+        if (dvui.button(@src(), "Generate Invoice", .{ .draw_focus = true }, .{
+            .tag = "btn-save",
+            .expand = .both,
+            .font = util.Font.semi_bold.lg(),
+            .color_fill = util.Color.primary.get(),
+            .corner_radius = Rect.all(util.gap.xs),
+            .padding = Rect.all(util.gap.md),
+            .margin = .{ .x = 0, .w = 0, .y = util.gap.xxl, .h = util.gap.xxl },
+        })) {
+            log.info("button clicked", .{});
         }
     }
 

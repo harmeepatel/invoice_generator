@@ -6,7 +6,9 @@ const util = @import("../util.zig");
 const customers = @import("../db/customers.zig");
 const validate = @import("../validate.zig");
 
-const log = std.log.scoped(.component_form_field);
+const log = std.log.scoped(.ae_form_field);
+
+var text_entry_opts = util.FieldOptions.text_entry;
 
 pub var all = [_]FormField{
     .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
@@ -28,26 +30,7 @@ pub const FormField = struct {
     kind: Kind,
     label: []const u8,
     err_msg: []const u8 = "",
-    multiline: bool = false,
     placeholder: []const u8 = "",
-
-    label_options: dvui.Options = .{
-        .padding = dvui.Rect.all(0),
-        .font = util.font(util.text.sm, "Cascadia_Mono_Light"),
-    },
-    err_label_options: dvui.Options = .{
-        .padding = dvui.Rect.all(0),
-        .font = util.font(util.text.sm, "Cascadia_Mono_Light"),
-        .color_text = dvui.Color.fromHex("#ED4A4A"),
-        .gravity_x = 1.0,
-    },
-    text_entry_options: dvui.Options = .{
-        .expand = .horizontal,
-        .margin = dvui.Rect{ .h = util.gap.xl },
-        .padding = dvui.Rect.all(util.gap.sm),
-        .font = util.font(util.text.sm, "Cascadia_Mono_Light"),
-        .min_size_content = .{ .h = util.text.sm },
-    },
 
     pub const Kind = enum {
         name,
@@ -79,13 +62,12 @@ pub const FormField = struct {
                 .{
                     .id_extra = key,
                     .expand = .both,
-                    .margin = dvui.Rect{ .h = util.gap.md },
                 },
             );
             defer h_stack.deinit();
 
-            dvui.labelNoFmt(@src(), field.label, .{}, field.label_options);
-            dvui.labelNoFmt(@src(), field.err_msg, .{}, field.err_label_options);
+            dvui.labelNoFmt(@src(), field.label, .{}, util.FieldOptions.label);
+            dvui.labelNoFmt(@src(), field.err_msg, .{}, util.FieldOptions.err_label);
         }
 
         switch (field.kind) {
@@ -94,16 +76,17 @@ pub const FormField = struct {
                     var hbox = dvui.box(@src(), .{ .dir = .horizontal }, .{ .expand = .both });
                     defer hbox.deinit();
 
-                    const combo = dvui.comboBox(@src(), .{}, field.text_entry_options);
+                    const combo = dvui.comboBox(@src(), .{}, text_entry_opts);
                     defer combo.deinit();
+
                     // filter suggestions to match the start of the entry
                     if (combo.te.text_changed) blk: {
-                        const arena = dvui.currentWindow().lifo();
-                        var filtered = std.ArrayListUnmanaged([]const u8).initCapacity(arena, util.PostalCodes.count) catch {
+                        // const arena = dvui.currentWindow().lifo();
+                        var filtered = std.ArrayListUnmanaged([]const u8).initCapacity(main.gpa, util.PostalCodes.count) catch {
                             dvui.dataRemove(null, combo.te.data().id, "suggestions");
                             break :blk;
                         };
-                        defer filtered.deinit(arena);
+                        defer filtered.deinit(main.gpa);
 
                         for (util.PostalCodes.states) |state| {
                             var lower_buf: [64]u8 = undefined;
@@ -117,33 +100,22 @@ pub const FormField = struct {
                         }
                         dvui.dataSetSlice(null, combo.te.data().id, "suggestions", filtered.items);
 
-                        // validateFormField(field, combo.te, customer);
                         field.validateAndUpdate(combo.te, customer);
                     }
 
                     if (combo.entries(dvui.dataGetSlice(null, combo.te.data().id, "suggestions", [][]const u8) orelse &util.PostalCodes.states)) |_| {
-                        // validateFormField(field, combo.te, customer);
                         field.validateAndUpdate(combo.te, customer);
                     }
                 }
             },
             else => {
-                const text_init_options: dvui.TextEntryWidget.InitOptions = .{
-                    .placeholder = field.placeholder,
-                    .multiline = field.multiline,
-                };
-
-                if (field.multiline) {
-                    field.text_entry_options.min_size_content = .{ .h = field.text_entry_options.font.?.size * util.scale_h.x6 };
-                }
-
                 if (field.err_msg.len > 0) {
-                    field.text_entry_options.color_border = dvui.Color.fromHex("#ed4a4aff");
+                    text_entry_opts.color_fill = util.Color.err.get();
                 } else {
-                    field.text_entry_options.color_border = dvui.Color.fromHex("#4b4b4bff");
+                    text_entry_opts.color_fill = util.Color.layer1.get();
                 }
 
-                var te = dvui.textEntry(@src(), text_init_options, field.text_entry_options);
+                var te = dvui.textEntry(@src(), .{ .placeholder = field.placeholder }, text_entry_opts);
                 defer te.deinit();
 
                 if (main.should_reset_form) {

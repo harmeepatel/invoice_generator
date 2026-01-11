@@ -1,115 +1,117 @@
 const std = @import("std");
 const dvui = @import("dvui");
+const main = @import("../main.zig");
 const util = @import("../util.zig");
+const log = std.log.scoped(.ae_invoice_item);
 
-// pub const Invoice = struct {
-//     id: i64,
-//     invoice_no: i64, // Sequential number within fiscal year
-//     customer_id: i64,
-//     fiscal_year: [2]u16, // e.g., "2024-25"
-//     invoice_date: i64, // Unix timestamp
-//     due_date: i64, // Unix timestamp
-//     transporter: []const u8,
-//     subtotal: i64, // Amount in paise (1 rupee = 100 paise)
-//     tax_amount: i64, // Tax in paise
-//     total_amount: i64, // Total in paise
-//     notes: ?[]const u8 = null,
-//     created_at: i64 = 0,
-// };
+const Rect = dvui.Rect;
 
-// pub const InvoiceItem = struct {
-//     id: i64,
-//     invoice_id: i64,
-//     item_name: []const u8,
-//     description: ?[]const u8 = null,
-//     quantity: i64,
-//     unit_price: i64, // Price in paise
-//     tax_rate: i64, // Tax rate in basis points (e.g., 1800 = 18%)
-//     amount: i64, // Total amount for this item in paise
-// };
+var label_options: dvui.Options = util.FieldOptions.label;
+var text_entry_options = util.FieldOptions.text_entry;
+
+key: usize,
+const Self = @This();
 
 pub const ItemField = struct {
     label: []const u8,
-    multiline: bool = false,
     placeholder: []const u8 = "",
 
-    label_options: dvui.Options = .{
-        .padding = dvui.Rect.all(0),
-        .font = util.font(util.text.sm, "Cascadia_Mono_Light"),
-    },
-    err_label_options: dvui.Options = .{
-        .padding = dvui.Rect.all(0),
-        .font = util.font(util.text.sm, "Cascadia_Mono_Light"),
-        .color_text = dvui.Color.fromHex("#ED4A4A"),
-        .gravity_x = 1.0,
-    },
-    text_entry_options: dvui.Options = .{
-        .expand = .horizontal,
-        .margin = dvui.Rect{ .h = util.gap.xl },
-        .padding = dvui.Rect.all(util.gap.sm),
-        .font = util.font(util.text.sm, "Cascadia_Mono_Light"),
-        .min_size_content = .{ .h = util.text.sm },
-    },
-
-    fn render(field: ItemField, key: usize) void {
-        var col_box = dvui.box(
-            @src(),
-            .{ .dir = .vertical },
-            .{
-                .id_extra = key,
-                .expand = .both,
-                .margin = dvui.Rect{
-                    .h = util.gap.md,
-                    .w = util.gap.md,
-                },
-            },
-        );
+    fn render(field: ItemField, key: usize, want_label: bool) void {
+        log.info("all.len: {d}", .{all.len});
+        var col_box = dvui.box(@src(), .{ .dir = .vertical }, .{
+            .id_extra = key,
+            .min_size_content = .{ .w = main.max_width / (all.len + 1) },
+            .max_size_content = .{ .w = main.max_width / (all.len + 1), .h = dvui.currentWindow().rect_pixels.h },
+        });
         defer col_box.deinit();
 
-        {
-            dvui.labelNoFmt(@src(), field.label, .{}, .{});
-        }
+        label_options.font = util.Font.light.sm();
+        if (want_label) dvui.labelNoFmt(@src(), field.label, .{}, label_options);
 
-        {
-            const text_init_options: dvui.TextEntryWidget.InitOptions = .{
-                .placeholder = field.placeholder,
-                .multiline = field.multiline,
-            };
+        text_entry_options.id_extra = key;
+        text_entry_options.margin = Rect{ .h = util.gap.sm };
 
-            var te = dvui.textEntry(@src(), text_init_options, field.text_entry_options);
-            defer te.deinit();
-        }
+        var te = dvui.textEntry(@src(), .{ .placeholder = field.placeholder }, text_entry_options);
+        defer te.deinit();
     }
 };
 
 pub var all = [_]ItemField{
-    .{ .label = "Name", .placeholder = "Hritik Roshan" },
-    .{ .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
-    .{ .label = "Email (Optional)", .placeholder = "abc@xyz.com (Optional)" },
-    .{ .label = "Phone", .placeholder = "+91 11111 99999" },
-    .{ .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note (Optional)" },
+    .{ .label = "Serial Number", .placeholder = "000000000" },
+    .{ .label = "Item Name", .placeholder = "Bibcock" },
+    .{ .label = "HSN Code", .placeholder = "000000" },
+    .{ .label = "Quantity(Q)", .placeholder = "0" },
+    .{ .label = "Sale Rate(SR)", .placeholder = "00.00" },
+    .{ .label = "Discount %", .placeholder = "00.00" },
+    .{ .label = "GST", .placeholder = "00.00" },
+    .{ .label = "Total Tax", .placeholder = "00.00" },
+    .{ .label = "Amount", .placeholder = "Q * SR" },
 };
 
-pub fn render(key: usize) void {
-    var main_stack = dvui.box(
+pub fn renderItem(self: Self, want_label: bool) void {
+    var col_box = dvui.box(
         @src(),
         .{ .dir = .horizontal },
         .{
-            .expand = .both,
-            .margin = dvui.Rect{ .h = util.gap.md },
+            .id_extra = self.key,
+            .expand = .horizontal,
         },
     );
-    defer main_stack.deinit();
+    defer col_box.deinit();
 
     // random number generater for field keys
-    var prng = std.Random.DefaultPrng.init(@intCast(key));
-    const rand = prng.random();
+    // var prng = std.Random.DefaultPrng.init(@intCast(self.key));
+    // const rand = prng.random();
+    //
+    // const seed = rand.int(usize);
+
+    inline for (all[0..], 0..) |*field, idx| {
+        const k = self.key + idx;
+        field.render(k, want_label);
+
+        // gap
+        if (idx < all.len - 1) {
+            var spacer = dvui.box(@src(), .{}, .{
+                .id_extra = k,
+                .min_size_content = .{ .w = util.gap.sm },
+            });
+            defer spacer.deinit();
+        }
+    }
+}
+
+pub fn render(key: usize) void {
+    var row_box = dvui.box(
+        @src(),
+        .{ .dir = .vertical },
+        .{
+            .id_extra = key,
+            .expand = .both,
+        },
+    );
+    defer row_box.deinit();
 
     {
-        const seed = rand.int(usize);
+        for (main.item_list.items, 0..) |item, idx| {
+            item.renderItem(if (idx == 0) true else false);
+        }
+    }
 
-        inline for (all[0..], 0..) |*field, idx| {
-            field.render(seed + idx);
+    {
+        const font = util.Font.extra_light.lg();
+        if (dvui.button(@src(), "+", .{ .draw_focus = true }, .{
+            .tag = "add-item",
+            .expand = .both,
+            .corner_radius = Rect.all(util.gap.xs),
+            .font = font,
+        })) {
+            const next_key = if (main.item_list.items.len > 0)
+                main.item_list.items[main.item_list.items.len - 1].key + 1
+            else
+                key;
+            main.item_list.append(main.gpa, .{ .key = next_key }) catch |err| {
+                log.err("Failed to append item: {}", .{err});
+            };
         }
     }
 }

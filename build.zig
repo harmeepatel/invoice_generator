@@ -1,5 +1,5 @@
 const std = @import("std");
-pub const log = std.log.scoped(.aei_build);
+pub const log = std.log.scoped(.ae_build);
 
 fn initDbFile() void {
     const init_db_path = "src/assets/ae.db";

@@ -1,7 +1,7 @@
 // INFO: AI GENERATED CODE: https://claude.ai/chat/1d02a3b9-1b73-41aa-be67-45fb6cca208d
 
 const std = @import("std");
-const log = std.log.scoped(.aei_validate);
+const log = std.log.scoped(.ae_validate);
 
 const main = @import("main.zig");
 const util = @import("util.zig");
@@ -432,8 +432,8 @@ fn postalCode(str: []const u8, state_name: []const u8) ValidationResult {
 
             const msg = std.fmt.bufPrint(
                 &error_message_buffer,
-                "Out of range for {s} [{d}-{d}]",
-                .{ states[idx], min_postal_code[idx], max_postal_code[idx] },
+                "Out of range [{d}-{d}]",
+                .{ min_postal_code[idx], max_postal_code[idx] },
             ) catch {
                 return .{ .err_msg = "Cannot generate error message" };
             };

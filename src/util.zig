@@ -1,11 +1,30 @@
 const std = @import("std");
 const dvui = @import("dvui");
-const log = std.log.scoped(.aei_util);
+const log = std.log.scoped(.ae_util);
 
 const main = @import("main.zig");
 const customers = @import("./db/customers.zig");
 const validate = @import("validate.zig");
-const form_field = @import("components/form_field.zig");
+
+pub const Color = enum {
+    layer0,
+    layer1,
+
+    primary,
+    border,
+    err,
+
+    pub fn get(self: Color) dvui.Color {
+        return switch (self) {
+            .layer0 => dvui.Color.fromHSLuv(30, 8, 5, 100),
+            .layer1 => Color.layer0.get().lighten(8),
+
+            .primary => dvui.Color.fromHex("#6d6dff"),
+            .border => Color.layer0.get().lighten(16),
+            .err => dvui.Color.fromHex("#ff3333"),
+        };
+    }
+};
 
 pub const win_aspect_ratio: dvui.Rect = .{ .w = 16.0, .h = 10.0 };
 pub const win_init_size: dvui.Size = .{ .w = win_aspect_ratio.w * 100, .h = win_aspect_ratio.h * 100 };
@@ -74,14 +93,6 @@ pub const PostalCodes = struct {
     }
 };
 
-pub var form_fields: ?struct {
-    name: FormField,
-    gstin: FormField,
-    email: FormField,
-    phone: FormField,
-    address: FormField,
-} = null;
-
 fn makeScale(comptime base: f32, comptime scale: f32) type {
     return struct {
         pub const xs = base;
@@ -92,90 +103,77 @@ fn makeScale(comptime base: f32, comptime scale: f32) type {
         pub const xxl = xl * scale;
     };
 }
-const scaling = 1.36;
-pub const gap = makeScale(8.0, scaling);
-pub const text = makeScale(13.0, scaling);
+const scaling = 1.28;
+pub const gap = makeScale(10.0, scaling);
+pub const text = makeScale(14.0, scaling);
 
-fn makeHeightScale() type {
-    return struct {
-        pub const x1 = 1.0;
-        pub const x2 = 2.0;
-        pub const x4 = 4.0;
-        pub const x6 = 6.0;
-        pub const x8 = 8.0;
-    };
-}
-pub const scale_h = makeHeightScale();
+pub const Font = enum {
+    extra_light,
+    light,
+    regular,
+    medium,
+    semi_bold,
+    bold,
 
-pub fn font(size: f32, name: []const u8) dvui.Font {
-    return dvui.Font{
-        .size = size,
-        .id = dvui.Font.FontId.fromName(name),
-    };
-}
+    fn getName(self: Font) []const u8 {
+        return switch (self) {
+            .extra_light => "Cascadia_Mono_ExtraLight",
+            .light => "Cascadia_Mono_Light",
+            .regular => "Cascadia_Mono_Regular",
+            .medium => "Cascadia_Mono_Medium",
+            .semi_bold => "Cascadia_Mono_SemiBold",
+            .bold => "Cascadia_Mono_Bold",
+        };
+    }
 
-pub const FormField = struct {
-    kind: form_field.FormField.Kind,
-    label: []const u8,
-    err_msg: []const u8 = "",
-    multiline: bool = false,
-    placeholder: []const u8 = "",
+    inline fn makeFont(self: Font, size: f32) dvui.Font {
+        return dvui.Font{
+            .size = size,
+            .id = dvui.Font.FontId.fromName(self.getName()),
+        };
+    }
 
-    label_options: dvui.Options = .{
+    pub fn xs(self: Font) dvui.Font {
+        return self.makeFont(text.xs);
+    }
+    pub fn sm(self: Font) dvui.Font {
+        return self.makeFont(text.sm);
+    }
+    pub fn md(self: Font) dvui.Font {
+        return self.makeFont(text.md);
+    }
+    pub fn lg(self: Font) dvui.Font {
+        return self.makeFont(text.lg);
+    }
+    pub fn xl(self: Font) dvui.Font {
+        return self.makeFont(text.xl);
+    }
+    pub fn xxl(self: Font) dvui.Font {
+        return self.makeFont(text.xxl);
+    }
+};
+
+pub const FieldOptions = struct {
+    pub const label = dvui.Options{
+        .margin = dvui.Rect{ .h = gap.sm },
         .padding = dvui.Rect.all(0),
-        .font = font(text.sm, "Cascadia_Mono_Light"),
-    },
-    err_label_options: dvui.Options = .{
+        .font = Font.light.md(),
+    };
+    pub const err_label = dvui.Options{
         .padding = dvui.Rect.all(0),
-        .font = font(text.sm, "Cascadia_Mono_Light"),
-        .color_text = dvui.Color.fromHex("#ED4A4A"),
+        .font = Font.light.sm(),
+        .color_text = Color.err.get(),
         .gravity_x = 1.0,
-    },
-    text_entry_options: dvui.Options = .{
+    };
+    pub const text_entry = dvui.Options{
         .expand = .horizontal,
         .margin = dvui.Rect{ .h = gap.xl },
-        .padding = dvui.Rect.all(gap.sm),
-        .font = font(text.sm, "Cascadia_Mono_Light"),
+        .padding = dvui.Rect.all(gap.md),
+        .font = Font.light.sm(),
+        .color_border = Color.layer0.get().lighten(16),
+        .corner_radius = dvui.Rect.all(gap.xs),
         .min_size_content = .{ .h = text.sm },
-    },
-
-    pub fn validateAndUpdate(
-        self: *FormField,
-        text_entry_widget: *dvui.TextEntryWidget,
-        customer: *customers.Customer,
-    ) void {
-        const result = validate.validate(self.kind, text_entry_widget.getText(), customer.*);
-
-        if (result.err_msg) |err| {
-            self.err_msg = err;
-        } else {
-            self.err_msg = "";
-            customer.setCustomerField(main.gpa, self.kind, text_entry_widget.getText()) catch |err| {
-                log.err("Error setting customer field {any} with \n {any}", .{ self.kind, err });
-            };
-
-            // Revalidate dependent fields
-            for (result.revalidate_fields) |revalidate_kind| {
-                for (&form_field.all_fields) |*other_field| {
-                    if (other_field.kind == revalidate_kind) {
-                        const current_value = customer.getFieldValue(revalidate_kind);
-                        const revalidation_result = validate.validate(
-                            revalidate_kind,
-                            current_value,
-                            customer.*,
-                        );
-
-                        if (revalidation_result.err_msg) |revalidate_err| {
-                            other_field.err_msg = revalidate_err;
-                        } else {
-                            other_field.err_msg = "";
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    };
 };
 
 pub fn dumpStruct(comptime T: type, value: T, spaces: ?comptime_int) void {
