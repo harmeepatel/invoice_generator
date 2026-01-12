@@ -13,13 +13,27 @@ key: usize,
 const Self = @This();
 
 pub const ItemField = struct {
+    kind: Kind,
     label: []const u8,
     placeholder: []const u8 = "",
+    has_error: bool = false,
+
+    const Kind = enum {
+        serial_number,
+        item_name,
+        hsn_code,
+        quantity,
+        sale_rate,
+        discount,
+        gst,
+        total_tax,
+        amount,
+    };
 
     fn render(field: ItemField, key: usize, want_label: bool) void {
-        log.info("all.len: {d}", .{all.len});
         var col_box = dvui.box(@src(), .{ .dir = .vertical }, .{
             .id_extra = key,
+            .expand = .both,
             .min_size_content = .{ .w = main.max_width / (all.len + 1) },
             .max_size_content = .{ .w = main.max_width / (all.len + 1), .h = dvui.currentWindow().rect_pixels.h },
         });
@@ -37,15 +51,15 @@ pub const ItemField = struct {
 };
 
 pub var all = [_]ItemField{
-    .{ .label = "Serial Number", .placeholder = "000000000" },
-    .{ .label = "Item Name", .placeholder = "Bibcock" },
-    .{ .label = "HSN Code", .placeholder = "000000" },
-    .{ .label = "Quantity(Q)", .placeholder = "0" },
-    .{ .label = "Sale Rate(SR)", .placeholder = "00.00" },
-    .{ .label = "Discount %", .placeholder = "00.00" },
-    .{ .label = "GST", .placeholder = "00.00" },
-    .{ .label = "Total Tax", .placeholder = "00.00" },
-    .{ .label = "Amount", .placeholder = "Q * SR" },
+    .{ .kind = .serial_number, .label = "Serial Number", .placeholder = "000000000" },
+    .{ .kind = .item_name, .label = "Item Name", .placeholder = "Bibcock" },
+    .{ .kind = .hsn_code, .label = "HSN Code", .placeholder = "000000" },
+    .{ .kind = .quantity, .label = "Quantity(Q)", .placeholder = "0" },
+    .{ .kind = .sale_rate, .label = "Sale Rate(SR)", .placeholder = "00.00" },
+    .{ .kind = .discount, .label = "Discount %", .placeholder = "00.00" },
+    .{ .kind = .gst, .label = "GST", .placeholder = "00.00" }, // TODO: can be calculated
+    .{ .kind = .total_tax, .label = "Total Tax", .placeholder = "00.00" }, // TODO: can be calculated
+    .{ .kind = .amount, .label = "Amount", .placeholder = "Q * SR" }, // TODO: can be calculated
 };
 
 pub fn renderItem(self: Self, want_label: bool) void {
@@ -54,16 +68,10 @@ pub fn renderItem(self: Self, want_label: bool) void {
         .{ .dir = .horizontal },
         .{
             .id_extra = self.key,
-            .expand = .horizontal,
+            .expand = .both,
         },
     );
     defer col_box.deinit();
-
-    // random number generater for field keys
-    // var prng = std.Random.DefaultPrng.init(@intCast(self.key));
-    // const rand = prng.random();
-    //
-    // const seed = rand.int(usize);
 
     inline for (all[0..], 0..) |*field, idx| {
         const k = self.key + idx;

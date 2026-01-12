@@ -58,8 +58,8 @@ var orig_content_scale: f32 = 1.0;
 
 pub fn AppInit(win: *dvui.Window) !void {
     ae_db = try Db.init(gpa);
-    item_list = try .initCapacity(gpa, 10);
-    try item_list.append(gpa, .{ .key = 123 });
+    item_list = try .initCapacity(gpa, 8);
+    try item_list.append(gpa, .{ .key = 999_999 });
 
     orig_content_scale = win.content_scale;
 
@@ -86,6 +86,7 @@ pub fn AppInit(win: *dvui.Window) !void {
 // deinit app
 pub fn AppDeinit() void {
     util.dumpStruct(customers.Customer, customer, null);
+    util.dumpStruct(@TypeOf(item_list), item_list, null);
     customer.deinit(gpa);
     ae_db.deinit();
     item_list.deinit(gpa);
@@ -103,14 +104,10 @@ pub fn AppFrame() !dvui.App.Result {
 
 // this is redrawn every frame
 pub fn frame() !dvui.App.Result {
+    var key: usize = 0;
 
     // idk what this is
-    var scaler = dvui.scale(@src(), .{
-        .scale = &dvui.currentWindow().content_scale,
-        .pinch_zoom = .global,
-    }, .{
-        .rect = .cast(dvui.windowRect()),
-    });
+    var scaler = dvui.scale(@src(), .{ .scale = &dvui.currentWindow().content_scale, .pinch_zoom = .global }, .{ .rect = .cast(dvui.windowRect()) });
     scaler.deinit();
 
     // menu
@@ -172,20 +169,16 @@ pub fn frame() !dvui.App.Result {
         }
     }
 
-    // random number generater for field keys
-    var prng = std.Random.DefaultPrng.init(@intCast(14101998));
-    const rand = prng.random();
-
     // scrollable area below the menu
     var scroll = dvui.scrollArea(@src(), .{}, .{ .expand = .both, .style = .window });
     defer scroll.deinit();
 
     var main_container = dvui.box(@src(), .{}, .{
-        .max_size_content = .{ .w = max_width, .h = dvui.currentWindow().rect_pixels.h },
         .margin = Rect{
-            .y = util.gap.lg,
             .x = @max(util.gap.lg, (dvui.windowRect().w - max_width) / 2.0),
             .w = @max(util.gap.lg, (dvui.windowRect().w - max_width) / 2.0),
+            .y = util.gap.lg,
+            .h = util.gap.xxl * 4,
         },
     });
     defer main_container.deinit();
@@ -215,19 +208,14 @@ pub fn frame() !dvui.App.Result {
                 // vbox for title and form-fields
                 var left_column = dvui.box(@src(), .{ .dir = .vertical }, .{
                     .min_size_content = .{ .w = column_width },
-                    .max_size_content = .{
-                        .w = column_width,
-                        .h = util.win_init_size.h,
-                    },
                 });
                 defer left_column.deinit();
 
                 // form-fields
                 {
-                    const seed_a = rand.int(usize);
-
                     inline for (form_field.all[0..left_field_count], 0..) |*field, idx| {
-                        field.render(seed_a + idx, &customer);
+                        field.render(key + idx, &customer);
+                        key += 1;
                     }
                 }
             }
@@ -245,19 +233,14 @@ pub fn frame() !dvui.App.Result {
                 // vbox for title and form-fields
                 var right_column = dvui.box(@src(), .{ .dir = .vertical }, .{
                     .min_size_content = .{ .w = column_width },
-                    .max_size_content = .{
-                        .w = column_width,
-                        .h = util.win_init_size.h,
-                    },
                 });
                 defer right_column.deinit();
 
                 // form-fields
                 {
-                    const seed_b = rand.int(usize);
-
                     inline for (form_field.all[left_field_count..], 0..) |*field, idx| {
-                        field.render(seed_b + idx, &customer);
+                        field.render(key + idx, &customer);
+                        key += 1;
                     }
                 }
             }
@@ -266,8 +249,8 @@ pub fn frame() !dvui.App.Result {
 
     // invoice item
     {
-        const seed = rand.int(usize);
-        invoice_item.render(seed);
+        invoice_item.render(key);
+        key += 1;
     }
 
     // generate invoice button

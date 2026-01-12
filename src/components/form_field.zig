@@ -4,7 +4,7 @@ const dvui = @import("dvui");
 const main = @import("../main.zig");
 const util = @import("../util.zig");
 const customers = @import("../db/customers.zig");
-const validate = @import("../validate.zig");
+const validate = @import("../validate_form.zig");
 
 const log = std.log.scoped(.ae_form_field);
 
@@ -81,7 +81,6 @@ pub const FormField = struct {
 
                     // filter suggestions to match the start of the entry
                     if (combo.te.text_changed) blk: {
-                        // const arena = dvui.currentWindow().lifo();
                         var filtered = std.ArrayListUnmanaged([]const u8).initCapacity(main.gpa, util.PostalCodes.count) catch {
                             dvui.dataRemove(null, combo.te.data().id, "suggestions");
                             break :blk;
