@@ -74,8 +74,8 @@ pub const Customer = struct {
                 .line_1 = &[_]u8{},
                 .line_2 = null,
                 .line_3 = null,
-                .city = &[_]u8{},
                 .state = &[_]u8{},
+                .city = &[_]u8{},
                 .postal_code = &[_]u8{},
             },
         };

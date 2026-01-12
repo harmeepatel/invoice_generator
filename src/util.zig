@@ -101,6 +101,7 @@ fn makeScale(comptime base: f32, comptime scale: f32) type {
         pub const lg = md * scale;
         pub const xl = lg * scale;
         pub const xxl = xl * scale;
+        pub const xxxl = xxl * scale;
     };
 }
 const scaling = 1.28;

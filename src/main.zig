@@ -12,21 +12,21 @@ const Color = dvui.Color;
 const fonts = @import("fonts");
 const util = @import("util.zig");
 const form_field = @import("components/form_field.zig");
-const invoice_item = @import("components/invoice_item.zig");
 
+const Invoice_Item = @import("components/invoice_item.zig");
 const Db = @import("db/init.zig");
-const customers = @import("db/customers.zig");
+const Customers = @import("db/customers.zig");
 
 const window_icon_png = @embedFile("assets/achal-logo.png");
 
-var customer: customers.Customer = .init();
+var customer: Customers.Customer = .init();
 pub var ae_db: Db = undefined;
 pub var should_reset_form: bool = false;
 
 // max-width of main container
 pub const max_width = util.win_init_size.w * 0.75;
 
-pub var item_list: std.ArrayList(invoice_item) = undefined;
+pub var item_list: std.ArrayList(Invoice_Item) = undefined;
 
 // }
 
@@ -85,7 +85,7 @@ pub fn AppInit(win: *dvui.Window) !void {
 
 // deinit app
 pub fn AppDeinit() void {
-    util.dumpStruct(customers.Customer, customer, null);
+    util.dumpStruct(Customers.Customer, customer, null);
     util.dumpStruct(@TypeOf(item_list), item_list, null);
     customer.deinit(gpa);
     ae_db.deinit();
@@ -110,11 +110,13 @@ pub fn frame() !dvui.App.Result {
     var scaler = dvui.scale(@src(), .{ .scale = &dvui.currentWindow().content_scale, .pinch_zoom = .global }, .{ .rect = .cast(dvui.windowRect()) });
     scaler.deinit();
 
+    dvui.label(@src(), "{d}", .{dvui.FPS()}, .{ .gravity_x = 1 });
     // menu
     {
         const padding = Rect.all(util.gap.sm);
         {
             var hbox = dvui.box(@src(), .{ .dir = .horizontal }, .{
+                .tag = "menu-container",
                 .style = .window,
                 .background = true,
                 .expand = .horizontal,
@@ -127,7 +129,7 @@ pub fn frame() !dvui.App.Result {
 
             if (dvui.menuItemLabel(@src(), "File", .{ .submenu = true }, .{
                 .tag = "first-focusable",
-                .font = util.Font.extra_light.xs(),
+                .font = util.Font.extra_light.sm(),
             })) |r| {
                 var fw = dvui.floatingMenu(@src(), .{ .from = r }, .{});
                 defer fw.deinit();
@@ -154,13 +156,20 @@ pub fn frame() !dvui.App.Result {
                     }
                 }
             }
+
+            if (dvui.button(@src(), "dbg", .{}, .{
+                .tag = "dbg",
+            })) {
+                dvui.toggleDebugWindow();
+            }
         }
 
         {
-            var pad = dvui.box(@src(), .{}, .{ .padding = Rect{ .w = padding.w, .x = padding.x } });
+            var pad = dvui.box(@src(), .{}, .{ .tag = "menu-padding", .padding = Rect{ .w = padding.w, .x = padding.x } });
             defer pad.deinit();
 
             var line = dvui.box(@src(), .{}, .{
+                .tag = "menu-seperator",
                 .background = true,
                 .color_fill = Color.gray,
                 .min_size_content = dvui.Size{ .w = dvui.windowRectPixels().w, .h = 1 },
@@ -170,78 +179,75 @@ pub fn frame() !dvui.App.Result {
     }
 
     // scrollable area below the menu
-    var scroll = dvui.scrollArea(@src(), .{}, .{ .expand = .both, .style = .window });
+    var scroll = dvui.scrollArea(@src(), .{}, .{ .tag = "scroll", .expand = .both, .style = .window });
     defer scroll.deinit();
 
     var main_container = dvui.box(@src(), .{}, .{
+        .tag = "main-container",
+        .min_size_content = .{ .w = @min(dvui.windowRect().w, max_width) },
         .margin = Rect{
-            .x = @max(util.gap.lg, (dvui.windowRect().w - max_width) / 2.0),
-            .w = @max(util.gap.lg, (dvui.windowRect().w - max_width) / 2.0),
-            .y = util.gap.lg,
-            .h = util.gap.xxl * 4,
+            .x = @max(util.gap.xxl, (dvui.windowRect().w - max_width) / 2.0),
+            .w = @max(util.gap.xxl, (dvui.windowRect().w - max_width) / 2.0),
+            .y = util.gap.xl,
+            .h = util.gap.xxl,
         },
     });
     defer main_container.deinit();
 
     // vbox for title and form-fields
     {
-        var field_container = dvui.box(@src(), .{ .dir = .vertical }, .{
-            .min_size_content = .{ .w = max_width },
-            .padding = .{ .h = util.gap.xxl },
+        const left_field_count = 5;
+
+        var flex_container = dvui.box(@src(), .{ .dir = .horizontal }, .{
+            .tag = "form-container",
+            .expand = .horizontal,
+            .margin = .{ .h = util.gap.xxxl },
         });
-        defer field_container.deinit();
+        defer flex_container.deinit();
 
-        // two column layout with half the window width
+        const column_width = (flex_container.child_rect.w - (util.gap.xxl)) / 2.0;
+
+        // left column
         {
-            const left_field_count = 5;
-
-            var flex_container = dvui.box(@src(), .{ .dir = .horizontal }, .{
-                .expand = .horizontal,
+            // vbox for title and form-fields
+            var left_column = dvui.box(@src(), .{ .dir = .vertical }, .{
+                .tag = "form-left-container",
+                .min_size_content = .{ .w = column_width },
             });
-            defer flex_container.deinit();
+            defer left_column.deinit();
 
-            const column_gap = util.gap.md;
-            const column_width = (flex_container.child_rect.w - (column_gap * 2)) / 2.0;
-
-            // left column
+            // form-fields
             {
-                // vbox for title and form-fields
-                var left_column = dvui.box(@src(), .{ .dir = .vertical }, .{
-                    .min_size_content = .{ .w = column_width },
-                });
-                defer left_column.deinit();
-
-                // form-fields
-                {
-                    inline for (form_field.all[0..left_field_count], 0..) |*field, idx| {
-                        field.render(key + idx, &customer);
-                        key += 1;
-                    }
+                inline for (form_field.all[0..left_field_count], 0..) |*field, idx| {
+                    field.render(key + idx, &customer);
+                    key += 1;
                 }
             }
+        }
 
-            // gap
+        // gap
+        {
+            var spacer = dvui.box(@src(), .{}, .{
+                .tag = "form-spacer",
+                .min_size_content = .{ .w = util.gap.xxl },
+            });
+            defer spacer.deinit();
+        }
+
+        // right column
+        {
+            // vbox for title and form-fields
+            var right_column = dvui.box(@src(), .{ .dir = .vertical }, .{
+                .tag = "form-right-container",
+                .min_size_content = .{ .w = column_width },
+            });
+            defer right_column.deinit();
+
+            // form-fields
             {
-                var spacer = dvui.box(@src(), .{}, .{
-                    .min_size_content = .{ .w = column_gap * 2 },
-                });
-                defer spacer.deinit();
-            }
-
-            // right column
-            {
-                // vbox for title and form-fields
-                var right_column = dvui.box(@src(), .{ .dir = .vertical }, .{
-                    .min_size_content = .{ .w = column_width },
-                });
-                defer right_column.deinit();
-
-                // form-fields
-                {
-                    inline for (form_field.all[left_field_count..], 0..) |*field, idx| {
-                        field.render(key + idx, &customer);
-                        key += 1;
-                    }
+                inline for (form_field.all[left_field_count..], 0..) |*field, idx| {
+                    field.render(key + idx, &customer);
+                    key += 1;
                 }
             }
         }
@@ -249,14 +255,14 @@ pub fn frame() !dvui.App.Result {
 
     // invoice item
     {
-        invoice_item.render(key);
+        Invoice_Item.render(key);
         key += 1;
     }
 
     // generate invoice button
     {
         if (dvui.button(@src(), "Generate Invoice", .{ .draw_focus = true }, .{
-            .tag = "btn-save",
+            .tag = "btn-generate-invoice",
             .expand = .both,
             .font = util.Font.semi_bold.lg(),
             .color_fill = util.Color.primary.get(),
