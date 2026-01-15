@@ -1,10 +1,8 @@
-const std = @import("std");
 const dvui = @import("dvui");
-const log = std.log.scoped(.ae_util);
-
 const main = @import("main.zig");
-const customers = @import("./db/customers.zig");
-const validate = @import("validate_form.zig");
+const std = @import("std");
+
+const log = std.log.scoped(.ae_util);
 
 pub const Color = enum {
     layer0,
@@ -152,29 +150,6 @@ pub const Font = enum {
     pub fn xxl(self: Font) dvui.Font {
         return self.makeFont(text.xxl);
     }
-};
-
-pub const FieldOptions = struct {
-    pub const label = dvui.Options{
-        .margin = dvui.Rect{ .h = gap.sm },
-        .padding = dvui.Rect.all(0),
-        .font = Font.light.md(),
-    };
-    pub const err_label = dvui.Options{
-        .padding = dvui.Rect.all(0),
-        .font = Font.light.sm(),
-        .color_text = Color.err.get(),
-        .gravity_x = 1.0,
-    };
-    pub const text_entry = dvui.Options{
-        .expand = .horizontal,
-        .margin = dvui.Rect{ .h = gap.xl },
-        .padding = dvui.Rect.all(gap.md),
-        .font = Font.light.sm(),
-        .color_border = Color.layer0.get().lighten(16),
-        .corner_radius = dvui.Rect.all(gap.xs),
-        .min_size_content = .{ .h = text.sm },
-    };
 };
 
 pub fn dumpStruct(comptime T: type, value: T, spaces: ?comptime_int) void {
