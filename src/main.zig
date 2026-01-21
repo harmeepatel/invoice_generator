@@ -48,8 +48,6 @@ pub fn AppInit(win: *dvui.Window) !void {
     error_queue = .init(gpa);
     invoice = try .init(gpa);
 
-    log.debug("{any}", .{invoice});
-
     {
         try dvui.addFont("Cascadia_Mono_ExtraLight", fonts.Cascadia_Mono_Light, null);
         try dvui.addFont("Cascadia_Mono_Light", fonts.Cascadia_Mono_Light, null);
@@ -102,7 +100,7 @@ pub fn AppFrame() !dvui.App.Result {
 
 // this is redrawn every frame
 pub fn frame() !dvui.App.Result {
-    // var key: usize = 0;
+    var key: usize = 0;
 
     // scrollable area below the menu
     var scroll = dvui.scrollArea(@src(), .{ .horizontal_bar = .auto_overlay }, .{ .tag = "scroll", .expand = .both, .style = .window });
@@ -122,14 +120,118 @@ pub fn frame() !dvui.App.Result {
 
     // customer details
     {
-        var fields_arr = [_]Field{
-            .init(.name),
-            .init(.state),
-            .init(.postal_code),
+        var all = [_]Field{
+            .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
+            .{ .kind = .gstin, .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
+            .{ .kind = .gst, .label = "GST %", .placeholder = "5.0" },
+            .{ .kind = .email, .label = "Email (Optional)", .placeholder = "abc@xyz.com (Optional)" },
+            .{ .kind = .phone, .label = "Phone", .placeholder = "+91 11111 99999" },
+            .{ .kind = .remark, .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note (Optional)" },
+            // address
+            .{ .kind = .shop_no, .label = "Shop Number", .placeholder = "AB 404" },
+            .{ .kind = .line_1, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
+            .{ .kind = .line_2, .label = "Address Line 2 (Optional)", .placeholder = "Landmark (Optional)" },
+            .{ .kind = .line_3, .label = "Address Line 3 (Optional)", .placeholder = "Street Name (Optional)" },
+            .{ .kind = .state, .variant = .selection_box, .label = "State", .placeholder = "Gujarat" },
+            .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
+            .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
         };
+        const left_field_count = 6;
 
-        inline for (&fields_arr, 0..) |*field, idx| {
-            field.render(idx);
+        var flex_container = dvui.box(@src(), .{ .dir = .horizontal, .equal_space = true }, .{
+            .tag = "form-container",
+            .expand = .horizontal,
+            .margin = .{ .h = util.gap.xxxl },
+        });
+        defer flex_container.deinit();
+
+        // left column
+        {
+            var left_column = dvui.box(@src(), .{ .dir = .vertical }, .{
+                .tag = "form-left-container",
+                .expand = .horizontal,
+                .margin = .{ .w = util.gap.xxl / 2 },
+            });
+            defer left_column.deinit();
+
+            {
+                inline for (all[0..left_field_count], 0..) |*field, idx| {
+                    field.render(key + idx);
+                    key += 1;
+                }
+            }
+        }
+
+        // right column
+        {
+            var right_column = dvui.box(@src(), .{ .dir = .vertical }, .{
+                .tag = "form-right-container",
+                .expand = .horizontal,
+                .margin = .{ .x = util.gap.xxl / 2 },
+            });
+            defer right_column.deinit();
+
+            {
+                inline for (all[left_field_count..], 0..) |*field, idx| {
+                    field.render(key + idx);
+                    key += 1;
+                }
+            }
+        }
+    }
+
+    // invoice items
+    {
+        {
+            var vbox_item = dvui.box(
+                @src(),
+                .{ .dir = .vertical },
+                .{
+                    .id_extra = key,
+                    .expand = .both,
+                },
+            );
+            defer vbox_item.deinit();
+
+            {
+                var has_label = false;
+
+                for (invoice.items.items) |_| {
+                    if (!has_label) {
+                        // item.renderLabels();
+                        has_label = !has_label;
+                    }
+                    // item.renderTextEntry();
+                }
+            }
+
+            {
+                if (dvui.button(@src(), "+", .{ .draw_focus = true }, .{
+                    .tag = "add-item",
+                    .expand = .horizontal,
+                    .corner_radius = Rect.all(util.gap.xs),
+                    .font = util.Font.extra_light.lg(),
+                })) {
+                    // Invoice_Item.addItem(key);
+                }
+            }
+        }
+
+        key += 1;
+    }
+
+    // generate invoice button
+    {
+        if (dvui.button(@src(), "Generate Invoice", .{ .draw_focus = true }, .{
+            .tag = "btn-generate-invoice",
+            .expand = .both,
+            .font = util.Font.semi_bold.lg(),
+            .color_fill = util.Color.primary.get(),
+            .corner_radius = Rect.all(util.gap.xs),
+            .padding = Rect.all(util.gap.md),
+            .margin = .{ .x = 0, .w = 0, .y = util.gap.xxl, .h = util.gap.xxl },
+        })) {
+            log.info("INVOICE: {any}", .{invoice});
         }
     }
 

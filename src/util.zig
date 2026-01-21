@@ -13,12 +13,13 @@ pub const Color = enum {
     err,
 
     pub fn get(self: Color) dvui.Color {
+        @setEvalBranchQuota(1250);
         return switch (self) {
             .layer0 => dvui.Color.fromHSLuv(30, 8, 5, 100),
-            .layer1 => Color.layer0.get().lighten(8),
+            .layer1 => Color.layer0.get().lighten(5),
 
             .primary => dvui.Color.fromHex("#6d6dff"),
-            .border => Color.layer0.get().lighten(16),
+            .border => Color.layer0.get().lighten(20),
             .err => dvui.Color.fromHex("#ff3333"),
         };
     }
@@ -151,56 +152,3 @@ pub const Font = enum {
         return self.makeFont(text.xxl);
     }
 };
-
-pub fn dumpStruct(comptime T: type, value: T, spaces: ?comptime_int) void {
-    const info = @typeInfo(T);
-
-    const spc = spaces orelse 1;
-    const indent = "  ";
-    const indent2 = indent ++ indent;
-
-    switch (info) {
-        .@"struct" => |s| {
-            if (spc != 1) {
-                log.info("{s}{s} {{", .{ indent, @typeName(T) });
-            } else {
-                log.info("{s} {{", .{@typeName(T)});
-            }
-
-            inline for (s.fields) |field| {
-                const field_value = @field(value, field.name);
-
-                // If the field is itself a struct, recurse
-                switch (@typeInfo(field.type)) {
-                    .@"struct" => {
-                        const nest_indent = indent2.len * 4;
-                        log.info("{s}{s} =", .{ indent2, field.name });
-                        dumpStruct(field.type, field_value, nest_indent);
-                    },
-                    .optional => {
-                        if (field_value) |v| {
-                            log.info("{s}{s} = {s}", .{ indent2, field.name, v });
-                        }
-                    },
-                    else => {
-                        if (@TypeOf(field_value) == []const u8) {
-                            log.info("{s}{s} = {s}", .{ indent2, field.name, field_value });
-                        } else {
-                            log.info("{s}{s} = {any}", .{ indent2, field.name, field_value });
-                        }
-                    },
-                }
-            }
-
-            if (spc != 1) {
-                log.info("{s}}}", .{indent});
-            } else {
-                log.info("}}", .{});
-            }
-        },
-
-        else => {
-            log.info("cannot dump non-struct type: {s}", .{@typeName(T)});
-        },
-    }
-}
