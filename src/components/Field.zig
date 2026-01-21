@@ -1,4 +1,5 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const dvui = @import("dvui");
 const util = @import("../util.zig");
 const main = @import("../main.zig");
@@ -40,9 +41,14 @@ key: usize = 0,
 variant: Variant = .default,
 label: ?[]const u8 = null,
 placeholder: ?[]const u8 = null,
+field_text: ?[]const u8 = null,
+suggestions: ?[]const []const u8 = null,
 
+main_container_opts: dvui.Options = .{
+    .expand = .both,
+    .margin = .{ .h = util.gap.lg },
+},
 label_opts: dvui.Options = .{
-    .margin = dvui.Rect{ .h = util.gap.sm },
     .padding = dvui.Rect.all(0),
     .font = util.Font.light.md(),
 },
@@ -53,9 +59,9 @@ err_label_opts: dvui.Options = .{
     .gravity_x = 1.0,
 },
 text_entry_opts: dvui.Options = .{
-    .expand = .horizontal,
-    .margin = dvui.Rect{ .h = util.gap.xl },
-    .padding = dvui.Rect.all(util.gap.md),
+    .expand = .both,
+    .margin = dvui.Rect.all(0),
+    .padding = dvui.Rect.all(util.gap.sm),
     .color_border = util.Color.border.get(),
     .font = util.Font.light.sm(),
     .corner_radius = dvui.Rect.all(util.gap.xs),
@@ -69,13 +75,20 @@ pub fn init(typ: Kind) Self {
 pub fn render(self: *Self, key: usize) void {
     self.key = key;
 
-    var vbox = dvui.box(
-        @src(),
-        .{ .dir = .vertical },
-        .{ .id_extra = self.key, .expand = .both },
-    );
+    self.main_container_opts.id_extra = self.key;
+
+    var vbox = dvui.box(@src(), .{ .dir = .vertical }, self.main_container_opts);
     defer vbox.deinit();
 
+    if (builtin.mode == .Debug) {
+        dvui.label(@src(), "{d}", .{self.key}, .{
+            .font = util.Font.extra_light.xs(),
+            .color_text = util.Color.debug.get(),
+            .padding = dvui.Rect.all(0),
+        });
+    }
+
+    // label / error
     {
         var hbox = dvui.box(
             @src(),
@@ -93,16 +106,28 @@ pub fn render(self: *Self, key: usize) void {
         }
     }
 
+    // space
+    {
+        const spacer = dvui.box(@src(), .{}, .{ .min_size_content = .{ .h = util.gap.xs } });
+        spacer.deinit();
+    }
+
+    // text-entry
     switch (self.variant) {
         .default => {
             if (main.error_queue.contains(self.key)) {
-                self.text_entry_opts.color_fill = util.Color.err.get();
+                self.text_entry_opts.color_border = util.Color.err.get();
             } else {
-                self.text_entry_opts.color_fill = util.Color.layer1.get();
+                self.text_entry_opts.color_border = util.Color.border.get();
             }
 
             var te = dvui.textEntry(@src(), .{ .placeholder = if (self.placeholder) |ph| ph else "" }, self.text_entry_opts);
             defer te.deinit();
+
+            // for invoice-items that already have values entered.
+            if (self.field_text) |text| {
+                te.textSet(text, false);
+            }
 
             if (main.should_reset_form) {
                 te.textSet("", false);
@@ -124,6 +149,11 @@ pub fn render(self: *Self, key: usize) void {
                             self.setError(err);
                         }
                     },
+                    .gst => {
+                        if (main.invoice.setGST(value)) |err| {
+                            self.setError(err);
+                        }
+                    },
                     .email => {
                         if (main.invoice.setEmail(value)) |err| {
                             self.setError(err);
@@ -142,7 +172,6 @@ pub fn render(self: *Self, key: usize) void {
                     .postal_code => {
                         // Register this field's key for cross-field validation
                         main.invoice.address_builder.setPostalCodeFieldKey(self.key);
-
                         if (main.invoice.address_builder.setPostalCode(value)) |err| {
                             self.setError(err);
                         }
@@ -169,11 +198,6 @@ pub fn render(self: *Self, key: usize) void {
                     },
                     .line_3 => {
                         if (main.invoice.address_builder.setLine3(value)) |err| {
-                            self.setError(err);
-                        }
-                    },
-                    .gst => {
-                        if (main.invoice.setGST(value)) |err| {
                             self.setError(err);
                         }
                     },
@@ -215,7 +239,11 @@ pub fn render(self: *Self, key: usize) void {
                 }
             }
         },
+
         .selection_box => {
+            std.debug.assert(self.suggestions != null);
+            const suggestion_list = self.suggestions.?;
+
             var te = dvui.widgetAlloc(dvui.TextEntryWidget);
             defer te.deinit();
 
@@ -236,7 +264,7 @@ pub fn render(self: *Self, key: usize) void {
             if (te.text_changed) blk: {
                 _ = main.error_queue.swapRemove(self.key);
 
-                var filtered = std.ArrayListUnmanaged([]const u8).initCapacity(main.gpa, util.PostalCodes.count) catch {
+                var filtered = std.ArrayListUnmanaged([]const u8).initCapacity(main.gpa, suggestion_list.len) catch {
                     dvui.dataRemove(null, te.data().id, "suggestions");
                     break :blk;
                 };
@@ -249,12 +277,12 @@ pub fn render(self: *Self, key: usize) void {
                 var lower_buf: [64]u8 = undefined;
                 var lower_filter: [64]u8 = undefined;
 
-                for (util.PostalCodes.states) |state| {
-                    const state_lower = std.ascii.lowerString(&lower_buf, state);
+                for (suggestion_list) |sug_item| {
+                    const state_lower = std.ascii.lowerString(&lower_buf, sug_item);
                     const filter_text = std.ascii.lowerString(&lower_filter, te.getText());
 
                     if (std.mem.containsAtLeast(u8, state_lower, 1, filter_text)) {
-                        filtered.appendAssumeCapacity(state);
+                        filtered.appendAssumeCapacity(sug_item);
                     }
                 }
                 dvui.dataSetSlice(null, te.data().id, "suggestions", filtered.items);
@@ -264,20 +292,17 @@ pub fn render(self: *Self, key: usize) void {
                 }
             }
 
-            const suggestions = dvui.dataGetSlice(null, te.data().id, "suggestions", [][]const u8) orelse &util.PostalCodes.states;
-
             if (sug.dropped()) {
+                const suggestions = dvui.dataGetSlice(null, te.data().id, "suggestions", [][]const u8) orelse suggestion_list;
                 for (suggestions) |state_name| {
-                    _ = sug.addChoiceLabel(state_name);
-                }
-            }
+                    if (sug.addChoiceLabel(state_name)) {
+                        _ = main.error_queue.swapRemove(self.key);
 
-            if (sug.activate_selected) {
-                _ = main.error_queue.swapRemove(self.key);
-
-                te.textSet(suggestions[sug.selected_index], true);
-                if (main.invoice.address_builder.setState(suggestions[sug.selected_index])) |err| {
-                    self.setError(err);
+                        te.textSet(suggestions[sug.selected_index], true);
+                        if (main.invoice.address_builder.setState(suggestions[sug.selected_index])) |err| {
+                            self.setError(err);
+                        }
+                    }
                 }
             }
         },

@@ -1,8 +1,10 @@
 const std = @import("std");
+const dvui = @import("dvui");
 const util = @import("util.zig");
 
 const log = std.log.scoped(.ae_invoice);
 
+const KeyGen = util.KeyGen;
 pub const ErrorMessage = ?[]const u8;
 
 var err_buf: [128]u8 = undefined;
@@ -174,6 +176,62 @@ const Item = struct {
     quantity: usize,
     sale_rate: f16,
     discount: f16,
+
+    pub fn row(self: Item, keygen: *KeyGen, want_label: bool) void {
+        const Field = @import("components/Field.zig");
+        var all = [_]Field{
+            .{ .kind = .serial_number, .label = "Serial Number", .placeholder = "000000000" },
+            .{ .kind = .item_name, .label = "Item Name", .placeholder = "Bibcock" },
+            .{ .kind = .hsn_code, .label = "HSN Code", .placeholder = "000000" },
+            .{ .kind = .quantity, .label = "Quantity(Q)", .placeholder = "0" },
+            .{ .kind = .sale_rate, .label = "Sale Rate(SR)", .placeholder = "00.00" }, // TODO: make a db and add products to automatically find prices
+            .{ .kind = .discount, .label = "Discount %", .placeholder = "00.00" },
+        };
+
+        var hbox = dvui.box(@src(), .{ .dir = .horizontal }, .{
+            .id_extra = keygen.emit(),
+            .expand = .both,
+            .margin = .{ .h = util.gap.xs },
+        });
+        defer hbox.deinit();
+
+        inline for (&all, 0..) |*field, idx| {
+            const k = keygen.emit();
+
+            if (!want_label) {
+                field.label = null;
+            }
+
+            var buf: [16]u8 = undefined;
+            field.field_text = switch (field.kind) {
+                .serial_number => self.serial_number,
+                .item_name => self.item_name,
+                .hsn_code => self.hsn_code,
+                .quantity => blk: {
+                    const tmp = std.fmt.bufPrint(&buf, "{}", .{self.quantity}) catch "";
+                    break :blk tmp;
+                },
+                .sale_rate => blk: {
+                    const tmp = std.fmt.bufPrint(&buf, "{}", .{self.sale_rate}) catch "";
+                    break :blk tmp;
+                },
+                .discount => blk: {
+                    const tmp = std.fmt.bufPrint(&buf, "{}", .{self.discount}) catch "";
+                    break :blk tmp;
+                },
+                else => unreachable,
+            };
+            field.label_opts.font = util.Font.light.sm();
+            field.text_entry_opts.id_extra = keygen.emit();
+            field.text_entry_opts.margin = dvui.Rect{ .h = util.gap.sm };
+            field.main_container_opts.margin = .{ .h = 0 };
+            field.render(k);
+
+            if (idx < all.len - 1) {
+                field.main_container_opts.margin = .{ .w = util.gap.xs };
+            }
+        }
+    }
 };
 
 pub const ItemBuilder = struct {
@@ -183,6 +241,43 @@ pub const ItemBuilder = struct {
     quantity: ?usize = null,
     sale_rate: ?f16 = null,
     discount: f16 = 0.0,
+
+    pub fn row(keygen: *KeyGen, want_label: bool) void {
+        const Field = @import("components/Field.zig");
+        var all = [_]Field{
+            .{ .kind = .serial_number, .label = "Serial Number", .placeholder = "000000000" },
+            .{ .kind = .item_name, .label = "Item Name", .placeholder = "Bibcock" },
+            .{ .kind = .hsn_code, .label = "HSN Code", .placeholder = "000000" },
+            .{ .kind = .quantity, .label = "Quantity(Q)", .placeholder = "0" },
+            .{ .kind = .sale_rate, .label = "Sale Rate(SR)", .placeholder = "00.00" }, // TODO: make a db and add products to automatically find prices
+            .{ .kind = .discount, .label = "Discount %", .placeholder = "00.00" },
+        };
+
+        var hbox = dvui.box(@src(), .{ .dir = .horizontal }, .{
+            .id_extra = keygen.emit(),
+            .expand = .both,
+            .margin = .{ .h = util.gap.xs },
+        });
+        defer hbox.deinit();
+
+        inline for (&all, 0..) |*field, idx| {
+            const k = keygen.emit();
+
+            if (!want_label) {
+                field.label = null;
+            }
+
+            field.label_opts.font = util.Font.light.sm();
+            field.text_entry_opts.id_extra = keygen.emit();
+            field.text_entry_opts.margin = dvui.Rect{ .h = util.gap.sm };
+            field.main_container_opts.margin = .{ .h = 0 };
+            field.render(k);
+
+            if (idx < all.len - 1) {
+                field.main_container_opts.margin = .{ .w = util.gap.xs };
+            }
+        }
+    }
 
     pub fn setSerialNumber(self: *ItemBuilder, serial_number: []const u8) ErrorMessage {
         if (serial_number.len == 0) return "Required";
@@ -249,7 +344,7 @@ pub const ItemBuilder = struct {
         self.discount = 0.0;
     }
 
-    pub fn build(self: ItemBuilder) Item {
+    pub fn build(self: *ItemBuilder) Item {
         return Item{
             .serial_number = self.serial_number.?,
             .item_name = self.item_name.?,
@@ -287,19 +382,19 @@ pub const InvoiceBuilder = struct {
     address_builder: AddressBuilder,
 
     item_builder: ItemBuilder,
-    items: std.ArrayList(Item),
+    item_list: std.ArrayList(Item),
 
     pub fn init(allocator: std.mem.Allocator) !InvoiceBuilder {
         return .{
             .allocator = allocator,
-            .items = try std.ArrayList(Item).initCapacity(allocator, 8),
+            .item_list = try std.ArrayList(Item).initCapacity(allocator, 8),
             .address_builder = AddressBuilder{},
             .item_builder = ItemBuilder{},
         };
     }
 
     pub fn deinit(self: *InvoiceBuilder) void {
-        self.items.deinit(self.allocator);
+        self.item_list.deinit(self.allocator);
     }
 
     pub fn setName(self: *InvoiceBuilder, name: []const u8) ErrorMessage {
@@ -431,11 +526,12 @@ pub const InvoiceBuilder = struct {
     }
 
     pub fn addItem(self: *InvoiceBuilder) !void {
-        try self.items.append(self.item_builder.build());
+        try self.item_list.append(self.allocator, self.item_builder.build());
+        self.item_builder.flush();
     }
 
     pub fn removeItem(self: *InvoiceBuilder, index: usize) void {
-        _ = self.items.swapRemove(index);
+        _ = self.item_list.swapRemove(index);
     }
 
     pub fn flush(self: *InvoiceBuilder) void {
@@ -448,7 +544,7 @@ pub const InvoiceBuilder = struct {
         self.address = null;
         self.address_builder.flush();
         self.item_builder.flush();
-        self.items.clearRetainingCapacity();
+        self.item_list.clearRetainingCapacity();
     }
 
     pub fn build(self: *InvoiceBuilder, id: usize) !Invoice {
@@ -462,7 +558,7 @@ pub const InvoiceBuilder = struct {
             .phone = self.phone.?,
             .remark = self.remark,
             .address = self.address_builder.build(),
-            .items = try self.items.toOwnedSlice(),
+            .items = try self.item_list.toOwnedSlice(),
         };
     }
 };

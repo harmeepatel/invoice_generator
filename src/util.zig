@@ -11,6 +11,7 @@ pub const Color = enum {
     primary,
     border,
     err,
+    debug,
 
     pub fn get(self: Color) dvui.Color {
         @setEvalBranchQuota(1250);
@@ -21,6 +22,7 @@ pub const Color = enum {
             .primary => dvui.Color.fromHex("#6d6dff"),
             .border => Color.layer0.get().lighten(20),
             .err => dvui.Color.fromHex("#ff3333"),
+            .debug => dvui.Color.fromHex("#ff5555"),
         };
     }
 };
@@ -150,5 +152,31 @@ pub const Font = enum {
     }
     pub fn xxl(self: Font) dvui.Font {
         return self.makeFont(text.xxl);
+    }
+};
+
+pub const KeyGen = struct {
+    random: std.Random,
+    og_key: usize = 0,
+    key: usize = 0,
+
+    pub fn init() KeyGen {
+        var prng = std.Random.DefaultPrng.init(@intCast(std.time.timestamp()));
+        const rnd = prng.random();
+        const tmp_key = rnd.int(usize);
+        return .{ .random = rnd, .key = tmp_key, .og_key = tmp_key };
+    }
+
+    pub fn reset(self: *KeyGen) KeyGen {
+        self.key = self.og_key;
+        return self.*;
+    }
+
+    pub fn emit(self: *KeyGen) usize {
+        return blk: {
+            const cur_key = self.key;
+            self.key += 1;
+            break :blk cur_key;
+        };
     }
 };

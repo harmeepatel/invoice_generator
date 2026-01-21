@@ -7,9 +7,11 @@ const zqlite = @import("zqlite");
 
 const Color = util.Color;
 const Field = @import("components/Field.zig");
+const InvoiceBuilder = @import("invoice.zig").InvoiceBuilder;
+const ItemBuilder = @import("invoice.zig").ItemBuilder;
+const KeyGen = util.KeyGen;
 const Rect = dvui.Rect;
 const Size = dvui.Size;
-const InvoiceBuilder = @import("invoice.zig").InvoiceBuilder;
 
 const log = std.log.scoped(.ae_main);
 
@@ -21,6 +23,7 @@ pub const gpa = gpa_instance.allocator();
 
 pub var error_queue: std.AutoArrayHashMap(usize, []const u8) = undefined;
 pub var invoice: InvoiceBuilder = undefined;
+pub var keygen: KeyGen = undefined;
 
 pub const dvui_app: dvui.App = .{
     .config = .{
@@ -47,6 +50,7 @@ pub const panic = dvui.App.panic;
 pub fn AppInit(win: *dvui.Window) !void {
     error_queue = .init(gpa);
     invoice = try .init(gpa);
+    keygen = .init();
 
     {
         try dvui.addFont("Cascadia_Mono_ExtraLight", fonts.Cascadia_Mono_Light, null);
@@ -88,19 +92,30 @@ pub fn AppFrame() !dvui.App.Result {
         const box = dvui.box(@src(), .{ .dir = .horizontal }, .{
             .expand = .horizontal,
             .background = true,
-            .color_fill = util.Color.err.get(),
+            .color_fill = util.Color.debug.get(),
         });
         defer box.deinit();
 
-        dvui.label(@src(), "{d}", .{dvui.FPS()}, .{ .gravity_x = 0.5 });
+        {
+            var buf: [32]u8 = undefined;
+            const fps = try std.fmt.bufPrint(&buf, "{d:.5}", .{dvui.FPS()});
+            if (dvui.button(@src(), fps, .{}, .{
+                .min_size_content = .{ .w = 80 },
+                .gravity_x = 0.5,
+            })) {
+                dvui.toggleDebugWindow();
+            }
+
+            // dvui.label(@src(), "{d}", .{dvui.FPS()}, .{ .gravity_y = 0.5 });
+        }
     }
 
+    keygen = keygen.reset();
     return frame();
 }
 
 // this is redrawn every frame
 pub fn frame() !dvui.App.Result {
-    var key: usize = 0;
 
     // scrollable area below the menu
     var scroll = dvui.scrollArea(@src(), .{ .horizontal_bar = .auto_overlay }, .{ .tag = "scroll", .expand = .both, .style = .window });
@@ -132,7 +147,7 @@ pub fn frame() !dvui.App.Result {
             .{ .kind = .line_1, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
             .{ .kind = .line_2, .label = "Address Line 2 (Optional)", .placeholder = "Landmark (Optional)" },
             .{ .kind = .line_3, .label = "Address Line 3 (Optional)", .placeholder = "Street Name (Optional)" },
-            .{ .kind = .state, .variant = .selection_box, .label = "State", .placeholder = "Gujarat" },
+            .{ .kind = .state, .variant = .selection_box, .label = "State", .placeholder = "Gujarat", .suggestions = &util.PostalCodes.states },
             .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
             .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
         };
@@ -155,9 +170,8 @@ pub fn frame() !dvui.App.Result {
             defer left_column.deinit();
 
             {
-                inline for (all[0..left_field_count], 0..) |*field, idx| {
-                    field.render(key + idx);
-                    key += 1;
+                inline for (all[0..left_field_count]) |*field| {
+                    field.render(keygen.emit());
                 }
             }
         }
@@ -172,9 +186,8 @@ pub fn frame() !dvui.App.Result {
             defer right_column.deinit();
 
             {
-                inline for (all[left_field_count..], 0..) |*field, idx| {
-                    field.render(key + idx);
-                    key += 1;
+                inline for (all[left_field_count..]) |*field| {
+                    field.render(keygen.emit());
                 }
             }
         }
@@ -187,21 +200,20 @@ pub fn frame() !dvui.App.Result {
                 @src(),
                 .{ .dir = .vertical },
                 .{
-                    .id_extra = key,
+                    .id_extra = keygen.emit(),
                     .expand = .both,
                 },
             );
             defer vbox_item.deinit();
 
             {
-                var has_label = false;
-
-                for (invoice.items.items) |_| {
-                    if (!has_label) {
-                        // item.renderLabels();
-                        has_label = !has_label;
-                    }
-                    // item.renderTextEntry();
+                for (invoice.item_list.items, 0..) |item, idx| {
+                    if (idx == 0) item.row(&keygen, true) else item.row(&keygen, false);
+                }
+                if (invoice.item_list.items.len > 0) {
+                    ItemBuilder.row(&keygen, false);
+                } else {
+                    ItemBuilder.row(&keygen, true);
                 }
             }
 
@@ -212,12 +224,12 @@ pub fn frame() !dvui.App.Result {
                     .corner_radius = Rect.all(util.gap.xs),
                     .font = util.Font.extra_light.lg(),
                 })) {
-                    // Invoice_Item.addItem(key);
+                    try invoice.addItem();
+                    log.debug("invoice.item_builder: {any}", .{invoice.item_builder});
+                    log.debug("invoice.item_list.items: {any}", .{invoice.item_list.items});
                 }
             }
         }
-
-        key += 1;
     }
 
     // generate invoice button
@@ -231,7 +243,7 @@ pub fn frame() !dvui.App.Result {
             .padding = Rect.all(util.gap.md),
             .margin = .{ .x = 0, .w = 0, .y = util.gap.xxl, .h = util.gap.xxl },
         })) {
-            log.info("INVOICE: {any}", .{invoice});
+            log.debug("invoice: {any}", .{invoice});
         }
     }
 

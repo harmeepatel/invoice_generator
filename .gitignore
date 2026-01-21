@@ -2,4 +2,7 @@
 zig-out/
 .zig-cache/
 
+memory.svg
+out.user_stacks
+
 *.pdf
