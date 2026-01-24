@@ -39,11 +39,6 @@ pub fn build(b: *std.Build) void {
     });
 
     {
-        // fonts
-        exe.root_module.addAnonymousImport("fonts", .{
-            .root_source_file = b.path("src/assets/fonts/fonts.zig"),
-        });
-
         // dvui
         const dvui_dep = b.dependency("dvui", .{
             .target = target,

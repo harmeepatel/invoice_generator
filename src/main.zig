@@ -1,29 +1,24 @@
 const builtin = @import("builtin");
 const dvui = @import("dvui");
-const fonts = @import("fonts");
+const fonts = @import("fonts.zig");
 const std = @import("std");
 const util = @import("util.zig");
 const zqlite = @import("zqlite");
+const Invoice = @import("invoice.zig");
 
 const Color = util.Color;
-const Field = @import("Field.zig");
-const InvoiceBuilder = @import("invoice.zig").InvoiceBuilder;
-const ItemBuilder = @import("invoice.zig").ItemBuilder;
 const KeyGen = util.KeyGen;
 const Rect = dvui.Rect;
 const Size = dvui.Size;
 
 const log = std.log.scoped(.ae_main);
 
-pub const max_width = util.win_init_size.w * 0.75;
-pub var should_reset_form: bool = false;
-
 var gpa_instance = std.heap.GeneralPurposeAllocator(.{}){};
 pub const gpa = gpa_instance.allocator();
 
-pub var error_queue: std.AutoArrayHashMap(usize, []const u8) = undefined;
-pub var invoice: InvoiceBuilder = undefined;
+pub const max_width = util.win_init_size.w * 0.75;
 pub var keygen: KeyGen = undefined;
+pub var invoice: Invoice = undefined;
 
 pub const dvui_app: dvui.App = .{
     .config = .{
@@ -42,15 +37,14 @@ pub const dvui_app: dvui.App = .{
 
 pub const main = dvui.App.main;
 pub const panic = dvui.App.panic;
-// pub const std_options: std.Options = .{
-//     .logFn = dvui.App.logFn,
-// };
+pub const std_options: std.Options = .{
+    .logFn = dvui.App.logFn,
+};
 
 // init app state
 pub fn AppInit(win: *dvui.Window) !void {
-    error_queue = .init(gpa);
-    invoice = try .init(gpa);
     keygen = .init();
+    invoice = try .init(gpa);
 
     {
         try dvui.addFont("Cascadia_Mono_ExtraLight", fonts.Cascadia_Mono_Light, null);
@@ -76,7 +70,6 @@ pub fn AppInit(win: *dvui.Window) !void {
 
 // deinit app
 pub fn AppDeinit() void {
-    error_queue.deinit();
     invoice.deinit();
 
     const leaked = gpa_instance.deinit();
@@ -131,105 +124,10 @@ pub fn frame() !dvui.App.Result {
     defer main_container.deinit();
 
     // customer details
-    {
-        var all = [_]Field{
-            .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
-            .{ .kind = .gstin, .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
-            .{ .kind = .gst, .label = "GST %", .placeholder = "5.0" },
-            .{ .kind = .email, .label = "Email (Optional)", .placeholder = "abc@xyz.com (Optional)" },
-            .{ .kind = .phone, .label = "Phone", .placeholder = "+91 11111 99999" },
-            .{ .kind = .remark, .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note (Optional)" },
-            // address
-            .{ .kind = .shop_no, .label = "Shop Number", .placeholder = "AB 404" },
-            .{ .kind = .line_1, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
-            .{ .kind = .line_2, .label = "Address Line 2 (Optional)", .placeholder = "Landmark (Optional)" },
-            .{ .kind = .line_3, .label = "Address Line 3 (Optional)", .placeholder = "Street Name (Optional)" },
-            .{ .kind = .state, .variant = .selection_box, .label = "State", .placeholder = "Gujarat", .suggestions = &util.PostalCodes.states },
-            .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
-            .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
-        };
-        const left_field_count = 6;
-
-        var flex_container = dvui.box(@src(), .{ .dir = .horizontal, .equal_space = true }, .{
-            .tag = "form-container",
-            .expand = .horizontal,
-            .margin = .{ .h = util.gap.xxxl },
-        });
-        defer flex_container.deinit();
-
-        // left column
-        {
-            var left_column = dvui.box(@src(), .{ .dir = .vertical }, .{
-                .tag = "form-left-container",
-                .expand = .horizontal,
-                .margin = .{ .w = util.gap.xxl / 2 },
-            });
-            defer left_column.deinit();
-
-            {
-                inline for (all[0..left_field_count]) |*field| {
-                    field.render(keygen.emit());
-                }
-            }
-        }
-
-        // right column
-        {
-            var right_column = dvui.box(@src(), .{ .dir = .vertical }, .{
-                .tag = "form-right-container",
-                .expand = .horizontal,
-                .margin = .{ .x = util.gap.xxl / 2 },
-            });
-            defer right_column.deinit();
-
-            {
-                inline for (all[left_field_count..]) |*field| {
-                    field.render(keygen.emit());
-                }
-            }
-        }
-    }
+    {}
 
     // invoice items
-    {
-        {
-            var vbox_item = dvui.box(
-                @src(),
-                .{ .dir = .vertical },
-                .{
-                    .id_extra = keygen.emit(),
-                    .expand = .both,
-                },
-            );
-            defer vbox_item.deinit();
-
-            {
-                for (invoice.item_list.items, 0..) |item, idx| {
-                    if (idx == 0) item.row(&keygen, true) else item.row(&keygen, false);
-                }
-                if (invoice.item_list.items.len > 0) {
-                    ItemBuilder.row(&keygen, false);
-                } else {
-                    ItemBuilder.row(&keygen, true);
-                }
-            }
-
-            {
-                if (dvui.button(@src(), "+", .{ .draw_focus = true }, .{
-                    .tag = "add-item",
-                    .expand = .horizontal,
-                    .corner_radius = Rect.all(util.gap.xs),
-                    .font = util.Font.extra_light.lg(),
-                })) {
-                    try invoice.addItem();
-                    log.debug("invoice: {any}", .{invoice});
-                    log.debug("invoice.item_builder: {any}", .{invoice.item_builder});
-                    log.debug("invoice.item_list.items: {any}", .{invoice.item_list.items});
-                    log.debug("", .{});
-                }
-            }
-        }
-    }
+    {}
 
     // generate invoice button
     {
