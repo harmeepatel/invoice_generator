@@ -1,9 +1,9 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const dvui = @import("dvui");
-const util = @import("../util.zig");
-const main = @import("../main.zig");
-const invoice = @import("../invoice.zig");
+const util = @import("util.zig");
+const main = @import("main.zig");
+const invoice = @import("invoice.zig");
 
 const log = std.log.scoped(.ae_component_field);
 
@@ -59,7 +59,7 @@ err_label_opts: dvui.Options = .{
     .gravity_x = 1.0,
 },
 text_entry_opts: dvui.Options = .{
-    .expand = .both,
+    .expand = .horizontal,
     .margin = dvui.Rect.all(0),
     .padding = dvui.Rect.all(util.gap.sm),
     .color_border = util.Color.border.get(),

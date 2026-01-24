@@ -178,7 +178,7 @@ const Item = struct {
     discount: f16,
 
     pub fn row(self: Item, keygen: *KeyGen, want_label: bool) void {
-        const Field = @import("components/Field.zig");
+        const Field = @import("Field.zig");
         var all = [_]Field{
             .{ .kind = .serial_number, .label = "Serial Number", .placeholder = "000000000" },
             .{ .kind = .item_name, .label = "Item Name", .placeholder = "Bibcock" },
@@ -221,15 +221,12 @@ const Item = struct {
                 },
                 else => unreachable,
             };
+
             field.label_opts.font = util.Font.light.sm();
             field.text_entry_opts.id_extra = keygen.emit();
-            field.text_entry_opts.margin = dvui.Rect{ .h = util.gap.sm };
-            field.main_container_opts.margin = .{ .h = 0 };
-            field.render(k);
+            field.main_container_opts.margin = .{ .h = 0, .w = if (idx == all.len - 1) 0 else util.gap.xs };
 
-            if (idx < all.len - 1) {
-                field.main_container_opts.margin = .{ .w = util.gap.xs };
-            }
+            field.render(k);
         }
     }
 };
@@ -243,7 +240,7 @@ pub const ItemBuilder = struct {
     discount: f16 = 0.0,
 
     pub fn row(keygen: *KeyGen, want_label: bool) void {
-        const Field = @import("components/Field.zig");
+        const Field = @import("Field.zig");
         var all = [_]Field{
             .{ .kind = .serial_number, .label = "Serial Number", .placeholder = "000000000" },
             .{ .kind = .item_name, .label = "Item Name", .placeholder = "Bibcock" },
@@ -269,13 +266,9 @@ pub const ItemBuilder = struct {
 
             field.label_opts.font = util.Font.light.sm();
             field.text_entry_opts.id_extra = keygen.emit();
-            field.text_entry_opts.margin = dvui.Rect{ .h = util.gap.sm };
-            field.main_container_opts.margin = .{ .h = 0 };
-            field.render(k);
+            field.main_container_opts.margin = .{ .h = 0, .w = if (idx == all.len - 1) 0 else util.gap.xs };
 
-            if (idx < all.len - 1) {
-                field.main_container_opts.margin = .{ .w = util.gap.xs };
-            }
+            field.render(k);
         }
     }
 
@@ -342,13 +335,20 @@ pub const ItemBuilder = struct {
         self.quantity = null;
         self.sale_rate = null;
         self.discount = 0.0;
+        log.debug("flush: {any}", .{self});
     }
 
-    pub fn build(self: *ItemBuilder) Item {
+    pub fn build(self: *ItemBuilder, allocator: std.mem.Allocator) Item {
         return Item{
-            .serial_number = self.serial_number.?,
-            .item_name = self.item_name.?,
-            .hsn_code = self.hsn_code.?,
+            .serial_number = allocator.dupe(u8, self.serial_number.?) catch {
+                @panic("Failed to duplicate ItemBuilder.serial_number");
+            },
+            .item_name = allocator.dupe(u8, self.item_name.?) catch {
+                @panic("Failed to duplicate ItemBuilder.serial_number");
+            },
+            .hsn_code = allocator.dupe(u8, self.hsn_code.?) catch {
+                @panic("Failed to duplicate ItemBuilder.serial_number");
+            },
             .quantity = self.quantity.?,
             .sale_rate = self.sale_rate.?,
             .discount = self.discount,
@@ -394,6 +394,16 @@ pub const InvoiceBuilder = struct {
     }
 
     pub fn deinit(self: *InvoiceBuilder) void {
+        if (self.item_builder.serial_number) |sn| {
+            self.allocator.free(sn);
+        }
+        if (self.item_builder.item_name) |in| {
+            self.allocator.free(in);
+        }
+        if (self.item_builder.hsn_code) |hsn| {
+            self.allocator.free(hsn);
+        }
+
         self.item_list.deinit(self.allocator);
     }
 
@@ -526,7 +536,16 @@ pub const InvoiceBuilder = struct {
     }
 
     pub fn addItem(self: *InvoiceBuilder) !void {
-        try self.item_list.append(self.allocator, self.item_builder.build());
+        if (self.item_builder.serial_number == null or
+            self.item_builder.item_name == null or
+            self.item_builder.hsn_code == null or
+            self.item_builder.quantity == null or
+            self.item_builder.sale_rate == null)
+        {
+            return error.IncompleteItem;
+        }
+
+        try self.item_list.append(self.allocator, self.item_builder.build(self.allocator));
         self.item_builder.flush();
     }
 

@@ -6,7 +6,7 @@ const util = @import("util.zig");
 const zqlite = @import("zqlite");
 
 const Color = util.Color;
-const Field = @import("components/Field.zig");
+const Field = @import("Field.zig");
 const InvoiceBuilder = @import("invoice.zig").InvoiceBuilder;
 const ItemBuilder = @import("invoice.zig").ItemBuilder;
 const KeyGen = util.KeyGen;
@@ -105,8 +105,6 @@ pub fn AppFrame() !dvui.App.Result {
             })) {
                 dvui.toggleDebugWindow();
             }
-
-            // dvui.label(@src(), "{d}", .{dvui.FPS()}, .{ .gravity_y = 0.5 });
         }
     }
 
@@ -116,7 +114,6 @@ pub fn AppFrame() !dvui.App.Result {
 
 // this is redrawn every frame
 pub fn frame() !dvui.App.Result {
-
     // scrollable area below the menu
     var scroll = dvui.scrollArea(@src(), .{ .horizontal_bar = .auto_overlay }, .{ .tag = "scroll", .expand = .both, .style = .window });
     defer scroll.deinit();
@@ -225,8 +222,10 @@ pub fn frame() !dvui.App.Result {
                     .font = util.Font.extra_light.lg(),
                 })) {
                     try invoice.addItem();
+                    log.debug("invoice: {any}", .{invoice});
                     log.debug("invoice.item_builder: {any}", .{invoice.item_builder});
                     log.debug("invoice.item_list.items: {any}", .{invoice.item_list.items});
+                    log.debug("", .{});
                 }
             }
         }
