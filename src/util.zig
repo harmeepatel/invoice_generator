@@ -2,7 +2,24 @@ const dvui = @import("dvui");
 const main = @import("main.zig");
 const std = @import("std");
 
-const log = std.log.scoped(.ae_util);
+const color_log: ColoredLog = .{ .log = std.log.scoped(.ae_util) };
+
+pub const ColoredLog = struct {
+    log: type,
+
+    pub fn debug(self: @This(), comptime format: []const u8, args: anytype) void {
+        self.log.debug("\x1b[1;97m" ++ format ++ "\x1b[0m", args);
+    }
+    pub fn info(self: @This(), comptime format: []const u8, args: anytype) void {
+        self.log.info("\x1b[1;96m" ++ format ++ "\x1b[0m", args);
+    }
+    pub fn warn(self: @This(), comptime format: []const u8, args: anytype) void {
+        self.log.warn("\x1b[1;33m" ++ format ++ "\x1b[0m", args);
+    }
+    pub fn err(self: @This(), comptime format: []const u8, args: anytype) void {
+        self.log.err("\x1b[1;91m" ++ format ++ "\x1b[0m", args);
+    }
+};
 
 pub const Color = enum {
     layer0,

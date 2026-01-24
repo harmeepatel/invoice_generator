@@ -6,12 +6,13 @@ const util = @import("util.zig");
 const zqlite = @import("zqlite");
 const Invoice = @import("invoice.zig");
 
+const Field = @import("field.zig");
 const Color = util.Color;
 const KeyGen = util.KeyGen;
 const Rect = dvui.Rect;
 const Size = dvui.Size;
 
-const log = std.log.scoped(.ae_main);
+const color_log: util.ColoredLog = .{ .log = std.log.scoped(.ae_main) };
 
 var gpa_instance = std.heap.GeneralPurposeAllocator(.{}){};
 pub const gpa = gpa_instance.allocator();
@@ -19,6 +20,7 @@ pub const gpa = gpa_instance.allocator();
 pub const max_width = util.win_init_size.w * 0.75;
 pub var keygen: KeyGen = undefined;
 pub var invoice: Invoice = undefined;
+pub var error_queue: std.AutoArrayHashMap(usize, []const u8) = undefined;
 
 pub const dvui_app: dvui.App = .{
     .config = .{
@@ -45,6 +47,7 @@ pub const std_options: std.Options = .{
 pub fn AppInit(win: *dvui.Window) !void {
     keygen = .init();
     invoice = try .init(gpa);
+    error_queue = .init(gpa);
 
     {
         try dvui.addFont("Cascadia_Mono_ExtraLight", fonts.Cascadia_Mono_Light, null);
@@ -65,16 +68,18 @@ pub fn AppInit(win: *dvui.Window) !void {
         defer dvui.themeSet(theme);
 
         theme.window.fill = Color.layer0.get();
+        theme.err.fill = util.Color.err.get();
     }
 }
 
 // deinit app
 pub fn AppDeinit() void {
     invoice.deinit();
+    error_queue.deinit();
 
     const leaked = gpa_instance.deinit();
     if (leaked == .leak) {
-        log.err("Memory leak detected!", .{});
+        color_log.err("Memory leak detected!", .{});
     }
 }
 
@@ -124,7 +129,61 @@ pub fn frame() !dvui.App.Result {
     defer main_container.deinit();
 
     // customer details
-    {}
+    {
+        var left_fields = [_]Field{
+            .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
+            .{ .kind = .gstin, .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
+            .{ .kind = .gst, .variant = .number, .label = "GST %", .placeholder = "5.0" },
+            .{ .kind = .email, .label = "Email (Optional)", .placeholder = "abc@xyz.com" },
+            .{ .kind = .phone, .label = "Phone", .placeholder = "+91 11111 99999" },
+            .{ .kind = .remark, .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note" },
+        };
+
+        var right_fields = [_]Field{
+            .{ .kind = .shop_no, .label = "Shop Number", .placeholder = "AB 404" },
+            .{ .kind = .line_1, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
+            .{ .kind = .line_2, .label = "Address Line 2 (Optional)", .placeholder = "Landmark" },
+            .{ .kind = .line_3, .label = "Address Line 3 (Optional)", .placeholder = "Street Name" },
+            .{ .kind = .state, .variant = .selection, .label = "State", .placeholder = "Gujarat", .suggestions = &util.PostalCodes.states },
+            .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
+            .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
+        };
+
+        var flex_container = dvui.box(@src(), .{ .dir = .horizontal, .equal_space = true }, .{
+            .tag = "form-container",
+            .expand = .horizontal,
+            .margin = .{ .y = util.gap.lg, .h = util.gap.lg },
+        });
+        defer flex_container.deinit();
+
+        // Left column
+        {
+            var left_column = dvui.box(@src(), .{ .dir = .vertical }, .{
+                .tag = "form-left-container",
+                .expand = .horizontal,
+                .margin = .{ .w = util.gap.md },
+            });
+            defer left_column.deinit();
+
+            inline for (&left_fields) |*field| {
+                field.render(keygen.emit());
+            }
+        }
+
+        // Right column
+        {
+            var right_column = dvui.box(@src(), .{ .dir = .vertical }, .{
+                .tag = "form-right-container",
+                .expand = .horizontal,
+                .margin = .{ .x = util.gap.md },
+            });
+            defer right_column.deinit();
+
+            inline for (&right_fields) |*field| {
+                field.render(keygen.emit());
+            }
+        }
+    }
 
     // invoice items
     {}
@@ -140,7 +199,7 @@ pub fn frame() !dvui.App.Result {
             .padding = Rect.all(util.gap.md),
             .margin = .{ .x = 0, .w = 0, .y = util.gap.xxl, .h = util.gap.xxl },
         })) {
-            log.debug("invoice: {any}", .{invoice});
+            color_log.debug("invoice: {any}", .{invoice});
         }
     }
 

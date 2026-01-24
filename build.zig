@@ -1,5 +1,18 @@
 const std = @import("std");
-pub const log = std.log.scoped(.ae_build);
+const log = std.log.scoped(.ae_build);
+
+pub fn log_debug(comptime format: []const u8, args: anytype) void {
+    log.debug("\x1b[1;97m" ++ format ++ "\x1b[0m", args);
+}
+pub fn log_info(comptime format: []const u8, args: anytype) void {
+    log.info("\x1b[1;96m" ++ format ++ "\x1b[0m", args);
+}
+pub fn log_warn(comptime format: []const u8, args: anytype) void {
+    log.warn("\x1b[1;33m" ++ format ++ "\x1b[0m", args);
+}
+pub fn log_err(comptime format: []const u8, args: anytype) void {
+    log.err("\x1b[1;91m" ++ format ++ "\x1b[0m", args);
+}
 
 fn initDbFile() void {
     const init_db_path = "src/assets/ae.db";
@@ -7,7 +20,7 @@ fn initDbFile() void {
 
     if (fs.openFile(init_db_path, .{})) |file| {
         defer file.close();
-        log.info("DB found @ {s}", .{init_db_path});
+        log_info("DB found @ {s}", .{init_db_path});
     } else |err| switch (err) {
         error.FileNotFound => {
             if (std.fs.path.dirname(init_db_path)) |dir| fs.makePath(dir) catch {};
@@ -17,10 +30,10 @@ fn initDbFile() void {
             };
             defer f.close();
 
-            log.info("Creating new DB", .{});
+            log_info("Creating new DB", .{});
         },
         else => |e| {
-            log.err("Unexpected error: {any}", .{e});
+            log_err("Unexpected error: {any}", .{e});
         },
     }
 }
@@ -74,7 +87,7 @@ pub fn build(b: *std.Build) void {
             });
             b.getInstallStep().dependOn(&install_assets.step);
         } else {
-            log.info("DB found @ {s}", .{work_db_path});
+            log_info("DB found @ {s}", .{work_db_path});
         }
     }
 

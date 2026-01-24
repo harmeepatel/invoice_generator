@@ -1,7 +1,7 @@
 const std = @import("std");
-const log = std.log.scoped(.ae_invoice);
+const color_log: @import("util.zig").ColoredLog = .{ .log = std.log.scoped(.ae_invoice) };
 
-pub const Self = @This();
+const Self = @This();
 
 const ProductDraft = struct {
     serial_number: ?[]const u8 = null,
