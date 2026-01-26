@@ -196,7 +196,6 @@ fn renderSelection(self: *Self) void {
 }
 
 fn handleValueChange(self: *Self, value: []const u8) bool {
-
     var is_error_set = false;
     const result = validation.validateName(value);
 

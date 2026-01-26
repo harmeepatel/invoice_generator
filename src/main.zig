@@ -4,8 +4,9 @@ const fonts = @import("fonts.zig");
 const std = @import("std");
 const util = @import("util.zig");
 const zqlite = @import("zqlite");
-const Invoice = @import("invoice.zig");
+const validation = @import("validation.zig");
 
+const Invoice = @import("invoice.zig");
 const Field = @import("field.zig");
 const Color = util.Color;
 const KeyGen = util.KeyGen;
@@ -130,25 +131,6 @@ pub fn frame() !dvui.App.Result {
 
     // customer details
     {
-        var left_fields = [_]Field{
-            .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
-            .{ .kind = .gstin, .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
-            .{ .kind = .gst, .variant = .number, .label = "GST %", .placeholder = "5.0" },
-            .{ .kind = .email, .label = "Email (Optional)", .placeholder = "abc@xyz.com" },
-            .{ .kind = .phone, .label = "Phone", .placeholder = "+91 11111 99999" },
-            .{ .kind = .remark, .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note" },
-        };
-
-        var right_fields = [_]Field{
-            .{ .kind = .shop_no, .label = "Shop Number", .placeholder = "AB 404" },
-            .{ .kind = .line_1, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
-            .{ .kind = .line_2, .label = "Address Line 2 (Optional)", .placeholder = "Landmark" },
-            .{ .kind = .line_3, .label = "Address Line 3 (Optional)", .placeholder = "Street Name" },
-            .{ .kind = .state, .variant = .selection, .label = "State", .placeholder = "Gujarat", .suggestions = &util.PostalCodes.states },
-            .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
-            .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
-        };
-
         var flex_container = dvui.box(@src(), .{ .dir = .horizontal, .equal_space = true }, .{
             .tag = "form-container",
             .expand = .horizontal,
@@ -158,6 +140,15 @@ pub fn frame() !dvui.App.Result {
 
         // Left column
         {
+            var left_fields = [_]Field{
+                .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
+                .{ .kind = .gstin, .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
+                .{ .kind = .gst, .variant = .number, .label = "GST %", .placeholder = "5.0" },
+                .{ .kind = .email, .label = "Email (Optional)", .placeholder = "abc@xyz.com" },
+                .{ .kind = .phone, .label = "Phone", .placeholder = "+91 11111 99999" },
+                .{ .kind = .remark, .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note" },
+            };
+
             var left_column = dvui.box(@src(), .{ .dir = .vertical }, .{
                 .tag = "form-left-container",
                 .expand = .horizontal,
@@ -172,6 +163,16 @@ pub fn frame() !dvui.App.Result {
 
         // Right column
         {
+            var right_fields = [_]Field{
+                .{ .kind = .shop_no, .label = "Shop Number", .placeholder = "AB 404" },
+                .{ .kind = .line, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
+                .{ .kind = .line, .label = "Address Line 2 (Optional)", .placeholder = "Landmark" },
+                .{ .kind = .line, .label = "Address Line 3 (Optional)", .placeholder = "Street Name" },
+                .{ .kind = .state, .variant = .selection, .label = "State", .placeholder = "Gujarat", .suggestions = &util.PostalCodes.states },
+                .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
+                .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
+            };
+
             var right_column = dvui.box(@src(), .{ .dir = .vertical }, .{
                 .tag = "form-right-container",
                 .expand = .horizontal,
