@@ -113,6 +113,7 @@ pub const PostalCodes = struct {
 
 fn makeScale(comptime base: f32, comptime scale: f32) type {
     return struct {
+        pub const xxs = xs / scale;
         pub const xs = base;
         pub const sm = xs * scale;
         pub const md = sm * scale;

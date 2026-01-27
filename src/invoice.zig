@@ -50,7 +50,7 @@ const InvoiceDraft = struct {
     email: ?[]const u8 = null,
     phone: ?[]const u8 = null,
     remark: ?[]const u8 = null,
-    address: ?AddressDraft = null,
+    address: AddressDraft = .{},
     current_product: ProductDraft = .{},
 };
 
