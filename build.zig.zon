@@ -5,8 +5,8 @@
     .minimum_zig_version = "0.15.2",
     .dependencies = .{
         .dvui = .{
-            .url = "git+https://github.com/david-vanderson/dvui?ref=main#a605fc7eb4e92f76fd6d7cf7143d7a4137330bde",
-            .hash = "dvui-0.4.0-dev-AQFJmcB91gAGVRax3uauPaa1Ub0YQNYXz_qFVYDMJ_uO",
+            .url = "git+https://github.com/david-vanderson/dvui?ref=main#0ca4d5c7a7915ee53a7f69c7facb8b48b7807f40",
+            .hash = "dvui-0.4.0-dev-AQFJmc3h2gBHoPtLm2KO1NEWuqV-kPm1cusWeY6OkHKf",
         },
         .sqlite = .{
             .url = "git+https://github.com/vrischmann/zig-sqlite#0b75ba276d34de3141ec1697e3ef7c836d7b38e7",

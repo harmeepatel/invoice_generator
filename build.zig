@@ -5,7 +5,7 @@ pub fn log_debug(comptime format: []const u8, args: anytype) void {
     log.debug("\x1b[1;97m" ++ format ++ "\x1b[0m", args);
 }
 pub fn log_info(comptime format: []const u8, args: anytype) void {
-    log.info("\x1b[1;96m" ++ format ++ "\x1b[0m", args);
+    log.info("\x1b[1;32m" ++ format ++ "\x1b[0m", args);
 }
 pub fn log_warn(comptime format: []const u8, args: anytype) void {
     log.warn("\x1b[1;33m" ++ format ++ "\x1b[0m", args);

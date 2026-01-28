@@ -1,6 +1,5 @@
 const builtin = @import("builtin");
 const dvui = @import("dvui");
-const fonts = @import("fonts.zig");
 const std = @import("std");
 const util = @import("util.zig");
 const zqlite = @import("zqlite");
@@ -56,13 +55,6 @@ pub fn AppInit(win: *dvui.Window) !void {
     field_kind_map = .init(gpa);
 
     {
-        try dvui.addFont("Cascadia_Mono_ExtraLight", fonts.Cascadia_Mono_Light, null);
-        try dvui.addFont("Cascadia_Mono_Light", fonts.Cascadia_Mono_Light, null);
-        try dvui.addFont("Cascadia_Mono_Regular", fonts.Cascadia_Mono_Regular, null);
-        try dvui.addFont("Cascadia_Mono_Medium", fonts.Cascadia_Mono_Regular, null);
-        try dvui.addFont("Cascadia_Mono_SemiBold", fonts.Cascadia_Mono_Regular, null);
-        try dvui.addFont("Cascadia_Mono_Bold", fonts.Cascadia_Mono_Bold, null);
-
         if (false) {
             win.theme = switch (win.backend.preferredColorScheme() orelse .dark) {
                 .light => dvui.Theme.builtin.adwaita_light,
@@ -73,6 +65,7 @@ pub fn AppInit(win: *dvui.Window) !void {
         var theme = win.theme;
         defer dvui.themeSet(theme);
 
+        theme.embedded_fonts = util.fonts;
         theme.window.fill = Color.layer0.get();
         theme.err.fill = util.Color.err.get();
     }
@@ -198,7 +191,6 @@ pub fn frame() !dvui.App.Result {
 
     // invoice items
     {
-        // const Field = @import("Field.zig");
         var fields = [_]Field{
             .{ .kind = .serial_number, .label = "Serial Number", .placeholder = "000000000" },
             .{ .kind = .item_name, .label = "Item Name", .placeholder = "Bibcock" },
@@ -208,29 +200,38 @@ pub fn frame() !dvui.App.Result {
             .{ .kind = .discount, .label = "Discount %", .placeholder = "00.00" },
         };
 
-        var hbox = dvui.box(@src(), .{ .dir = .horizontal }, .{
+        var fbox = dvui.flexbox(@src(), .{
+            .justify_content = .start,
+        }, .{
             .id_extra = keygen.emit(),
             .expand = .both,
         });
-        defer hbox.deinit();
+        defer fbox.deinit();
 
+        const hgap = util.gap.xs;
         inline for (&fields, 0..) |*field, idx| {
             const k = keygen.emit();
 
-            field.label_opts.font = util.Font.light.sm();
+            field.label_opts.font = dvui.Font.find(.{ .family = "light" }).withSize(util.text.sm);
             field.text_entry_opts.id_extra = keygen.emit();
-            field.main_container_opts.margin = .{ .h = 0, .w = if (idx == fields.len - 1) 0 else util.gap.xs };
+            field.main_container_opts.margin = .{ .h = 0, .w = if (idx == fields.len - 1) 0 else hgap };
+            field.main_container_opts.min_size_content = .{
+                .w = blk: {
+                    const gaps = hgap * @as(f32, @floatFromInt(fields.len - 1));
+                    const field_width = ((fbox.data().rect.w - gaps) / fields.len);
+                    break :blk field_width;
+                },
+            };
 
             field.render(k, false);
         }
     }
-
     // generate invoice button
     {
         if (dvui.button(@src(), "Generate Invoice", .{ .draw_focus = true }, .{
             .tag = "btn-generate-invoice",
             .expand = .both,
-            .font = util.Font.semi_bold.lg(),
+            .font = dvui.Font.find(.{ .family = "semibold" }),
             .color_fill = util.Color.primary.get(),
             .corner_radius = Rect.all(util.gap.xs),
             .padding = Rect.all(util.gap.md),

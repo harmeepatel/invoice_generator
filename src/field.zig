@@ -31,11 +31,11 @@ main_container_opts: dvui.Options = .{
 },
 label_opts: dvui.Options = .{
     .padding = dvui.Rect.all(0),
-    .font = util.Font.light.md(),
+    .font = dvui.Font.find(.{ .family = "light" }).withSize(util.text.md),
 },
 err_label_opts: dvui.Options = .{
     .padding = dvui.Rect.all(0),
-    .font = util.Font.light.sm(),
+    .font = dvui.Font.find(.{ .family = "light" }).withSize(util.text.sm),
     .color_text = util.Color.err.get(),
     .gravity_x = 1.0,
 },
@@ -44,7 +44,7 @@ text_entry_opts: dvui.Options = .{
     .margin = dvui.Rect.all(0),
     .padding = .{ .y = util.gap.sm, .h = util.gap.sm, .x = util.gap.md, .w = util.gap.md },
     .color_border = util.Color.border.get(),
-    .font = util.Font.light.sm(),
+    .font = dvui.Font.find(.{ .family = "light" }).withSize(util.text.sm),
     .corner_radius = dvui.Rect.all(util.gap.xs),
     .min_size_content = .{ .h = util.text.sm },
 },
@@ -62,7 +62,7 @@ pub fn render(self: *Self, key: usize, is_last: bool) void {
 
     if (builtin.mode == .Debug) {
         dvui.label(@src(), "{d}", .{self.key}, .{
-            .font = util.Font.extra_light.xs(),
+            .font = dvui.Font.find(.{ .family = "extralight" }).withSize(util.text.xs),
             .color_text = util.Color.debug.get(),
             .padding = dvui.Rect.all(0),
         });
@@ -92,12 +92,10 @@ pub fn render(self: *Self, key: usize, is_last: bool) void {
 }
 
 fn renderTextEntry(self: *Self) void {
-    var te = dvui.TextEntryWidget.init(@src(), .{
-        // .text = .{ .internal = .{ .limit = 5 } },
-    }, self.text_entry_opts);
+    var te: dvui.TextEntryWidget = undefined;
+    te.init(@src(), .{}, self.text_entry_opts);
     defer te.deinit();
 
-    te.install();
     te.processEvents();
     te.draw();
 
@@ -158,9 +156,8 @@ fn renderSelection(self: *Self) void {
     var te = dvui.widgetAlloc(dvui.TextEntryWidget);
     defer te.deinit();
 
-    te.* = dvui.TextEntryWidget.init(@src(), .{ .placeholder = if (self.placeholder) |ph| ph else "" }, self.text_entry_opts);
+    te.init(@src(), .{ .placeholder = if (self.placeholder) |ph| ph else "" }, self.text_entry_opts);
     te.data().was_allocated_on_widget_stack = true;
-    te.install();
 
     var sug = dvui.suggestion(te, .{
         .button = false,
@@ -299,7 +296,7 @@ fn updateInvoiceDraft(self: *Self, value: []const u8) void {
 }
 
 fn getError(self: *Self) ?[]const u8 {
-    return main.error_q.get(self.key); 
+    return main.error_q.get(self.key);
 }
 
 fn setError(self: *Self, msg: []const u8) void {

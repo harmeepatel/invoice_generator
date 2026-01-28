@@ -2,6 +2,10 @@ const dvui = @import("dvui");
 const main = @import("main.zig");
 const std = @import("std");
 
+pub const win_aspect_ratio: dvui.Rect = .{ .w = 16.0, .h = 10.0 };
+pub const win_init_size: dvui.Size = .{ .w = win_aspect_ratio.w * 100, .h = win_aspect_ratio.h * 100 };
+pub const win_min_size: dvui.Size = .{ .w = win_aspect_ratio.w * 50, .h = win_aspect_ratio.h * 50 };
+
 const color_log: ColoredLog = .{ .log = std.log.scoped(.ae_util) };
 
 pub const ColoredLog = struct {
@@ -11,7 +15,7 @@ pub const ColoredLog = struct {
         self.log.debug("\x1b[1;97m" ++ format ++ "\x1b[0m", args);
     }
     pub fn info(self: @This(), comptime format: []const u8, args: anytype) void {
-        self.log.info("\x1b[1;96m" ++ format ++ "\x1b[0m", args);
+        self.log.info("\x1b[1;32m" ++ format ++ "\x1b[0m", args);
     }
     pub fn warn(self: @This(), comptime format: []const u8, args: anytype) void {
         self.log.warn("\x1b[1;33m" ++ format ++ "\x1b[0m", args);
@@ -43,10 +47,6 @@ pub const Color = enum {
         };
     }
 };
-
-pub const win_aspect_ratio: dvui.Rect = .{ .w = 16.0, .h = 10.0 };
-pub const win_init_size: dvui.Size = .{ .w = win_aspect_ratio.w * 100, .h = win_aspect_ratio.h * 100 };
-pub const win_min_size: dvui.Size = .{ .w = win_aspect_ratio.w * 50, .h = win_aspect_ratio.h * 50 };
 
 pub const PostalCodes = struct {
     pub const states = [_][]const u8{
@@ -127,50 +127,31 @@ const scaling = 1.28;
 pub const gap = makeScale(10.0, scaling);
 pub const text = makeScale(14.0, scaling);
 
-pub const Font = enum {
-    extra_light,
-    light,
-    regular,
-    medium,
-    semi_bold,
-    bold,
-
-    fn getName(self: Font) []const u8 {
-        return switch (self) {
-            .extra_light => "Cascadia_Mono_ExtraLight",
-            .light => "Cascadia_Mono_Light",
-            .regular => "Cascadia_Mono_Regular",
-            .medium => "Cascadia_Mono_Medium",
-            .semi_bold => "Cascadia_Mono_SemiBold",
-            .bold => "Cascadia_Mono_Bold",
-        };
-    }
-
-    inline fn makeFont(self: Font, size: f32) dvui.Font {
-        return dvui.Font{
-            .size = size,
-            .id = dvui.Font.FontId.fromName(self.getName()),
-        };
-    }
-
-    pub fn xs(self: Font) dvui.Font {
-        return self.makeFont(text.xs);
-    }
-    pub fn sm(self: Font) dvui.Font {
-        return self.makeFont(text.sm);
-    }
-    pub fn md(self: Font) dvui.Font {
-        return self.makeFont(text.md);
-    }
-    pub fn lg(self: Font) dvui.Font {
-        return self.makeFont(text.lg);
-    }
-    pub fn xl(self: Font) dvui.Font {
-        return self.makeFont(text.xl);
-    }
-    pub fn xxl(self: Font) dvui.Font {
-        return self.makeFont(text.xxl);
-    }
+pub const fonts: []const dvui.Font.Source = &.{
+    .{
+        .family = dvui.Font.array("bold"),
+        .bytes = @embedFile("./assets/fonts/CascadiaMono-Bold.ttf"),
+    },
+    .{
+        .family = dvui.Font.array("extralight"),
+        .bytes = @embedFile("./assets/fonts/CascadiaMono-ExtraLight.ttf"),
+    },
+    .{
+        .family = dvui.Font.array("light"),
+        .bytes = @embedFile("./assets/fonts/CascadiaMono-Light.ttf"),
+    },
+    .{
+        .family = dvui.Font.array("medium"),
+        .bytes = @embedFile("./assets/fonts/CascadiaMono-Medium.ttf"),
+    },
+    .{
+        .family = dvui.Font.array("regular"),
+        .bytes = @embedFile("./assets/fonts/CascadiaMono-Regular.ttf"),
+    },
+    .{
+        .family = dvui.Font.array("semibold"),
+        .bytes = @embedFile("./assets/fonts/CascadiaMono-SemiBold.ttf"),
+    },
 };
 
 pub const KeyGen = struct {
