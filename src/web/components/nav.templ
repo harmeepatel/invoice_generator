@@ -1,0 +1,17 @@
+package component;
+
+templ Nav() {
+	<nav id="nav" class="mt-4 p-4 border-1 rounded-xl text-xl font-bold flex items-center justify-between">
+		Nav
+		<img src="/static/images/logo.svg" class="rounded-full w-12"/>
+	</nav>
+}
+
+templ NavLi(name string, ref string) {
+	<li class="">
+		<a href={ templ.URL(ref) } class="">
+			{ name }
+			<span class=""></span>
+		</a>
+	</li>
+}

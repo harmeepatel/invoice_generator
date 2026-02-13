@@ -1,8 +1,7 @@
 .DS_Store
-zig-out/
-.zig-cache/
 
-memory.svg
-out.user_stacks
-
+go.sum
 *.pdf
+
+.air/
+bin/

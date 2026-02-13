@@ -1,0 +1,12 @@
+root = "."
+tmp_dir = ".air"
+
+[build]
+cmd = "go build -o ./bin/main ./src/"
+bin = "bin/main"
+include_ext = ["go", "templ", "html", "css"]
+exclude_dir = ["assets", "tmp", "testdata", "vendor", "src/web/node_modules"]
+
+[log]
+time = false
+main_only = false

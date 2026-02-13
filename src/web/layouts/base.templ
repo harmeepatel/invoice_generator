@@ -1,0 +1,22 @@
+package layout;
+
+import "ae_invoice/src/web/components"
+
+templ Base(title string) {
+	<!DOCTYPE html>
+	<html id="main-html" lang="en" data-theme="dark" class="scroll-smooth">
+		<head>
+			<meta charset="utf-8"/>
+			<link rel="icon" href="/static/images/logo.svg"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="description" content="Protfolio website with my resume and some useful blogs."/>
+			<link rel="stylesheet" href="/static/css/index.css"/>
+			<script type="module" src="/static/js/datastar.js"></script>
+			<title>{ title }</title>
+		</head>
+		<body class="max-w-screen-xl m-auto bg-[#fafafa] dark:bg-[#181818] text-black dark:text-white">
+			@component.Nav()
+			{ children... }
+		</body>
+	</html>
+}
