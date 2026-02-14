@@ -1,9 +1,16 @@
 package component;
 
 templ Nav() {
-	<nav id="nav" class="mt-4 p-4 border-1 rounded-xl text-xl font-bold flex items-center justify-between">
-		Nav
-		<img src="/static/images/logo.svg" class="rounded-full w-12"/>
+	<nav id="nav" class="navbar bg-base-100 shadow-sm">
+		<div class="flex-1">
+			<a class="text-xl" href="/">daisyUI</a>
+		</div>
+		<div class="flex gap-2">
+			<input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto"/>
+			<div tabindex="0" class="avatar">
+				<img src="/static/images/logo.svg" class="w-10"/>
+			</div>
+		</div>
 	</nav>
 }
 
