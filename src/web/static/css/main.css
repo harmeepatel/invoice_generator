@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@config "../../tailwind.config.js";
+
+@source "../../**/*/*.{ts,js,templ,html}";
 
 @plugin "daisyui";
 
@@ -8,13 +9,13 @@
     default: true;
     prefersdark: true;
     color-scheme: "dark";
-    --color-base-100: oklch(20% 0.010 30);
-    --color-base-200: oklch(5% 0.080 30);
+    --color-base-100: oklch(20% 0.01 30);
+    --color-base-200: oklch(5% 0.08 30);
     --color-base-300: oklch(34.9% 0.012 30);
     --color-base-content: oklch(97.807% 0.029 256.847);
-    --color-primary: oklch(0.4587 0.2847 264.19);
+    --color-primary: oklch(45.87% 0.285 264.19);
     --color-primary-content: oklch(96% 0.018 272.314);
-    --color-secondary: oklch(0.7577 0.164765 69.3948);
+    --color-secondary: oklch(75.77% 0.165 69.395);
     --color-secondary-content: oklch(94% 0.028 342.258);
     --color-accent: oklch(77% 0.152 181.912);
     --color-accent-content: oklch(38% 0.063 188.416);
@@ -24,7 +25,7 @@
     --color-info-content: oklch(29% 0.066 243.157);
     --color-success: oklch(76% 0.177 163.223);
     --color-success-content: oklch(37% 0.077 168.94);
-    --color-warning: oklch(82% 0.160 84.429);
+    --color-warning: oklch(82% 0.16 84.429);
     --color-warning-content: oklch(41% 0.112 45.904);
     --color-error: oklch(71% 0.194 13.428);
     --color-error-content: oklch(27% 0.105 12.094);
@@ -36,4 +37,15 @@
     --border: 1px;
     --depth: 1;
     --noise: 0;
+}
+
+@font-face {
+    font-family: "Cascadia";
+    src: url("../fonts/CascadiaMono-VariableFont_wght.ttf") format("woff2");
+    font-weight: 50 1000;
+    font-stretch: 20% 200%;
+}
+
+@theme {
+    --font-sans: "Cascadia", sans-serif;
 }

@@ -3,5 +3,7 @@
 go.sum
 *.pdf
 
+
+.logs/
 .air/
 bin/

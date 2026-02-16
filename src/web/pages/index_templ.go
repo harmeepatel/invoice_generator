@@ -10,6 +10,19 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import layout "ae_invoice/src/web/layouts"
 
+// .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
+// .{ .kind = .gstin, .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
+// .{ .kind = .gst, .variant = .number, .label = "GST %", .placeholder = "5.0" },
+// .{ .kind = .email, .is_optional = true, .label = "Email (Optional)", .placeholder = "abc@xyz.com" },
+// .{ .kind = .phone, .label = "Phone", .placeholder = "+91 11111 99999" },
+// .{ .kind = .remark, .is_optional = true, .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note"
+// .{ .kind = .shop_no, .label = "Shop Number", .placeholder = "AB 404" },
+// .{ .kind = .line, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
+// .{ .kind = .line, .is_optional = true, .label = "Address Line 2 (Optional)", .placeholder = "Landmark" },
+// .{ .kind = .line, .is_optional = true, .label = "Address Line 3 (Optional)", .placeholder = "Street Name" },
+// .{ .kind = .state, .variant = .selection, .label = "State", .placeholder = "Gujarat", .suggestions =
+// .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
+// .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
 func Index(title string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -43,7 +56,7 @@ func Index(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"mx-6 sm:mx-12 3xl:mx-0 my-4 md:my-6 flex\n        flex-col gap-4 justify-center items-center\"><h1 class=\"text-center text-2xl font-semibold\">Achal Enterprice Invoice</h1></main>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"mx-6 sm:mx-12 3xl:mx-0 my-4 md:my-6 flex\n        flex-col gap-4 justify-center items-center\"><h1 class=\"text-center text-2xl font-semibold\">Achal Enterprice Invoice</h1><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/validate', {contentType: 'form'})\"><fieldset class=\"fieldset\"><legend class=\"fieldset-legend text-2xl font-light\">Name</legend> <input type=\"text\" name=\"name\" placeholder=\"Rohit Patel\" class=\"input validator\" pattern=\"[A-Za-z][A-Za-z0-9\\-]*\" minlength=\"3\" maxlength=\"30\" title=\"Only letters, numbers or dash\" data-bind:name data-on:keyup__throttle.300ms=\"@post('/form/validate')\"><p class=\"text-error\" data-show=\"$nameError != ''\" data-text=\"$nameError\"></p></fieldset><button type=\"submit\" class=\"w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError == true\">Generate Invoice</button></form></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -1,7 +1,7 @@
 package component;
 
 templ Nav() {
-	<nav id="nav" class="navbar bg-base-100 shadow-sm">
+	<nav id="nav" class="navbar bg-base-100 shadow-md">
 		<div class="flex-1">
 			<a class="text-xl" href="/">daisyUI</a>
 		</div>
@@ -12,13 +12,4 @@ templ Nav() {
 			</div>
 		</div>
 	</nav>
-}
-
-templ NavLi(name string, ref string) {
-	<li class="">
-		<a href={ templ.URL(ref) } class="">
-			{ name }
-			<span class=""></span>
-		</a>
-	</li>
 }

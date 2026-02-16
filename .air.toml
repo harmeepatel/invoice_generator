@@ -2,8 +2,8 @@ root = "."
 tmp_dir = ".air"
 
 [build]
-cmd = "go build -o ./bin/main ./src/"
-bin = "bin/main"
+cmd = "go build -o ./bin/ae_invoice ./src/"
+bin = "bin/ae_invoice"
 include_ext = ["go", "templ", "html", "css"]
 exclude_dir = ["assets", "tmp", "testdata", "vendor", "src/web/node_modules"]
 
