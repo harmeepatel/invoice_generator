@@ -4,7 +4,7 @@
     "type": "module",
     "private": true,
     "scripts": {
-        "build:daisyui": "tailwindcss -i static/css/main.css -o static/css/index.css --watch --minify"
+        "build:css": "tailwindcss -i static/css/main.css -o static/css/index.css --watch --minify --verbose"
     },
     "devDependencies": {
         "@types/bun": "latest",

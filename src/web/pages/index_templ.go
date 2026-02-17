@@ -8,21 +8,11 @@ package page
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import layout "ae_invoice/src/web/layouts"
+import (
+	component "ae_invoice/src/web/components"
+	layout "ae_invoice/src/web/layouts"
+)
 
-// .{ .kind = .name, .label = "Name", .placeholder = "Hritik Roshan" },
-// .{ .kind = .gstin, .label = "GSTIN", .placeholder = "24ABCDE1234F1Z5" },
-// .{ .kind = .gst, .variant = .number, .label = "GST %", .placeholder = "5.0" },
-// .{ .kind = .email, .is_optional = true, .label = "Email (Optional)", .placeholder = "abc@xyz.com" },
-// .{ .kind = .phone, .label = "Phone", .placeholder = "+91 11111 99999" },
-// .{ .kind = .remark, .is_optional = true, .label = "Remark (Optional)", .placeholder = "Transporter Name / Other Note"
-// .{ .kind = .shop_no, .label = "Shop Number", .placeholder = "AB 404" },
-// .{ .kind = .line, .label = "Address Line 1", .placeholder = "Complex / Plaza" },
-// .{ .kind = .line, .is_optional = true, .label = "Address Line 2 (Optional)", .placeholder = "Landmark" },
-// .{ .kind = .line, .is_optional = true, .label = "Address Line 3 (Optional)", .placeholder = "Street Name" },
-// .{ .kind = .state, .variant = .selection, .label = "State", .placeholder = "Gujarat", .suggestions =
-// .{ .kind = .city, .label = "City", .placeholder = "Ahmedabad" },
-// .{ .kind = .postal_code, .label = "Postal Code", .placeholder = "123123" },
 func Index(title string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -56,7 +46,67 @@ func Index(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"mx-6 sm:mx-12 3xl:mx-0 my-4 md:my-6 flex\n        flex-col gap-4 justify-center items-center\"><h1 class=\"text-center text-2xl font-semibold\">Achal Enterprice Invoice</h1><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/validate', {contentType: 'form'})\"><fieldset class=\"fieldset\"><legend class=\"fieldset-legend text-2xl font-light\">Name</legend> <input type=\"text\" name=\"name\" placeholder=\"Rohit Patel\" class=\"input validator\" pattern=\"[A-Za-z][A-Za-z0-9\\-]*\" minlength=\"3\" maxlength=\"30\" title=\"Only letters, numbers or dash\" data-bind:name data-on:keyup__throttle.300ms=\"@post('/form/validate')\"><p class=\"text-error\" data-show=\"$nameError != ''\" data-text=\"$nameError\"></p></fieldset><button type=\"submit\" class=\"w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError == true\">Generate Invoice</button></form></section></main>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"p-2\"><h1 class=\"text-4xl font-thin\">Customer Information</h1><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\"><div id=\"customer-container\" class=\"w-full flex gap-4\"><div id=\"left\" class=\"w-full min-w-0\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name", Signal: "name"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "gstin", PlaceHolder: "24ABCDE1234F1Z5", Legend: "GSTIN", Signal: "gstin"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST", Signal: "gst"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)", Signal: "email"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "tel", Name: "phone", PlaceHolder: "+91 11111 99999", Legend: "Phone", Signal: "phone"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)", Signal: "remark"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div id=\"right\" class=\"w-full min-w-0\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No", Signal: "shopNo"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1", Signal: "line1"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2", Signal: "line2"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3", Signal: "line3"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City", Signal: "city"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "state", PlaceHolder: "Gujarat", Legend: "State", Signal: "state"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code", Signal: "postalCode"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><button type=\"submit\" class=\"w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button></form></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

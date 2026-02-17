@@ -1,0 +1,33 @@
+package component
+
+import "fmt"
+
+type FieldSetConfig struct {
+	Type        string
+	Name        string
+	PlaceHolder string
+	Legend      string
+	Signal      string
+}
+
+templ FieldSet(conf FieldSetConfig) {
+	{{ errorSignal := "$" + conf.Signal + "Error" }}
+	<fieldset class="fieldset min-w-0">
+		<div class="flex justify-between items-end">
+			<legend class="fieldset-legend text-2xl font-light">{ conf.Legend }</legend>
+			<span
+				class="text-error block wrap-break-word"
+				data-show={ errorSignal + " != ''" }
+				data-text={ errorSignal }
+			></span>
+		</div>
+		<input
+			type={ conf.Type }
+			name={ conf.Name }
+			class="input w-full max-w-full text-lg h-auto px-4 py-2"
+			placeholder={ conf.PlaceHolder }
+			data-bind={ conf.Signal }
+			data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')", conf.Signal) }
+		/>
+	</fieldset>
+}

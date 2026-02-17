@@ -1,10 +1,10 @@
 package main
 
 import (
+	"ae_invoice/src/logger"
 	"errors"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 type App struct {
@@ -22,12 +22,12 @@ func NewApp() *App {
 }
 
 func (a *App) RunApp() {
-	Logger.Info("link : localhost" + a.server.Addr)
-	Logger.Info("pid  : " + strconv.Itoa(os.Getpid()))
+	logger.Logger.Info("link : localhost" + a.server.Addr)
+	// log.Info("pid  : " + strconv.Itoa(os.Getpid()))
 
 	// run server
 	if err := http.ListenAndServe(a.server.Addr, a.server.Handler); !errors.Is(err, http.ErrServerClosed) {
-		Logger.Error("HTTP server error: " + err.Error())
+		// log.Error("HTTP server error: " + err.Error())
 		os.Exit(1)
 	}
 }

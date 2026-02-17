@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"time"
 
+	"ae_invoice/src/handlers/validate"
+	"ae_invoice/src/logger"
 	page "ae_invoice/src/web/pages"
 
 	"github.com/a-h/templ"
 	"github.com/lpar/gzipped"
-	"github.com/starfederation/datastar-go/datastar"
 	"github.com/uptrace/bunrouter"
 )
 
@@ -53,35 +54,19 @@ func newRouter() *bunrouter.Router {
 		return nil
 	})
 
-	// customer details
-	type Customer struct {
-		Name string `json:"name"`
-	}
-
 	router.WithGroup("/form", func(fg *bunrouter.Group) {
-		fg.POST("/validate", func(w http.ResponseWriter, req bunrouter.Request) error {
-			customer := &Customer{}
-			if err := datastar.ReadSignals(req.Request, customer); err != nil {
-				err := req.ParseForm()
-				if err != nil {
-					return err
-				}
+		fg.WithGroup("/validate", func(vg *bunrouter.Group) {
+			vg.POST("/name", validate.Name)
+			vg.POST("/shopNo", validate.ShopNo)
+		})
 
-				fmt.Printf("name: %v\n", req.Form.Get("name"))
-				return nil
+		fg.POST("/submit", func(w http.ResponseWriter, req bunrouter.Request) error {
+			err := req.ParseForm()
+			if err != nil {
+				logger.Logger.Error("Failed to parse form on /validate/submit")
+				return err
 			}
-			fmt.Printf("%+v\n", customer)
-
-			cnlen := len(customer.Name)
-			sse := datastar.NewSSE(w, req.Request)
-			if cnlen == 0 || cnlen >= 4 {
-				fmt.Println(cnlen)
-				sse.PatchSignals([]byte(`{hasError: true}`))
-				sse.PatchSignals([]byte(`{nameError: "0 < x < 4"}`))
-			} else {
-				sse.PatchSignals([]byte(`{hasError: false}`))
-				sse.PatchSignals([]byte(`{nameError: ""}`))
-			}
+			fmt.Printf("name: %v | shop-no: %v\n", req.Form.Get("name"), req.Form.Get("shop-no"))
 			return nil
 		})
 	})

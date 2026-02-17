@@ -1,6 +1,12 @@
 @import "tailwindcss";
 
-@source "../../**/*/*.{ts,js,templ,html}";
+@source "../**/*.ts";
+@source "../**/*.js";
+@source "../**/*.templ";
+@source "../**/*.html";
+@source "../**/*.go";
+@source "./**/*.ts";
+@source "./**/*.js";
 
 @plugin "daisyui";
 
@@ -40,12 +46,12 @@
 }
 
 @font-face {
-    font-family: "Cascadia";
-    src: url("../fonts/CascadiaMono-VariableFont_wght.ttf") format("woff2");
+    font-family: "RobotoMono";
+    src: url("../fonts/RobotoMono.ttf") format("woff2");
     font-weight: 50 1000;
     font-stretch: 20% 200%;
 }
 
 @theme {
-    --font-sans: "Cascadia", sans-serif;
+    --font-sans: "RobotoMono", sans-serif;
 }

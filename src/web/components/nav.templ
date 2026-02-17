@@ -1,15 +1,14 @@
 package component;
 
 templ Nav() {
-	<nav id="nav" class="navbar bg-base-100 shadow-md">
-		<div class="flex-1">
-			<a class="text-xl" href="/">daisyUI</a>
+	<nav id="nav" class="navbar flex justify-between bg-base-100 shadow-md sticky top-0 z-50">
+		<div>
+			<a class="text-xl" href="/">
+				<div tabindex="0" class="avatar">
+					<img src="/static/images/logo.svg" class="w-10"/>
+				</div>
+			</a>
 		</div>
-		<div class="flex gap-2">
-			<input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto"/>
-			<div tabindex="0" class="avatar">
-				<img src="/static/images/logo.svg" class="w-10"/>
-			</div>
-		</div>
+		<input type="text" placeholder="Search" class="w-1/2 input input-bordered md:w-auto"/>
 	</nav>
 }
