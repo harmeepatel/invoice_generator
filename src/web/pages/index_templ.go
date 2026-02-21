@@ -46,31 +46,31 @@ func Index(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"p-2\"><h1 class=\"text-4xl font-thin\">Customer Information</h1><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\"><div id=\"customer-container\" class=\"w-full flex gap-4\"><div id=\"left\" class=\"w-full min-w-0\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"px-4 2xl:px-0\"><h1 class=\"text-4xl font-thin\">Customer Information</h1><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\"><div id=\"customer-info\" class=\"w-full flex gap-4\"><div id=\"left\" class=\"w-full min-w-0\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name", Signal: "name"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "gstin", PlaceHolder: "24ABCDE1234F1Z5", Legend: "GSTIN", Signal: "gstin"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "gstin", PlaceHolder: "24ABCDE1234F1Z5", Legend: "GSTIN"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST", Signal: "gst"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)", Signal: "email"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "tel", Name: "phone", PlaceHolder: "+91 11111 99999", Legend: "Phone", Signal: "phone"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "tel", Name: "phone", PlaceHolder: "11111 99999", Legend: "Phone"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)", Signal: "remark"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -78,35 +78,35 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No", Signal: "shopNo"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1", Signal: "line1"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2", Signal: "line2"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2 (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3", Signal: "line3"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3 (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City", Signal: "city"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "text", Name: "state", PlaceHolder: "Gujarat", Legend: "State", Signal: "state"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "select", Name: "state", PlaceHolder: "Gujarat", Legend: "State"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code", Signal: "postalCode"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.FieldSet(component.FieldSetConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><button type=\"submit\" class=\"w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button></form></section></main>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><div id=\"products-info\"></div><button type=\"submit\" class=\"w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button></form></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

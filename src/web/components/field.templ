@@ -1,33 +1,64 @@
 package component
 
-import "fmt"
+import (
+	"ae_invoice/src/shared"
+	"fmt"
+)
 
 type FieldSetConfig struct {
 	Type        string
 	Name        string
 	PlaceHolder string
 	Legend      string
-	Signal      string
 }
 
 templ FieldSet(conf FieldSetConfig) {
-	{{ errorSignal := "$" + conf.Signal + "Error" }}
-	<fieldset class="fieldset min-w-0">
-		<div class="flex justify-between items-end">
-			<legend class="fieldset-legend text-2xl font-light">{ conf.Legend }</legend>
+	{{ errorSignal := "$" + conf.Name + "Error" }}
+	<fieldset id={ conf.Name } class="fieldset min-w-0 pb-4">
+		<div class="flex justify-between items-end mb-1">
+			<legend class="py-0 fieldset-legend text-2xl font-light">{ conf.Legend }</legend>
 			<span
-				class="text-error block wrap-break-word"
+				class="text-error block wrap-break-word max-w-3/5"
 				data-show={ errorSignal + " != ''" }
 				data-text={ errorSignal }
 			></span>
 		</div>
-		<input
-			type={ conf.Type }
-			name={ conf.Name }
-			class="input w-full max-w-full text-lg h-auto px-4 py-2"
-			placeholder={ conf.PlaceHolder }
-			data-bind={ conf.Signal }
-			data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')", conf.Signal) }
-		/>
+		switch conf.Type {
+			case "select":
+				<select class="select w-full max-w-full text-lg h-auto px-4 py-2" data-bind={ conf.Name }>
+					for _, state := range shared.StateNames {
+						<option selected?={ state=="Gujarat" } value={ state }>{ state }</option>
+					}
+				</select>
+			case "tel":
+				<div class="join">
+					<select
+						class="select join-item max-w-[114px] min-w-[114px] text-lg h-auto px-4 py-2"
+						name={ conf.Name + "Ext" }
+						data-bind={ conf.Name + "Ext" }
+					>
+						<option value="91" selected>🇮🇳 +91</option>
+						<option value="011">🇮🇳 011</option>
+					</select>
+					<input
+						type={ conf.Type }
+						name={ conf.Name }
+						class="input w-full max-w-full text-lg h-auto px-4 py-2
+                        rounded-r-(--radius-field)"
+						placeholder={ conf.PlaceHolder }
+						data-bind={ conf.Name }
+						data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')", conf.Name) }
+					/>
+				</div>
+			default:
+				<input
+					type={ conf.Type }
+					name={ conf.Name }
+					class="input w-full max-w-full text-lg h-auto px-4 py-2"
+					placeholder={ conf.PlaceHolder }
+					data-bind={ conf.Name }
+					data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')", conf.Name) }
+				/>
+		}
 	</fieldset>
 }

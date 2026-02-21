@@ -8,31 +8,32 @@ import (
 
 templ Index(title string) {
 	@layout.Base(title) {
-		<main role="main" id="main" class="p-2">
+		<main role="main" id="main" class="px-4 2xl:px-0">
 			<h1 class="text-4xl font-thin">
 				Customer Information
 			</h1>
 			<section id="user-data" class="w-full">
 				<form data-on:submit="@post('/form/submit', {contentType: 'form'})">
-					<div id="customer-container" class="w-full flex gap-4">
+					<div id="customer-info" class="w-full flex gap-4">
 						<div id="left" class="w-full min-w-0">
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name", Signal: "name"})
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "gstin", PlaceHolder:"24ABCDE1234F1Z5", Legend: "GSTIN", Signal: "gstin"})
-							@component.FieldSet(component.FieldSetConfig{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST", Signal: "gst"})
-							@component.FieldSet(component.FieldSetConfig{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)", Signal: "email"})
-							@component.FieldSet(component.FieldSetConfig{Type: "tel", Name: "phone", PlaceHolder: "+91 11111 99999", Legend: "Phone", Signal: "phone"})
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)", Signal: "remark"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "gstin", PlaceHolder:"24ABCDE1234F1Z5", Legend: "GSTIN"})
+							@component.FieldSet(component.FieldSetConfig{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST"})
+							@component.FieldSet(component.FieldSetConfig{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)"})
+							@component.FieldSet(component.FieldSetConfig{Type: "tel", Name: "phone", PlaceHolder: "11111 99999", Legend: "Phone"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)"})
 						</div>
 						<div id="right" class="w-full min-w-0">
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No", Signal: "shopNo"})
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1", Signal: "line1"})
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2", Signal: "line2"})
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3", Signal: "line3"})
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City", Signal: "city"})
-							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "state", PlaceHolder: "Gujarat", Legend: "State", Signal: "state"})
-							@component.FieldSet(component.FieldSetConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code", Signal: "postalCode"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2 (Optional)"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3 (Optional)"})
+							@component.FieldSet(component.FieldSetConfig{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City"})
+							@component.FieldSet(component.FieldSetConfig{Type: "select", Name: "state", PlaceHolder: "Gujarat", Legend: "State"})
+							@component.FieldSet(component.FieldSetConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"})
 						</div>
 					</div>
+                    <div id="products-info"></div>
 					<button
 						type="submit"
 						class="w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed"

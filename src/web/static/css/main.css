@@ -1,12 +1,26 @@
 @import "tailwindcss";
 
-@source "../**/*.ts";
+@source "../**/*.go";
+@source "../**/*.html";
 @source "../**/*.js";
 @source "../**/*.templ";
-@source "../**/*.html";
-@source "../**/*.go";
-@source "./**/*.ts";
+@source "./**/*.css";
 @source "./**/*.js";
+@source "./**/*.ts";
+
+@layer base {
+    select option::checkmark {
+        content: "";
+    }
+
+    option:checked {
+        background-color: var(--color-primary);
+
+        &:hover {
+            background-color: color-mix(in oklch, var(--color-primary) 64%, white) !important;
+        }
+    }
+}
 
 @plugin "daisyui";
 
