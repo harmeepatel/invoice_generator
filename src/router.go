@@ -48,10 +48,8 @@ func newRouter() *bunrouter.Router {
 		),
 	))
 
-	// home
 	router.GET("/", func(w http.ResponseWriter, req bunrouter.Request) error {
 		w.Header().Set("Cache-Control", "public, max-age=60")
-
 		templ.Handler(page.Index("Invoice")).ServeHTTP(w, req.Request)
 		return nil
 	})

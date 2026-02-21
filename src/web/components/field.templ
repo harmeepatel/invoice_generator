@@ -5,18 +5,25 @@ import (
 	"fmt"
 )
 
-type FieldSetConfig struct {
+type FieldConfig struct {
 	Type        string
 	Name        string
 	PlaceHolder string
 	Legend      string
 }
 
-templ FieldSet(conf FieldSetConfig) {
+func getAutocompleteToken(inputName string) string {
+	switch inputName {
+	default:
+		return "off"
+	}
+}
+
+templ Field(conf FieldConfig) {
 	{{ errorSignal := "$" + conf.Name + "Error" }}
-	<fieldset id={ conf.Name } class="fieldset min-w-0 pb-4">
+	<div class="fieldset min-w-0 pb-4">
 		<div class="flex justify-between items-end mb-1">
-			<legend class="py-0 fieldset-legend text-2xl font-light">{ conf.Legend }</legend>
+			<label class="py-0 fieldset-label text-2xl font-light" for={ conf.Name }>{ conf.Legend }</label>
 			<span
 				class="text-error block wrap-break-word max-w-3/5"
 				data-show={ errorSignal + " != ''" }
@@ -25,7 +32,12 @@ templ FieldSet(conf FieldSetConfig) {
 		</div>
 		switch conf.Type {
 			case "select":
-				<select class="select w-full max-w-full text-lg h-auto px-4 py-2" data-bind={ conf.Name }>
+				<select
+					id={ conf.Name }
+					class="select w-full max-w-full text-lg h-auto px-4 py-2"
+					autocomplete="address-level1"
+					data-bind={ conf.Name }
+				>
 					for _, state := range shared.StateNames {
 						<option selected?={ state=="Gujarat" } value={ state }>{ state }</option>
 					}
@@ -35,30 +47,35 @@ templ FieldSet(conf FieldSetConfig) {
 					<select
 						class="select join-item max-w-[114px] min-w-[114px] text-lg h-auto px-4 py-2"
 						name={ conf.Name + "Ext" }
+						autocomplete="tel-country-code"
 						data-bind={ conf.Name + "Ext" }
 					>
 						<option value="91" selected>🇮🇳 +91</option>
 						<option value="011">🇮🇳 011</option>
 					</select>
 					<input
+						id={ conf.Name }
 						type={ conf.Type }
 						name={ conf.Name }
 						class="input w-full max-w-full text-lg h-auto px-4 py-2
                         rounded-r-(--radius-field)"
 						placeholder={ conf.PlaceHolder }
+						autocomplete="tel-national"
 						data-bind={ conf.Name }
 						data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')", conf.Name) }
 					/>
 				</div>
 			default:
 				<input
+					id={ conf.Name }
 					type={ conf.Type }
 					name={ conf.Name }
 					class="input w-full max-w-full text-lg h-auto px-4 py-2"
 					placeholder={ conf.PlaceHolder }
+					autocomplete={ getAutocompleteToken(conf.Name) }
 					data-bind={ conf.Name }
 					data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')", conf.Name) }
 				/>
 		}
-	</fieldset>
+	</div>
 }

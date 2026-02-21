@@ -1,1 +1,1 @@
-- [zig project](https://github.com/harmeepatel/invoice_generator/tree/a30646aa037427c0c45c2fd722600c26251290a9)
+- [zig version](https://github.com/harmeepatel/invoice_generator/tree/a30646aa037427c0c45c2fd722600c26251290a9)
