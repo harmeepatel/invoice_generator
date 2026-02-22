@@ -3,7 +3,7 @@ package validate
 import (
 	"ae_invoice/src/logger"
 	model "ae_invoice/src/models"
-	"ae_invoice/src/shared"
+	"ae_invoice/src/util"
 	"errors"
 	"fmt"
 	"net/http"
@@ -17,22 +17,12 @@ import (
 	"github.com/uptrace/bunrouter"
 )
 
-var isAllDigits = func(str string) bool {
-	for _, d := range str {
-		if !unicode.IsDigit(d) {
-			return false
-		}
-	}
-	return true
-}
-var isAllLetters = func(str string) bool {
-	for _, d := range str {
-		if !unicode.IsLetter(d) {
-			return false
-		}
-	}
-	return true
-}
+var (
+	panFirstFivePattern  = regexp.MustCompile(`^[A-Z]{5}$`)
+	panHolderTypePattern = regexp.MustCompile(`^[PCFHATGLJ]$`)
+	panDigitsPattern     = regexp.MustCompile(`^\d{4}$`)
+	panLastCharPattern   = regexp.MustCompile(`^[A-Z]$`)
+)
 
 func patch(w http.ResponseWriter, req bunrouter.Request, signals any) error {
 	sse := datastar.NewSSE(w, req.Request)
@@ -43,64 +33,90 @@ func patch(w http.ResponseWriter, req bunrouter.Request, signals any) error {
 	return nil
 }
 
+func validateName(name string) error {
+	switch {
+	case len(name) == 0:
+		return errors.New("Required")
+	case len(name) < 3:
+		return errors.New("Too short")
+	case len(name) > 100:
+		return errors.New("Name must be 100 characters or fewer")
+	}
+	return util.ContainsInvalidChar(name)
+}
+
 func Name(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
 		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
 		return err
 	}
+
 	type Signals struct {
 		HasError  bool   `json:"hasError"`
 		NameError string `json:"nameError"`
 	}
 	signals := &Signals{}
-	name := strings.TrimSpace(model.Customer.Name)
-	switch {
-	case len(name) == 0:
-		signals.HasError, signals.NameError = true, "Required"
-	case len(name) < 3:
-		signals.HasError, signals.NameError = true, "Too short"
-	case len(name) > 100:
-		signals.HasError, signals.NameError = true, "Name must be 100 characters or fewer"
-	default:
-		var specialCharPattern = regexp.MustCompile(`[^\w]`)
-		if specialCharPattern.FindStringIndex(name) != nil {
-			signals.HasError, signals.NameError = true, "Contains invalid characters"
-		}
+
+	name := strings.ToUpper(strings.TrimSpace(model.Customer.Name))
+	if err := validateName(name); err != nil {
+		signals.HasError, signals.NameError = true, err.Error()
 	}
+
 	return patch(w, req, signals)
 }
 
-func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
-		return err
-	}
-
+func validateGstin(gstin string) error {
 	var validatePan = func(panInput string) error {
-		pan := strings.TrimSpace(strings.ToUpper(panInput))
+		pan := strings.ToUpper(strings.TrimSpace(panInput))
+
 		switch {
 		case len(pan) == 0:
 			return errors.New("Required")
 		case len(pan) != 10:
 			return errors.New("PAN must be exactly 10 characters")
 		default:
-			var panPattern = regexp.MustCompile(`^[A-Z]{3}[PCFHATGLJ][A-Z]\d{4}[A-Z]$`)
 			switch {
-			case !regexp.MustCompile(`^[A-Z]{5}`).MatchString(pan[:5]):
+			case !panFirstFivePattern.MatchString(pan[:5]):
 				return errors.New("First 5 characters of PAN must be alphabetic")
-			case !regexp.MustCompile(`^[PCFHATGLJ]$`).MatchString(string(pan[3])):
-				return errors.New("6th character must be a valid holder type (P, C, F, H, A, T, G, L, or J)")
-			case !regexp.MustCompile(`^\d{4}$`).MatchString(pan[5:9]):
+			case !panHolderTypePattern.MatchString(string(pan[3])):
+				return errors.New("Invalid 6th characters [P, C, F, H, A, T, G, L, J]")
+			case !panDigitsPattern.MatchString(pan[5:9]):
 				return errors.New("Characters 7–11 must be numeric")
 			case pan[5:9] == "0000":
 				return errors.New("Numeric portion must be between 0001 and 9999")
-			case !regexp.MustCompile(`^[A-Z]$`).MatchString(string(pan[9])):
+			case !panLastCharPattern.MatchString(string(pan[9])):
 				return errors.New("Last character must be alphabetic")
-			case !panPattern.MatchString(pan):
-				return errors.New("Invalid PAN format")
 			}
 		}
+
 		return nil
+	}
+
+	switch {
+	case len(gstin) == 0:
+		return errors.New("Required")
+	case len(gstin) != 15:
+		return errors.New("GSTIN must be 15 characters")
+	case !unicode.IsDigit(rune(gstin[0])) && !unicode.IsDigit(rune(gstin[1])):
+		return errors.New("GSTIN has an invalid state code")
+	case validatePan(gstin[2:12]) != nil:
+		return validatePan(gstin[2:12])
+	case !unicode.IsDigit(rune(gstin[12])) && !unicode.IsUpper(rune(gstin[12])):
+		return errors.New("GSTIN has an invalid registration number")
+	case gstin[13] != 'Z':
+		return errors.New("GSTIN has an invalid format")
+	case !unicode.IsDigit(rune(gstin[14])) && !unicode.IsLetter(rune(gstin[14])):
+		return errors.New("GSTIN has an invalid last character")
+	}
+
+	return nil
+}
+
+// ae: 24AAZPP2696Q1ZE
+func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
 	}
 
 	type Signals struct {
@@ -108,29 +124,20 @@ func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
 		GstinError string `json:"gstinError"`
 	}
 	signals := &Signals{}
-	gstin := strings.TrimSpace(model.Customer.GSTIN)
 
-	switch {
-	case len(gstin) == 0:
-		signals.HasError, signals.GstinError = true, "Required"
-	case len(gstin) != 15:
-		signals.HasError, signals.GstinError = true, "GSTIN must be 15 characters"
-	default:
-		switch {
-		case !unicode.IsDigit(rune(gstin[0])) || !unicode.IsDigit(rune(gstin[1])):
-			signals.HasError, signals.GstinError = true, "GSTIN has an invalid state code"
-		case validatePan(gstin[2:12]) != nil:
-			err := validatePan(gstin[2:12])
-			signals.HasError, signals.GstinError = true, err.Error()
-		case !unicode.IsDigit(rune(gstin[12])) && !unicode.IsUpper(rune(gstin[12])):
-			signals.HasError, signals.GstinError = true, "GSTIN has an invalid registration number"
-		case gstin[13] != 'Z':
-			signals.HasError, signals.GstinError = true, "GSTIN has an invalid format"
-		case !unicode.IsDigit(rune(gstin[14])) || !unicode.IsLetter(rune(gstin[14])):
-			signals.HasError, signals.GstinError = true, "GSTIN has an invalid checksum"
-		}
+	gstin := strings.ToUpper(strings.TrimSpace(model.Customer.GSTIN))
+	if err := validateGstin(gstin); err != nil {
+		signals.HasError, signals.GstinError = true, err.Error()
 	}
+
 	return patch(w, req, signals)
+}
+
+func validateGst(gst float32) error {
+	if gst < 0 || gst > 40 {
+		return errors.New("GST must be 0% - 40%")
+	}
+	return nil
 }
 
 func Gst(w http.ResponseWriter, req bunrouter.Request) error {
@@ -145,13 +152,19 @@ func Gst(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	gst := model.Customer.GST
-	switch {
-	case gst < 0 || gst > 40:
-		signals.HasError, signals.GstError = true, "GST must be 0% - 40%"
+	if err := validateGst(model.Customer.GST); err != nil {
+		signals.HasError, signals.GstError = true, err.Error()
 	}
 
 	return patch(w, req, signals)
+}
+
+func validateEmail(email string) error {
+	_, err := mail.ParseAddress(email)
+	if len(email) > 0 && err != nil {
+		return errors.New("Invalid Email")
+	}
+	return nil
 }
 
 func Email(w http.ResponseWriter, req bunrouter.Request) error {
@@ -166,12 +179,25 @@ func Email(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	_, err := mail.ParseAddress(model.Customer.Email)
-	if len(model.Customer.Email) > 0 && err != nil {
-		signals.HasError, signals.EmailError = true, "Invalid Email"
+	if err := validateEmail(model.Customer.Email); err != nil {
+		signals.HasError, signals.EmailError = true, err.Error()
 	}
 
 	return patch(w, req, signals)
+}
+
+func validatePhone(phone string) error {
+	switch {
+	case len(phone) == 0:
+		return errors.New("Required")
+	case !util.IsAllDigits(phone):
+		return errors.New("Must be all digits")
+	case len(phone) > 10:
+		return errors.New("Must be exactly 10 digits")
+	case phone[0] < '6' || phone[0] > '9':
+		return errors.New("Should start with 6 - 9")
+	}
+	return nil
 }
 
 func Phone(w http.ResponseWriter, req bunrouter.Request) error {
@@ -186,19 +212,23 @@ func Phone(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	phone := model.Customer.Phone
-
-	switch {
-	case len(phone) == 0:
-		signals.HasError, signals.PhoneError = true, "Required"
-	case phone[0] < '6' || phone[0] > '9':
-		signals.HasError, signals.PhoneError = true, "Should start with 6 - 9"
-	case !isAllDigits(phone):
-		signals.HasError, signals.PhoneError = true, "Must be all digits"
-	case len(phone) > 10:
-		signals.HasError, signals.PhoneError = true, "Must be only 10 digits"
+	if err := validatePhone(model.Customer.Phone); err != nil {
+		signals.HasError, signals.PhoneError = true, err.Error()
 	}
+
 	return patch(w, req, signals)
+}
+
+func validateRemark(remark string) error {
+	if len(remark) > 0 {
+		switch {
+		case len(remark) < 3:
+			return errors.New("Too short")
+		case len(remark) > 100:
+			return errors.New("Remark must be 100 characters or fewer")
+		}
+	}
+	return util.ContainsInvalidChar(remark)
 }
 
 func Remark(w http.ResponseWriter, req bunrouter.Request) error {
@@ -212,23 +242,25 @@ func Remark(w http.ResponseWriter, req bunrouter.Request) error {
 		RemarkError string `json:"remarkError"`
 	}
 	signals := &Signals{}
-	remark := model.Customer.Remark
 
-	if len(remark) > 0 {
-		switch {
-		case len(remark) < 3:
-			signals.HasError, signals.RemarkError = true, "Too short"
-		case len(remark) > 100:
-			signals.HasError, signals.RemarkError = true, "Remark must be 100 characters or fewer"
-		default:
-			var specialCharPattern = regexp.MustCompile(`[^\w]`)
-			if specialCharPattern.FindStringIndex(remark) != nil {
-				signals.HasError, signals.RemarkError = true, "Contains invalid characters"
-			}
-		}
+	if err := validateRemark(model.Customer.Remark); err != nil {
+		signals.HasError, signals.RemarkError = true, err.Error()
 	}
 
 	return patch(w, req, signals)
+}
+
+func validateShopNo(shopNo string) error {
+	switch {
+	case len(shopNo) == 0:
+		return errors.New("Required")
+	case len(shopNo) < 3:
+		return errors.New("Too short")
+	case len(shopNo) > 8:
+		return errors.New("ShopNo must be 8 characters or fewer")
+	}
+
+	return util.ContainsInvalidChar(shopNo)
 }
 
 func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
@@ -243,21 +275,29 @@ func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	shopNo := strings.TrimSpace(model.Customer.ShopNo)
-	switch {
-	case len(shopNo) == 0:
-		signals.HasError, signals.ShopNoError = true, "Required"
-	case len(shopNo) < 3:
-		signals.HasError, signals.ShopNoError = true, "Too short"
-	case len(shopNo) > 8:
-		signals.HasError, signals.ShopNoError = true, "ShopNo must be 8 characters or fewer"
-	default:
-		var specialCharPattern = regexp.MustCompile(`[^\w]`)
-		if specialCharPattern.FindStringIndex(shopNo) != nil {
-			signals.HasError, signals.ShopNoError = true, "Contains invalid characters"
-		}
+	shopNo := strings.ToUpper(strings.TrimSpace(model.Customer.ShopNo))
+	if err := validateShopNo(shopNo); err != nil {
+		signals.HasError, signals.ShopNoError = true, err.Error()
 	}
+
 	return patch(w, req, signals)
+}
+
+func validateLine(value string) error {
+	required := false
+	if value == "line1" {
+		required = true
+	}
+
+	switch {
+	case required && len(value) == 0:
+		return errors.New("Required")
+	case len(value) < 3 && !(len(value) == 0):
+		return errors.New("Too short")
+	case len(value) > 100:
+		return errors.New("Must be 100 characters or fewer")
+	}
+	return util.ContainsInvalidChar(value)
 }
 
 func Line(w http.ResponseWriter, req bunrouter.Request) error {
@@ -274,25 +314,6 @@ func Line(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	var specialCharPattern = regexp.MustCompile(`[^\w]`)
-	var validateLine = func(value string, required bool) string {
-		if required && len(value) == 0 {
-			return "Required"
-		}
-		if len(value) == 0 {
-			return ""
-		}
-		switch {
-		case len(value) < 3:
-			return "Too short"
-		case len(value) > 100:
-			return "Must be 100 characters or fewer"
-		case specialCharPattern.MatchString(value):
-			return "Contains invalid characters"
-		}
-		return ""
-	}
-
 	endpoint := path.Base(req.URL.Path)
 	lines := map[string]struct {
 		value    string
@@ -304,14 +325,28 @@ func Line(w http.ResponseWriter, req bunrouter.Request) error {
 		"line3": {model.Customer.Line3, false, func(e string) { signals.Line3Error = e }},
 	}
 
-	if l, ok := lines[endpoint]; ok {
-		if errMsg := validateLine(l.value, l.required); errMsg != "" {
+	if line, ok := lines[endpoint]; ok {
+		if err := validateLine(line.value); err != nil {
 			signals.HasError = true
-			l.setError(errMsg)
+			line.setError(err.Error())
 		}
 	}
 
 	return patch(w, req, signals)
+}
+
+func validateCity(city string) error {
+	switch {
+	case len(city) == 0:
+		return errors.New("Required")
+	case len(city) < 3:
+		return errors.New("Too Short")
+	case len(city) > 32:
+		return errors.New("Too Long")
+	case !util.IsAllLetters(city):
+		return errors.New("Digits not allowed")
+	}
+	return util.ContainsInvalidChar(city)
 }
 
 func City(w http.ResponseWriter, req bunrouter.Request) error {
@@ -326,23 +361,8 @@ func City(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	city := model.Customer.City
-
-	switch {
-	case len(city) == 0:
+	if err := validateCity(model.Customer.City); err != nil {
 		signals.HasError, signals.CityError = true, "Required"
-	case len(city) < 3:
-		signals.HasError, signals.CityError = true, "Too Short"
-	case len(city) > 32:
-		signals.HasError, signals.CityError = true, "Too Long"
-	case !isAllLetters(city):
-		signals.HasError, signals.CityError = true, "Digits not allowed"
-	default:
-		var specialCharPattern = regexp.MustCompile(`[^\w]`)
-		if specialCharPattern.FindStringIndex(city) != nil {
-			signals.HasError, signals.CityError = true, "Contains invalid characters"
-		}
-
 	}
 
 	return patch(w, req, signals)
@@ -354,6 +374,14 @@ func State(w http.ResponseWriter, req bunrouter.Request) error {
 		return err
 	}
 
+	return nil
+}
+
+func validatePostalCode(state string, pc uint) error {
+	stateMinPc, stateMaxPc := util.States[state].MinCode, util.States[state].MaxCode
+	if pc < uint(stateMinPc) || pc > uint(stateMaxPc) {
+		return fmt.Errorf("Out of range [%v - %v]", stateMinPc, stateMaxPc)
+	}
 	return nil
 }
 
@@ -369,12 +397,8 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	state := model.Customer.State
-	stateMinPc, stateMaxPc := shared.States[state].MinCode, shared.States[state].MaxCode
-	pc := model.Customer.PostalCode
-
-	if pc < uint(stateMinPc) || pc > uint(stateMaxPc) {
-		signals.HasError, signals.PostalCodeError = true, fmt.Sprintf("Out of range (%v - %v)", stateMinPc, stateMaxPc)
+	if err := validatePostalCode(model.Customer.State, model.Customer.PostalCode); err != nil {
+		signals.HasError, signals.PostalCodeError = true, err.Error()
 	}
 
 	return patch(w, req, signals)

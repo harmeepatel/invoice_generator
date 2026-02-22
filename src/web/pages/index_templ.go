@@ -46,7 +46,7 @@ func Index(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto mb-4 px-4 2xl:px-0\"><div class=\"flex items-center justify-between\"><h1 class=\"text-4xl opacity-50\">Party Information</h1><label class=\"label\"><input type=\"checkbox\" checked=\"checked\" class=\"checkbox\"> Use same as Billing Address</label></div><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\" method=\"POST\"><div id=\"customer-info\" class=\"w-full flex-col md:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Business Details</legend>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span id=\"tmp\"></span><main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto mb-4 px-4 2xl:px-0\"><div class=\"flex items-center justify-between\"><h1 class=\"text-4xl opacity-50\">Party Information</h1><label class=\"label\"><input type=\"checkbox\" checked=\"checked\" class=\"checkbox\" disabled> Use same as Billing Address</label></div><section id=\"party-info\" class=\"w-full\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\" method=\"POST\"><div id=\"customer-info\" class=\"w-full flex-col md:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Business Details</legend>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -54,7 +54,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "gstin", PlaceHolder: "24ABCDE1234F1Z5", Legend: "GSTIN"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "gstin", PlaceHolder: "24ABCPM1234L1Z5", Legend: "GSTIN"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -1,4 +1,4 @@
-package shared
+package util
 
 import (
 	"ae_invoice/src/logger"
