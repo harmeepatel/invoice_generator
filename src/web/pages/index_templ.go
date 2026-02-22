@@ -46,7 +46,7 @@ func Index(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto px-4 2xl:px-0\"><div class=\"flex items-center justify-between\"><h1 class=\"text-4xl opacity-50\">Party Information</h1><label class=\"label\"><input type=\"checkbox\" checked=\"checked\" class=\"checkbox\"> Use same as Billing Address</label></div><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\"><div id=\"customer-info\" class=\"w-full flex-col md:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Business Details</legend>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto mb-4 px-4 2xl:px-0\"><div class=\"flex items-center justify-between\"><h1 class=\"text-4xl opacity-50\">Party Information</h1><label class=\"label\"><input type=\"checkbox\" checked=\"checked\" class=\"checkbox\"> Use same as Billing Address</label></div><section id=\"user-data\" class=\"w-full\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\" method=\"POST\"><div id=\"customer-info\" class=\"w-full flex-col md:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Business Details</legend>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -106,7 +106,35 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</fieldset></div><div id=\"products-info\"></div><button type=\"submit\" class=\"w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button></form></section></main>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</fieldset></div><fieldset id=\"product-info\" class=\"flex gap-2 flex-col md:flex-row\"><legend class=\"fieldset-legend font-extralight opacity-75\">Product Details</legend>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "itemName", PlaceHolder: "Bib Cock", Legend: "Name"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "salePrice", PlaceHolder: "256", Legend: "Price ₹"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</fieldset><button type=\"submit\" class=\"w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button></form></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

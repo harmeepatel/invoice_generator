@@ -34,6 +34,7 @@ templ Field(conf FieldConfig) {
 			case "select":
 				<select
 					id={ conf.Name }
+                    name={conf.Name}
 					class="select w-full max-w-full text-lg h-auto px-4 py-2"
 					autocomplete="address-level1"
 					data-bind={ conf.Name }

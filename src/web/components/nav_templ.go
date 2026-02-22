@@ -29,7 +29,7 @@ func Nav() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" class=\"px-4 2xl:px-0 navbar mb-4 shadow-lg bg-base-100/50 backdrop-blur-lg sticky top-0 z-50\"><div class=\"max-w-7xl m-auto w-full flex justify-between \"><div><a class=\"text-xl\" href=\"/\"><div tabindex=\"0\" class=\"avatar\"><img src=\"/static/images/logo.svg\" class=\"w-10\"></div></a></div><input id=\"search\" type=\"text\" placeholder=\"Search\" class=\"w-1/2 input input-bordered md:w-auto\"></div></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" class=\"navbar mb-4 shadow-lg bg-base-100/40 backdrop-blur-lg sticky px-0 top-0 z-50\"><div class=\"max-w-7xl m-auto w-full px-4 2xl:px-0 flex justify-between \"><div><a class=\"text-xl\" href=\"/\"><div tabindex=\"0\" class=\"avatar\"><img src=\"/static/images/logo.svg\" class=\"w-10\"></div></a></div><input id=\"search\" type=\"text\" placeholder=\"Search\" class=\"input input-bordered max-w-1/2\"></div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

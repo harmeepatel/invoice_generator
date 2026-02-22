@@ -5,10 +5,9 @@ import (
 	layout "ae_invoice/src/web/layouts"
 )
 
-
 templ Index(title string) {
 	@layout.Base(title) {
-		<main role="main" id="main" class="max-w-7xl m-auto px-4 2xl:px-0">
+		<main role="main" id="main" class="max-w-7xl m-auto mb-4 px-4 2xl:px-0">
             <div class="flex items-center justify-between">
                 <h1 class="text-4xl opacity-50">
                     Party Information
@@ -19,7 +18,7 @@ templ Index(title string) {
                 </label>
             </div>
 			<section id="user-data" class="w-full">
-				<form data-on:submit="@post('/form/submit', {contentType: 'form'})">
+				<form data-on:submit="@post('/form/submit', {contentType: 'form'})" method="POST">
 					<div id="customer-info" class="w-full flex-col md:flex-row flex gap-4">
                         <fieldset id="left" class="w-full min-w-0">
                             <legend class="fieldset-legend font-extralight opacity-75">Business Details</legend>
@@ -41,7 +40,15 @@ templ Index(title string) {
 							@component.Field(component.FieldConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"})
                         </fieldset>
 					</div>
-                    <div id="products-info"></div>
+                    <fieldset id="product-info" class="flex gap-2 flex-col md:flex-row">
+                        <legend class="fieldset-legend font-extralight opacity-75">Product Details</legend>
+                        @component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial"})
+                        @component.Field(component.FieldConfig{Type: "text", Name: "itemName", PlaceHolder: "Bib Cock", Legend: "Name"})
+                        @component.Field(component.FieldConfig{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"})
+                        @component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"})
+                        @component.Field(component.FieldConfig{Type: "number", Name: "salePrice", PlaceHolder: "256", Legend: "Price ₹"})
+                        @component.Field(component.FieldConfig{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"})
+                    </fieldset>
 					<button
 						type="submit"
 						class="w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed"
