@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"io/fs"
 	"net/http"
-	"strconv"
 	"time"
 
 	"ae_invoice/src/handlers/validate"
 	"ae_invoice/src/logger"
-	model "ae_invoice/src/models"
+	// model "ae_invoice/src/models"
 	page "ae_invoice/src/web/pages"
 
 	"github.com/a-h/templ"
@@ -78,34 +77,34 @@ func newRouter() *bunrouter.Router {
 				return err
 			}
 
-			gst, err := strconv.ParseFloat(req.Form.Get("gst"), 32)
-			if err != nil {
-				logger.Logger.Error("Problem parsing string to float for GST: %v", err)
-			}
+			// gst, err := strconv.ParseFloat(req.Form.Get("gst"), 32)
+			// if err != nil {
+			// 	logger.Logger.Error("Problem parsing string to float for GST: %v", err)
+			// }
 
-			postalCode, err := strconv.Atoi(req.Form.Get("postalCode"))
-			if err != nil {
-				logger.Logger.Error("Problem parsing string to Uint for PostalCode: %v", err)
-			}
+			// postalCode, err := strconv.Atoi(req.Form.Get("postalCode"))
+			// if err != nil {
+			// 	logger.Logger.Error("Problem parsing string to Uint for PostalCode: %v", err)
+			// }
 
-			customer := model.CustomerInfo{
-				Name:       req.Form.Get("name"),
-				GSTIN:      req.Form.Get("gstin"),
-				GST:        float32(gst),
-				Email:      req.Form.Get("email"),
-				Phone:      req.Form.Get("phone"),
-				PhoneExt:   req.Form.Get("phoneExt"),
-				Remark:     req.Form.Get("remark"),
-				ShopNo:     req.Form.Get("shopNo"),
-				Line1:      req.Form.Get("line1"),
-				Line2:      req.Form.Get("line2"),
-				Line3:      req.Form.Get("line3"),
-				City:       req.Form.Get("city"),
-				State:      req.Form.Get("state"),
-				PostalCode: uint(postalCode),
-			}
-
-			fmt.Println(customer)
+			// customer := model.CustomerInfo{
+			// 	Name:       req.Form.Get("name"),
+			// 	GSTIN:      req.Form.Get("gstin"),
+			// 	GST:        float32(gst),
+			// 	Email:      req.Form.Get("email"),
+			// 	Phone:      req.Form.Get("phone"),
+			// 	PhoneExt:   req.Form.Get("phoneExt"),
+			// 	Remark:     req.Form.Get("remark"),
+			// 	ShopNo:     req.Form.Get("shopNo"),
+			// 	Line1:      req.Form.Get("line1"),
+			// 	Line2:      req.Form.Get("line2"),
+			// 	Line3:      req.Form.Get("line3"),
+			// 	City:       req.Form.Get("city"),
+			// 	State:      req.Form.Get("state"),
+			// 	PostalCode: uint(postalCode),
+			// }
+			//
+			// fmt.Println(customer)
 
 			return nil
 		})

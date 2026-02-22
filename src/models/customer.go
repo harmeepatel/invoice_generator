@@ -18,4 +18,9 @@ type CustomerInfo struct {
 	PostalCode uint    `json:"postalCode"`
 }
 
+type ShippingAddr struct{
+}
+type BillingAddr struct{
+}
+
 var Customer = &CustomerInfo{}

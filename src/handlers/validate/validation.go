@@ -369,7 +369,8 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	stateMinPc, stateMaxPc := shared.States[model.Customer.State].MinCode, shared.States[model.Customer.State].MaxCode
+	state := model.Customer.State
+	stateMinPc, stateMaxPc := shared.States[state].MinCode, shared.States[state].MaxCode
 	pc := model.Customer.PostalCode
 
 	if pc < uint(stateMinPc) || pc > uint(stateMaxPc) {

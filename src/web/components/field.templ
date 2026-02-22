@@ -37,6 +37,7 @@ templ Field(conf FieldConfig) {
 					class="select w-full max-w-full text-lg h-auto px-4 py-2"
 					autocomplete="address-level1"
 					data-bind={ conf.Name }
+					data-on:change="@post('/form/validate/postalCode')"
 				>
 					for _, state := range shared.StateNames {
 						<option selected?={ state=="Gujarat" } value={ state }>{ state }</option>
