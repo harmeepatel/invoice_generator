@@ -33,6 +33,7 @@ templ Field(conf FieldConfig) {
 		switch conf.Type {
 			case "select":
 				<select
+                    id={ conf.Name }
 					name={ conf.Name }
 					class="select w-full max-w-full text-lg h-auto px-4 py-2"
 					autocomplete="address-level1"

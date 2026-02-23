@@ -8,11 +8,14 @@ import (
 
 	"ae_invoice/src/handlers/validate"
 	"ae_invoice/src/logger"
+	model "ae_invoice/src/models"
+
 	// model "ae_invoice/src/models"
 	page "ae_invoice/src/web/pages"
 
 	"github.com/a-h/templ"
 	"github.com/lpar/gzipped"
+	"github.com/starfederation/datastar-go/datastar"
 	"github.com/uptrace/bunrouter"
 )
 
@@ -105,6 +108,24 @@ func newRouter() *bunrouter.Router {
 			// }
 			//
 			// fmt.Println(customer)
+
+			return nil
+		})
+
+		fg.POST("/product", func(w http.ResponseWriter, req bunrouter.Request) error {
+			prod := &model.Product{}
+			if err := datastar.ReadSignals(req.Request, prod); err != nil {
+				logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", prod, err.Error()))
+				return err
+			}
+
+			model.Customer.Products = append(model.Customer.Products, *prod)
+
+			sse := datastar.NewSSE(w, req.Request)
+			if err := sse.MarshalAndPatchSignals(model.Customer.Products); err != nil {
+				logger.Logger.Error(fmt.Sprintf("Failed to Marshal %+v with error: %+v", model.Customer.Products, err.Error()))
+				return err
+			}
 
 			return nil
 		})

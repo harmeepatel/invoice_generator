@@ -3,6 +3,7 @@ package page;
 import (
 	component "ae_invoice/src/web/components"
 	layout "ae_invoice/src/web/layouts"
+	"ae_invoice/src/models"
 )
 
 templ Index(title string) {
@@ -18,9 +19,10 @@ templ Index(title string) {
                     Use same as Billing Address
                 </label>
             </div>
-			<section id="party-info" class="w-full">
+
+			<section id="party-info" class="w-full mb-12">
 				<form data-on:submit="@post('/form/submit', {contentType: 'form'})" method="POST">
-					<div id="customer-info" class="w-full flex-col md:flex-row flex gap-4">
+					<div id="customer-info" class="w-full mb-4 flex-col md:flex-row flex gap-4">
                         <fieldset id="left" class="w-full min-w-0">
                             <legend class="fieldset-legend font-extralight opacity-75">Business Details</legend>
                             @component.Field(component.FieldConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"})
@@ -43,23 +45,78 @@ templ Index(title string) {
 					</div>
                     <fieldset id="product-info" class="flex gap-2 flex-col md:flex-row">
                         <legend class="fieldset-legend font-extralight opacity-75">Product Details</legend>
-                        @component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial"})
-                        @component.Field(component.FieldConfig{Type: "text", Name: "itemName", PlaceHolder: "Bib Cock", Legend: "Name"})
+                        @component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial #"})
+                        @component.Field(component.FieldConfig{Type: "text", Name: "productName", PlaceHolder: "Bib Cock", Legend: "Name"})
                         @component.Field(component.FieldConfig{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"})
                         @component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"})
                         @component.Field(component.FieldConfig{Type: "number", Name: "salePrice", PlaceHolder: "256", Legend: "Price ₹"})
                         @component.Field(component.FieldConfig{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"})
                     </fieldset>
-					<button
-						type="submit"
-						class="w-full mt-8 btn btn-primary btn-xl disabled:cursor-not-allowed"
-						data-attr:disabled="$hasError"
-						disabled
-					>
-						Generate Invoice
-					</button>
+                    <div class="flex w-full gap-2 mt-4">
+                        <button
+                            type="submit"
+                            class="grow btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
+                            data-attr:disabled="$hasError"
+                            disabled
+                        >
+                            Generate Invoice
+                        </button>
+                        <button
+                            class="btn btn-primary btn-wide btn-lg disabled:cursor-not-allowed"
+                            data-on:click="@post('/form/product')"
+                            data-target="#products-list"
+                            data-swap="innerHTML"
+                            type="button"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                                <path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/>
+                            </svg>
+                        </button>
+                    </div>
 				</form>
 			</section>
+
+            <section>
+                <table class="table table-pin-rows">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <td>Serial #</td>
+                            <td>Name</td>
+                            <td>HSN</td>
+                            <td>Quantity</td>
+                            <td>Price ₹</td>
+                            <td>Discount</td>
+                        </tr>
+                    </thead>
+                    <tbody data-signals="{ productList: [] }">
+                        {{ rowNumber := 0 }}
+                        for _, product := range model.Customer.Products {
+                            {{ rowNumber += 1 }}
+                            <tr>
+                                <th>{rowNumber}</th>
+                                <td>{product.Serial}</td>
+                                <td>{product.Name}</td>
+                                <td>{product.Hsn}</td>
+                                <td>{product.Quantity}</td>
+                                <td>{product.Price}</td>
+                                <td>{product.Discount}</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <td>Serial #</td>
+                            <td>Name</td>
+                            <td>HSN</td>
+                            <td>Quantity</td>
+                            <td>Price ₹</td>
+                            <td>Discount</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </section>
 		</main>
 	}
 }

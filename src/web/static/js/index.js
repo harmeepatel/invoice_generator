@@ -18,7 +18,7 @@ for (let elem of fieldset) {
         localStorage.setItem(errorSpan.id, errorSpan.textContent)
     });
 
-    console.log(`id: ${errorSpan.id} textContent: ${errorSpan.textContent}`)
+    // console.log(`id: ${errorSpan.id} textContent: ${errorSpan.textContent}`)
 }
 
 console.log(localStorage);
