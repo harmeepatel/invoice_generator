@@ -1,0 +1,24 @@
+package component
+
+import (
+	"ae_invoice/src/models"
+	"fmt"
+	"strconv"
+)
+
+templ ProductRow(index int, product model.Product) {
+	<tr id={ fmt.Sprintf("product-row-%d", index) }>
+        <th>
+            <label>
+                <input type="checkbox" class="checkbox" />
+            </label>
+        </th>
+		<th>{ strconv.Itoa(index) }</th>
+		<td>{ product.Serial }</td>
+		<td>{ product.Name }</td>
+		<td>{ product.Hsn }</td>
+		<td>{ strconv.Itoa(int(product.Quantity)) }</td>
+		<td>{ fmt.Sprintf("%.2f", product.Price) }</td>
+		<td>{ fmt.Sprintf("%.2f", product.Discount) }</td>
+	</tr>
+}

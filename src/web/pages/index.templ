@@ -78,9 +78,14 @@ templ Index(title string) {
 
             <section>
                 <table class="table table-pin-rows">
-                    <thead>
+                    <thead class="text-xl">
                         <tr>
-                            <th></th>
+                            <th>
+                                <label>
+                                    <input type="checkbox" class="checkbox" />
+                                </label>
+                            </th>
+                            <th>#</th>
                             <td>Serial #</td>
                             <td>Name</td>
                             <td>HSN</td>
@@ -89,24 +94,19 @@ templ Index(title string) {
                             <td>Discount</td>
                         </tr>
                     </thead>
-                    <tbody data-signals="{ productList: [] }">
-                        {{ rowNumber := 0 }}
-                        for _, product := range model.Customer.Products {
-                            {{ rowNumber += 1 }}
-                            <tr>
-                                <th>{rowNumber}</th>
-                                <td>{product.Serial}</td>
-                                <td>{product.Name}</td>
-                                <td>{product.Hsn}</td>
-                                <td>{product.Quantity}</td>
-                                <td>{product.Price}</td>
-                                <td>{product.Discount}</td>
-                            </tr>
+                    <tbody id="product-tbody">
+                        for idx, product := range model.Customer.Products {
+                            @component.ProductRow(idx, product)
                         }
                     </tbody>
-                    <tfoot>
+                    <tfoot class="text-xl">
                         <tr>
-                            <th></th>
+                            <th>
+                                <label>
+                                    <input type="checkbox" class="checkbox" />
+                                </label>
+                            </th>
+                            <th>#</th>
                             <td>Serial #</td>
                             <td>Name</td>
                             <td>HSN</td>

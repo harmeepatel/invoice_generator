@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	model "ae_invoice/src/models"
 
 	// model "ae_invoice/src/models"
+	component "ae_invoice/src/web/components"
 	page "ae_invoice/src/web/pages"
 
 	"github.com/a-h/templ"
@@ -113,17 +115,28 @@ func newRouter() *bunrouter.Router {
 		})
 
 		fg.POST("/product", func(w http.ResponseWriter, req bunrouter.Request) error {
-			prod := &model.Product{}
-			if err := datastar.ReadSignals(req.Request, prod); err != nil {
-				logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", prod, err.Error()))
+			productInput := &model.Product{}
+			if err := datastar.ReadSignals(req.Request, productInput); err != nil {
+				logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", productInput, err.Error()))
 				return err
 			}
 
-			model.Customer.Products = append(model.Customer.Products, *prod)
+			model.Customer.Products = append(model.Customer.Products, *productInput)
+
+			newIndex := len(model.Customer.Products)
+			var buf bytes.Buffer
+			if err := component.ProductRow(newIndex, *productInput).Render(req.Context(), &buf); err != nil {
+				return err
+			}
 
 			sse := datastar.NewSSE(w, req.Request)
-			if err := sse.MarshalAndPatchSignals(model.Customer.Products); err != nil {
-				logger.Logger.Error(fmt.Sprintf("Failed to Marshal %+v with error: %+v", model.Customer.Products, err.Error()))
+			sse.PatchElements(buf.String(),
+				datastar.WithSelector("#product-tbody"),
+				datastar.WithMode("append"),
+			)
+
+			if err := sse.MarshalAndPatchSignals(productInput); err != nil {
+				logger.Logger.Error(fmt.Sprintf("Failed to MarshalAndPatchSignals %+v with error: %+v", productInput, err.Error()))
 				return err
 			}
 
