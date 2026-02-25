@@ -8,6 +8,48 @@
 @source "./**/*.js";
 @source "./**/*.ts";
 
+@font-face {
+    font-family: "RobotoMono";
+    src: url("../fonts/RobotoMono.ttf") format("woff2");
+    font-weight: 50 1000;
+    font-stretch: 20% 200%;
+}
+
+
+@theme {
+    --font-sans: "RobotoMono", sans-serif;
+
+    --text-base-size: 12px
+
+    /* --text-xs: */
+    /* --text-xs--line-height: */
+    /* --text-sm: */
+    /* --text-sm--line-height: */
+    /* --text-base: */
+    /* --text-base--line-height: */
+    /* --text-lg: */
+    /* --text-lg--line-height: */
+    /* --text-xl: */
+    /* --text-xl--line-height: */
+    /* --text-2xl: */
+    /* --text-2xl--line-height: */
+    /* --text-3xl: */
+    /* --text-3xl--line-height: */
+    /* --text-4xl: */
+    /* --text-4xl--line-height: */
+    /* --text-5xl: */
+    /* --text-5xl--line-height: */
+    /* --text-6xl: */
+    /* --text-6xl--line-height: */
+    /* --text-7xl: */
+    /* --text-7xl--line-height: */
+    /* --text-8xl: */
+    /* --text-8xl--line-height: */
+    /* --text-9xl: */
+    /* --text-9xl--line-height: */
+}
+
+
 @layer base {
     select option::checkmark {
         content: "";
@@ -23,6 +65,10 @@
 
     .fieldset-label {
         color: #e6e6e6 !important;
+    }
+
+    .table :where(th, td) {
+        padding-block: .3rem !important;
     }
 }
 
@@ -61,15 +107,4 @@
     --border: 1px;
     --depth: 1;
     --noise: 0;
-}
-
-@font-face {
-    font-family: "RobotoMono";
-    src: url("../fonts/RobotoMono.ttf") format("woff2");
-    font-weight: 50 1000;
-    font-stretch: 20% 200%;
-}
-
-@theme {
-    --font-sans: "RobotoMono", sans-serif;
 }

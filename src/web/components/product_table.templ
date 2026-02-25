@@ -1,0 +1,41 @@
+package component
+
+import (
+	"ae_invoice/src/models"
+	"fmt"
+	"strconv"
+)
+
+templ ProductRow(index int, product model.Product) {
+	<tr id={ fmt.Sprintf("product-row-%d", index) } class="hover:bg-base-content/2">
+		<th>
+			<button
+				class="btn btn-square bg-base-100 hover:bg-red-500/75"
+				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/form/product/%d")`, index) }
+				data-indicator:_fetching
+				data-attr:disabled="$_fetching"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+					<path
+						d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+					></path>
+				</svg>
+			</button>
+		</th>
+		<th>{ strconv.Itoa(index) }</th>
+		<td>{ product.Serial }</td>
+		<td>{ product.Name }</td>
+		<td>{ product.Hsn }</td>
+		<td>{ strconv.Itoa(int(product.Quantity)) }</td>
+		<td>{ fmt.Sprintf("%.2f", product.Price) }</td>
+		<td>{ fmt.Sprintf("%.2f", product.Discount) }</td>
+	</tr>
+}
+
+templ ProductBody() {
+    <tbody id="product-tbody">
+        for idx, product := range model.Customer.Products {
+            @ProductRow(idx+1, product)
+        }
+    </tbody>
+}

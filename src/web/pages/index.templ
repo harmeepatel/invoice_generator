@@ -3,15 +3,35 @@ package page;
 import (
 	component "ae_invoice/src/web/components"
 	layout "ae_invoice/src/web/layouts"
-	"ae_invoice/src/models"
 )
+
+templ tableHeader() {
+    <tr>
+        <th>
+            <button class="btn btn-square bg-transparent hidden" disabled="disabled">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                    <path
+                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                    ></path>
+                </svg>
+            </button>
+        </th>
+        <th>#</th>
+        <td>Serial #</td>
+        <td>Name</td>
+        <td>HSN</td>
+        <td>Quantity</td>
+        <td>Price ₹</td>
+        <td>Discount</td>
+    </tr>
+}
 
 templ Index(title string) {
 	@layout.Base(title) {
         <span id="tmp"></span>
 		<main role="main" id="main" class="max-w-7xl m-auto mb-4 px-4 2xl:px-0">
             <div class="flex items-center justify-between">
-                <h1 class="text-4xl opacity-50">
+                <h1 class="text-4xl">
                     Party Information
                 </h1>
                 <label class="label">
@@ -76,47 +96,19 @@ templ Index(title string) {
 				</form>
 			</section>
 
-            <section>
+            <section id="product-list" class="overflow-x-auto">
                 <table class="table table-pin-rows">
-                    <thead class="text-xl">
-                        <tr>
-                            <th>
-                                <label>
-                                    <input type="checkbox" class="checkbox" />
-                                </label>
-                            </th>
-                            <th>#</th>
-                            <td>Serial #</td>
-                            <td>Name</td>
-                            <td>HSN</td>
-                            <td>Quantity</td>
-                            <td>Price ₹</td>
-                            <td>Discount</td>
-                        </tr>
+                    <thead class="text-lg font-light">
+                        @tableHeader()
                     </thead>
-                    <tbody id="product-tbody">
-                        for idx, product := range model.Customer.Products {
-                            @component.ProductRow(idx, product)
-                        }
-                    </tbody>
-                    <tfoot class="text-xl">
-                        <tr>
-                            <th>
-                                <label>
-                                    <input type="checkbox" class="checkbox" />
-                                </label>
-                            </th>
-                            <th>#</th>
-                            <td>Serial #</td>
-                            <td>Name</td>
-                            <td>HSN</td>
-                            <td>Quantity</td>
-                            <td>Price ₹</td>
-                            <td>Discount</td>
-                        </tr>
+                    @component.ProductBody()
+                    <tfoot class="text-lg font-light">
+                        @tableHeader()
                     </tfoot>
                 </table>
             </section>
 		</main>
 	}
 }
+
+
