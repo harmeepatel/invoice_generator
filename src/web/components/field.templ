@@ -21,12 +21,12 @@ func getAutocompleteToken(inputName string) string {
 
 templ Field(conf FieldConfig) {
 	{{ errorSignal := "$" + conf.Name + "Error" }}
-	<div class="fieldset min-w-0 pb-4">
-		<label class="py-0 fieldset-label text-2xl font-light flex justify-between items-end mb-1" for={ conf.Name }>
+	<div class="fieldset min-w-0 pb-2">
+		<label class="py-0 fieldset-label text-xl text-gray-300 font-light flex justify-between items-end mb-1" for={ conf.Name }>
 			{ conf.Legend }
 			<span
                 id={conf.Name+"ErrDisplay"}
-				class="text-error text-sm block wrap-break-word max-w-3/5"
+				class="text-error text-base block wrap-break-word max-w-3/5"
 				data-text={ errorSignal }
 			></span>
 		</label>

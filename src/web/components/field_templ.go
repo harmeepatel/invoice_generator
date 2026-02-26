@@ -49,14 +49,14 @@ func Field(conf FieldConfig) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		errorSignal := "$" + conf.Name + "Error"
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"fieldset min-w-0 pb-4\"><label class=\"py-0 fieldset-label text-2xl font-light flex justify-between items-end mb-1\" for=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"fieldset min-w-0 pb-2\"><label class=\"py-0 fieldset-label text-xl text-gray-300 font-light flex justify-between items-end mb-1\" for=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(conf.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/components/field.templ`, Line: 25, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/components/field.templ`, Line: 25, Col: 121}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -88,7 +88,7 @@ func Field(conf FieldConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"text-error text-sm block wrap-break-word max-w-3/5\" data-text=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"text-error text-base block wrap-break-word max-w-3/5\" data-text=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -7,15 +7,7 @@ import (
 
 templ tableHeader() {
     <tr>
-        <th>
-            <button class="btn btn-square bg-transparent hidden" disabled="disabled">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                    <path
-                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
-                    ></path>
-                </svg>
-            </button>
-        </th>
+        <th></th>
         <th>#</th>
         <td>Serial #</td>
         <td>Name</td>
@@ -34,7 +26,7 @@ templ Index(title string) {
                 <h1 class="text-4xl">
                     Party Information
                 </h1>
-                <label class="label">
+                <label class="label text-sm">
                     <input type="checkbox" checked="checked" class="checkbox" disabled />
                     Use same as Billing Address
                 </label>
@@ -42,7 +34,7 @@ templ Index(title string) {
 
 			<section id="party-info" class="w-full mb-12">
 				<form data-on:submit="@post('/form/submit', {contentType: 'form'})" method="POST">
-					<div id="customer-info" class="w-full mb-4 flex-col md:flex-row flex gap-4">
+					<div id="customer-info" class="w-full mb-4 flex-col sm:flex-row flex gap-4">
                         <fieldset id="left" class="w-full min-w-0">
                             <legend class="fieldset-legend font-extralight opacity-75">Business Details</legend>
                             @component.Field(component.FieldConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"})
@@ -75,14 +67,14 @@ templ Index(title string) {
                     <div class="flex w-full gap-2 mt-4">
                         <button
                             type="submit"
-                            class="grow btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
+                            class="grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
                             data-attr:disabled="$hasError"
                             disabled
                         >
                             Generate Invoice
                         </button>
                         <button
-                            class="btn btn-primary btn-wide btn-lg disabled:cursor-not-allowed"
+                            class="grow-2 btn btn-primary btn-lg disabled:cursor-not-allowed"
                             data-on:click="@post('/form/product')"
                             data-target="#products-list"
                             data-swap="innerHTML"
@@ -97,7 +89,7 @@ templ Index(title string) {
 			</section>
 
             <section id="product-list" class="overflow-x-auto">
-                <table class="table table-pin-rows">
+                <table class="table table-pin-cols">
                     <thead class="text-lg font-light">
                         @tableHeader()
                     </thead>

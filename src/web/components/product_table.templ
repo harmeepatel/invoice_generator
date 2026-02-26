@@ -7,15 +7,15 @@ import (
 )
 
 templ ProductRow(index int, product model.Product) {
-	<tr id={ fmt.Sprintf("product-row-%d", index) } class="hover:bg-base-content/5">
+	<tr class="hover:bg-base-content/5">
 		<th>
 			<button
-				class="btn btn-square bg-base-100 hover:bg-red-500/75"
+				class="btn bg-base-100 hover:bg-red-500/75 p-0 w-8 h-8 lg:w-12 lg:h-12"
 				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/form/product/%d")`, index) }
 				data-indicator:_fetching
 				data-attr:disabled="$_fetching"
 			>
-            <img src="static/images/trash.svg"/>
+            <img src="static/images/trash.svg" class="w-4 h-4 lg:w-6 lg:h-6"/>
 			</button>
 		</th>
 		<th>{ strconv.Itoa(index) }</th>
@@ -29,7 +29,7 @@ templ ProductRow(index int, product model.Product) {
 }
 
 templ ProductBody() {
-    <tbody id="product-tbody">
+    <tbody id="product-tbody" class="text-base text-gray-300">
         for idx, product := range model.Customer.Products {
             @ProductRow(idx+1, product)
         }

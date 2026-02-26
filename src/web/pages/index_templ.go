@@ -34,7 +34,7 @@ func tableHeader() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<tr><th><button class=\"btn btn-square bg-transparent hidden\" disabled=\"disabled\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z\"></path></svg></button></th><th>#</th><td>Serial #</td><td>Name</td><td>HSN</td><td>Quantity</td><td>Price ₹</td><td>Discount</td></tr>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<tr><th></th><th>#</th><td>Serial #</td><td>Name</td><td>HSN</td><td>Quantity</td><td>Price ₹</td><td>Discount</td></tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -75,7 +75,7 @@ func Index(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span id=\"tmp\"></span><main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto mb-4 px-4 2xl:px-0\"><div class=\"flex items-center justify-between\"><h1 class=\"text-4xl\">Party Information</h1><label class=\"label\"><input type=\"checkbox\" checked=\"checked\" class=\"checkbox\" disabled> Use same as Billing Address</label></div><section id=\"party-info\" class=\"w-full mb-12\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\" method=\"POST\"><div id=\"customer-info\" class=\"w-full mb-4 flex-col md:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Business Details</legend>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span id=\"tmp\"></span><main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto mb-4 px-4 2xl:px-0\"><div class=\"flex items-center justify-between\"><h1 class=\"text-4xl\">Party Information</h1><label class=\"label text-sm\"><input type=\"checkbox\" checked=\"checked\" class=\"checkbox\" disabled> Use same as Billing Address</label></div><section id=\"party-info\" class=\"w-full mb-12\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\" method=\"POST\"><div id=\"customer-info\" class=\"w-full mb-4 flex-col sm:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Business Details</legend>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -163,7 +163,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button> <button class=\"btn btn-primary btn-wide btn-lg disabled:cursor-not-allowed\" data-on:click=\"@post('/form/product')\" data-target=\"#products-list\" data-swap=\"innerHTML\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto\"><table class=\"table table-pin-rows\"><thead class=\"text-lg font-light\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button> <button class=\"grow-2 btn btn-primary btn-lg disabled:cursor-not-allowed\" data-on:click=\"@post('/form/product')\" data-target=\"#products-list\" data-swap=\"innerHTML\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto\"><table class=\"table table-pin-cols\"><thead class=\"text-lg font-light\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

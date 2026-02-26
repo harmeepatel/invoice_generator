@@ -4,9 +4,11 @@
 @source "../**/*.html";
 @source "../**/*.js";
 @source "../**/*.templ";
+@source "../**/*.svg";
 @source "./**/*.css";
 @source "./**/*.js";
 @source "./**/*.ts";
+@source "./**/*.svg";
 
 @font-face {
     font-family: "RobotoMono";
@@ -16,38 +18,39 @@
 }
 
 :root {
-    --ratio: 1.32
+    --ratio: 1.24
+}
+
+@media(width <= 1024px) {
+    :root {
+        --text-base: 14px !important;
+        --ratio: 1.18;
+    }
+}
+
+@media(width <= 640px) {
+    :root {
+        --text-base: 12px !important;
+        --ratio: 1.12;
+    }
 }
 
 @theme {
     --font-sans: "RobotoMono", sans-serif;
 
-    --text-xs: calc(var(--text-sm) / var(--ratio)) !important;;
-    /* --text-xs--line-height: */
-    --text-sm: calc(var(--text-base) / var(--ratio)) !important;;
-    /* --text-sm--line-height: */
-    --text-base: 12px !important;
-    /* --text-base--line-height: */
-    --text-lg:  calc(var(--text-base) * var(--ratio)) !important;;
-    /* --text-lg--line-height: */
-    --text-xl:  calc(var(--text-lg) * var(--ratio)) !important;;
-    /* --text-xl--line-height: */
-    --text-2xl: calc(var(--text-xl) * var(--ratio)) !important;;
-    /* --text-2xl--line-height: */
-    --text-3xl: calc(var(--text-2xl) * var(--ratio)) !important;;
-    /* --text-3xl--line-height: */
-    --text-4xl: calc(var(--text-3xl) * var(--ratio)) !important;;
-    /* --text-4xl--line-height: */
-    --text-5xl: calc(var(--text-4xl) * var(--ratio)) !important;;
-    /* --text-5xl--line-height: */
-    --text-6xl: calc(var(--text-5xl) * var(--ratio)) !important;;
-    /* --text-6xl--line-height: */
-    --text-7xl: calc(var(--text-6xl) * var(--ratio)) !important;;
-    /* --text-7xl--line-height: */
-    --text-8xl: calc(var(--text-7xl) * var(--ratio)) !important;;
-    /* --text-8xl--line-height: */
-    --text-9xl: calc(var(--text-8xl) * var(--ratio)) !important;;
-    /* --text-9xl--line-height: */
+    --text-xs: calc(var(--text-sm) / var(--ratio)) !important;
+    --text-sm: calc(var(--text-base) / var(--ratio)) !important;
+    --text-base: 16px !important;
+    --text-lg: calc(var(--text-base) * var(--ratio)) !important;
+    --text-xl: calc(var(--text-lg) * var(--ratio)) !important;
+    --text-2xl: calc(var(--text-xl) * var(--ratio)) !important;
+    --text-3xl: calc(var(--text-2xl) * var(--ratio)) !important;
+    --text-4xl: calc(var(--text-3xl) * var(--ratio)) !important;
+    --text-5xl: calc(var(--text-4xl) * var(--ratio)) !important;
+    --text-6xl: calc(var(--text-5xl) * var(--ratio)) !important;
+    --text-7xl: calc(var(--text-6xl) * var(--ratio)) !important;
+    --text-8xl: calc(var(--text-7xl) * var(--ratio)) !important;
+    --text-9xl: calc(var(--text-8xl) * var(--ratio)) !important;
 }
 
 
