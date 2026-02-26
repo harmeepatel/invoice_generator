@@ -7,7 +7,6 @@ import (
 
 templ tableHeader() {
     <tr>
-        <th></th>
         <th>#</th>
         <td>Serial #</td>
         <td>Name</td>
@@ -15,6 +14,11 @@ templ tableHeader() {
         <td>Quantity</td>
         <td>Price ₹</td>
         <td>Discount</td>
+        <th>
+			<button class="btn p-0 w-8 h-8 lg:w-12 lg:h-12" disabled="disabled">
+				<img src="static/images/trash.svg" class="w-4 h-4 lg:w-6 lg:h-6"/>
+			</button>
+        </th>
     </tr>
 }
 
@@ -88,8 +92,8 @@ templ Index(title string) {
 				</form>
 			</section>
 
-            <section id="product-list" class="overflow-x-auto">
-                <table class="table table-pin-cols">
+            <section id="product-list" class="overflow-x-auto max-h-[640px] lg:max-h-[1024px]">
+                <table class="table table-pin-rows table-pin-cols">
                     <thead class="text-lg font-light">
                         @tableHeader()
                     </thead>

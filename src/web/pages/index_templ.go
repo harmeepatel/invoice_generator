@@ -34,7 +34,7 @@ func tableHeader() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<tr><th></th><th>#</th><td>Serial #</td><td>Name</td><td>HSN</td><td>Quantity</td><td>Price ₹</td><td>Discount</td></tr>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<tr><th>#</th><td>Serial #</td><td>Name</td><td>HSN</td><td>Quantity</td><td>Price ₹</td><td>Discount</td><th><button class=\"btn p-0 w-8 h-8 lg:w-12 lg:h-12\" disabled=\"disabled\"><img src=\"static/images/trash.svg\" class=\"w-4 h-4 lg:w-6 lg:h-6\"></button></th></tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -163,7 +163,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button> <button class=\"grow-2 btn btn-primary btn-lg disabled:cursor-not-allowed\" data-on:click=\"@post('/form/product')\" data-target=\"#products-list\" data-swap=\"innerHTML\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto\"><table class=\"table table-pin-cols\"><thead class=\"text-lg font-light\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button> <button class=\"grow-2 btn btn-primary btn-lg disabled:cursor-not-allowed\" data-on:click=\"@post('/form/product')\" data-target=\"#products-list\" data-swap=\"innerHTML\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto max-h-[640px] lg:max-h-[1024px]\"><table class=\"table table-pin-rows table-pin-cols\"><thead class=\"text-lg font-light\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

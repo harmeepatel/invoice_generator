@@ -7,31 +7,29 @@ import (
 )
 
 templ ProductRow(index int, product model.Product) {
-	<tr class="hover:bg-base-content/5">
-		<th>
-			<button
-				class="btn bg-base-100 hover:bg-red-500/75 p-0 w-8 h-8 lg:w-12 lg:h-12"
-				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/form/product/%d")`, index) }
-				data-indicator:_fetching
-				data-attr:disabled="$_fetching"
-			>
-            <img src="static/images/trash.svg" class="w-4 h-4 lg:w-6 lg:h-6"/>
-			</button>
-		</th>
-		<th>{ strconv.Itoa(index) }</th>
+	<tr class="group hover:bg-base-content/5">
+		<th class="group-hover:bg-[#252020]">{ strconv.Itoa(index) }</th>
 		<td>{ product.Serial }</td>
 		<td>{ product.Name }</td>
 		<td>{ product.Hsn }</td>
 		<td>{ strconv.Itoa(int(product.Quantity)) }</td>
 		<td>{ fmt.Sprintf("%.2f", product.Price) }</td>
 		<td>{ fmt.Sprintf("%.2f", product.Discount) }</td>
+		<th class="group-hover:bg-[#252020]">
+			<button
+				class="btn bg-base-100 hover:bg-red-500/75 p-0 w-8 h-8 lg:w-12 lg:h-12"
+				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/form/product/%d")`, index) }
+			>
+				<img src="static/images/trash.svg" class="w-4 h-4 lg:w-6 lg:h-6"/>
+			</button>
+		</th>
 	</tr>
 }
 
 templ ProductBody() {
-    <tbody id="product-tbody" class="text-base text-gray-300">
-        for idx, product := range model.Customer.Products {
-            @ProductRow(idx+1, product)
-        }
-    </tbody>
+	<tbody id="product-tbody" class="text-base text-gray-300">
+		for idx, product := range model.Customer.Products {
+			@ProductRow(idx+1, product)
+		}
+	</tbody>
 }
