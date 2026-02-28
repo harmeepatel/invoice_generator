@@ -135,7 +135,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</fieldset></div><fieldset id=\"product-info\" class=\"flex gap-2 flex-col md:flex-row\"><legend class=\"fieldset-legend font-extralight opacity-75\">Product Details</legend>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</fieldset></div><fieldset id=\"product-info\" class=\"flex md:gap-2 flex-col md:flex-row\"><legend class=\"fieldset-legend font-extralight opacity-75\">Product Details</legend><div class=\"flex gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -151,11 +151,15 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div class=\"flex gap-2\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "salePrice", PlaceHolder: "256", Legend: "Price ₹"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -163,7 +167,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button> <button class=\"grow-2 btn btn-primary btn-lg disabled:cursor-not-allowed\" data-on:click=\"@post('/form/product')\" data-target=\"#products-list\" data-swap=\"innerHTML\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto max-h-[640px] lg:max-h-[1024px]\"><table class=\"table table-pin-rows table-pin-cols\"><thead class=\"text-lg font-light\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"$hasError\" disabled>Generate Invoice</button> <button class=\"grow-2 btn btn-primary btn-lg disabled:cursor-not-allowed\" data-on:click=\"@post('/form/product')\" data-target=\"#products-list\" data-swap=\"innerHTML\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto max-h-[640px] lg:max-h-[1024px]\"><table class=\"table table-pin-rows table-pin-cols text-balance\"><thead class=\"text-lg font-light\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -171,7 +175,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</thead>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</thead>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -179,7 +183,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<tfoot class=\"text-lg font-light\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<tfoot class=\"text-lg font-light\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -187,7 +191,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</tfoot></table></section></main>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</tfoot></table></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

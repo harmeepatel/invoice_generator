@@ -24,7 +24,7 @@ var (
 	panLastCharPattern   = regexp.MustCompile(`^[A-Z]$`)
 )
 
-func patch(w http.ResponseWriter, req bunrouter.Request, signals any) error {
+func patchSignal(w http.ResponseWriter, req bunrouter.Request, signals any) error {
 	sse := datastar.NewSSE(w, req.Request)
 	if err := sse.MarshalAndPatchSignals(signals); err != nil {
 		logger.Logger.Error(fmt.Sprintf("Failed to Marshal %+v with error: %+v", signals, err.Error()))
@@ -32,6 +32,8 @@ func patch(w http.ResponseWriter, req bunrouter.Request, signals any) error {
 	}
 	return nil
 }
+
+// Customer
 
 func validateName(name string) error {
 	switch {
@@ -62,7 +64,7 @@ func Name(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.NameError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validateGstin(gstin string) error {
@@ -130,7 +132,7 @@ func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.GstinError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validateGst(gst float32) error {
@@ -156,7 +158,7 @@ func Gst(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.GstError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validateEmail(email string) error {
@@ -183,7 +185,7 @@ func Email(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.EmailError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validatePhone(phone string) error {
@@ -191,7 +193,7 @@ func validatePhone(phone string) error {
 	case len(phone) == 0:
 		return errors.New("Required")
 	case !util.IsAllDigits(phone):
-		return errors.New("Must be all digits")
+		return errors.New("Letters not allowed")
 	case len(phone) > 10:
 		return errors.New("Must be exactly 10 digits")
 	case phone[0] < '6' || phone[0] > '9':
@@ -216,7 +218,7 @@ func Phone(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.PhoneError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validateRemark(remark string) error {
@@ -247,7 +249,7 @@ func Remark(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.RemarkError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validateShopNo(shopNo string) error {
@@ -280,7 +282,7 @@ func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.ShopNoError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validateLine(value string) error {
@@ -332,7 +334,7 @@ func Line(w http.ResponseWriter, req bunrouter.Request) error {
 		}
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func validateCity(city string) error {
@@ -365,7 +367,7 @@ func City(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.CityError = true, "Required"
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
 }
 
 func State(w http.ResponseWriter, req bunrouter.Request) error {
@@ -401,5 +403,172 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 		signals.HasError, signals.PostalCodeError = true, err.Error()
 	}
 
-	return patch(w, req, signals)
+	return patchSignal(w, req, signals)
+}
+
+// Product
+func validatePsn(sn string) error {
+	switch {
+	case len(sn) == 0:
+		return errors.New("Required")
+	}
+	return nil
+}
+
+func SerialNumber(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals = struct {
+		HasError     bool   `json:"hasError"`
+		SerialNumber string `json:"serialNumberError"`
+	}
+	signals := &Signals{}
+
+	if err := validatePsn(model.Product.SerialNumber); err != nil {
+		signals.HasError, signals.SerialNumber = true, err.Error()
+	}
+
+	return patchSignal(w, req, signals)
+}
+
+func validatePname(name string) error {
+	switch {
+	case len(name) == 0:
+		return errors.New("Required")
+	}
+	return nil
+}
+
+func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals = struct {
+		HasError          bool   `json:"hasError"`
+		ProductNameNumber string `json:"productNameError"`
+	}
+	signals := &Signals{}
+
+	if err := validatePname(model.Product.Name); err != nil {
+		signals.HasError, signals.ProductNameNumber = true, err.Error()
+	}
+
+	return patchSignal(w, req, signals)
+}
+
+func validatePhsn(hsn string) error {
+	switch {
+	case len(hsn) == 0:
+		return errors.New("Required")
+	case len(hsn) != 2 && len(hsn) != 4 && len(hsn) != 6 && len(hsn) != 8:
+		return errors.New("Must be 2, 4, 6, or 8 digits")
+	case !util.IsAllDigits(hsn):
+		return errors.New("Letters not allowed")
+	}
+	return nil
+}
+
+func Hsn(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals = struct {
+		HasError  bool   `json:"hasError"`
+		HsnNumber string `json:"hsnError"`
+	}
+	signals := &Signals{}
+
+	if err := validatePhsn(model.Product.Hsn); err != nil {
+		signals.HasError, signals.HsnNumber = true, err.Error()
+	}
+
+	return patchSignal(w, req, signals)
+}
+
+func validatePquan(quantity int) error {
+	switch {
+	case quantity <= 0:
+		return errors.New("Atleast 1 Required")
+	}
+	return nil
+}
+
+func Quantity(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals = struct {
+		HasError       bool   `json:"hasError"`
+		QuantityNumber string `json:"quantityError"`
+	}
+	signals := &Signals{}
+
+	if err := validatePquan(model.Product.Quantity); err != nil {
+		signals.HasError, signals.QuantityNumber = true, err.Error()
+	}
+
+	return patchSignal(w, req, signals)
+}
+
+func validatePsp(price float32) error {
+	switch {
+	case price <= 0:
+		return errors.New("Invalid")
+	}
+	return nil
+}
+
+func SellPrice(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals = struct {
+		HasError        bool   `json:"hasError"`
+		SellPriceNumber string `json:"sellPriceError"`
+	}
+	signals := &Signals{}
+
+	if err := validatePsp(model.Product.Price); err != nil {
+		signals.HasError, signals.SellPriceNumber = true, err.Error()
+	}
+
+	return patchSignal(w, req, signals)
+}
+
+func validatePdisc(discount float32) error {
+	switch {
+	case discount < 0 || discount > 100:
+		return errors.New("Invalid")
+	}
+	return nil
+}
+
+func Discount(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals = struct {
+		HasError       bool   `json:"hasError"`
+		DiscountNumber string `json:"discountError"`
+	}
+	signals := &Signals{}
+
+	if err := validatePsp(model.Product.Discount); err != nil {
+		signals.HasError, signals.DiscountNumber = true, err.Error()
+	}
+
+	return patchSignal(w, req, signals)
 }

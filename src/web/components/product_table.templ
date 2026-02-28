@@ -9,7 +9,7 @@ import (
 templ ProductRow(index int, product model.Product) {
 	<tr class="group hover:bg-base-content/5">
 		<th class="group-hover:bg-[#252020]">{ strconv.Itoa(index) }</th>
-		<td>{ product.Serial }</td>
+		<td class="w-12">{ product.Serial }</td>
 		<td>{ product.Name }</td>
 		<td>{ product.Hsn }</td>
 		<td>{ strconv.Itoa(int(product.Quantity)) }</td>

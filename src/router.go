@@ -75,6 +75,13 @@ func newRouter() *bunrouter.Router {
 			vg.POST("/city", validate.City)
 			vg.POST("/state", validate.State)
 			vg.POST("/postalCode", validate.PostalCode)
+
+			vg.POST("/serialNumber", validate.SerialNumber)
+			vg.POST("/productName", validate.ProductName)
+			vg.POST("/hsn", validate.Hsn)
+			vg.POST("/quantity", validate.Quantity)
+			vg.POST("/sellPrice", validate.SellPrice)
+			vg.POST("/discount", validate.Discount)
 		})
 
 		fg.POST("/submit", func(w http.ResponseWriter, req bunrouter.Request) error {
@@ -83,6 +90,8 @@ func newRouter() *bunrouter.Router {
 				logger.Logger.Error("Failed to parse form on /validate/submit")
 				return err
 			}
+
+			fmt.Printf("customer: %+v\n", model.Customer)
 
 			// gst, err := strconv.ParseFloat(req.Form.Get("gst"), 32)
 			// if err != nil {
@@ -117,7 +126,7 @@ func newRouter() *bunrouter.Router {
 		})
 
 		fg.POST("/product", func(w http.ResponseWriter, req bunrouter.Request) error {
-			productInput := &model.Product{}
+			productInput := &model.ProductInfo{}
 			if err := datastar.ReadSignals(req.Request, productInput); err != nil {
 				logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", productInput, err.Error()))
 				return err

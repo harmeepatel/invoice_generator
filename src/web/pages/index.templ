@@ -38,6 +38,7 @@ templ Index(title string) {
 
 			<section id="party-info" class="w-full mb-12">
 				<form data-on:submit="@post('/form/submit', {contentType: 'form'})" method="POST">
+
 					<div id="customer-info" class="w-full mb-4 flex-col sm:flex-row flex gap-4">
                         <fieldset id="left" class="w-full min-w-0">
                             <legend class="fieldset-legend font-extralight opacity-75">Business Details</legend>
@@ -48,6 +49,7 @@ templ Index(title string) {
                             @component.Field(component.FieldConfig{Type: "tel", Name: "phone", PlaceHolder: "11111 99999", Legend: "Phone"})
                             @component.Field(component.FieldConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)"})
                         </fieldset>
+
                         <fieldset id="right" class="w-full min-w-0">
                             <legend class="fieldset-legend font-extralight opacity-75">Billing Address</legend>
 							@component.Field(component.FieldConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No"})
@@ -59,15 +61,21 @@ templ Index(title string) {
 							@component.Field(component.FieldConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"})
                         </fieldset>
 					</div>
-                    <fieldset id="product-info" class="flex gap-2 flex-col md:flex-row">
+
+                    <fieldset id="product-info" class="flex md:gap-2 flex-col md:flex-row">
                         <legend class="fieldset-legend font-extralight opacity-75">Product Details</legend>
-                        @component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial #"})
-                        @component.Field(component.FieldConfig{Type: "text", Name: "productName", PlaceHolder: "Bib Cock", Legend: "Name"})
-                        @component.Field(component.FieldConfig{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"})
-                        @component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"})
-                        @component.Field(component.FieldConfig{Type: "number", Name: "salePrice", PlaceHolder: "256", Legend: "Price ₹"})
-                        @component.Field(component.FieldConfig{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"})
+                        <div class="flex gap-2">
+                            @component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial #"})
+                            @component.Field(component.FieldConfig{Type: "text", Name: "productName", PlaceHolder: "Bib Cock", Legend: "Name"})
+                            @component.Field(component.FieldConfig{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"})
+                        </div>
+                        <div class="flex gap-2">
+                            @component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"})
+                            @component.Field(component.FieldConfig{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"})
+                            @component.Field(component.FieldConfig{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"})
+                        </div>
                     </fieldset>
+
                     <div class="flex w-full gap-2 mt-4">
                         <button
                             type="submit"
@@ -93,7 +101,7 @@ templ Index(title string) {
 			</section>
 
             <section id="product-list" class="overflow-x-auto max-h-[640px] lg:max-h-[1024px]">
-                <table class="table table-pin-rows table-pin-cols">
+                <table class="table table-pin-rows table-pin-cols text-balance">
                     <thead class="text-lg font-light">
                         @tableHeader()
                     </thead>
