@@ -93,7 +93,7 @@ func Field(conf FieldConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, templ.Attributes{
-			fmt.Sprintf("data-signals:%v-error__ifmissing", conf.Name): fmt.Sprintf("localStorage.getItem('%vErrDisplay') ?? ''", conf.Name),
+			fmt.Sprintf("data-signals:%v-error__ifmissing", util.CamelToKebab(conf.Name)): fmt.Sprintf("localStorage.getItem('%vErrDisplay') ?? ''", conf.Name),
 		})
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

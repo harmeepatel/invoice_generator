@@ -31,7 +31,7 @@ templ Field(conf FieldConfig) {
                 id={ conf.Name + "ErrDisplay" }
                 class="text-error text-base block wrap-break-word max-w-3/5"
                 { templ.Attributes{
-                    fmt.Sprintf("data-signals:%v-error__ifmissing", conf.Name): fmt.Sprintf("localStorage.getItem('%vErrDisplay') ?? ''", conf.Name),
+                    fmt.Sprintf("data-signals:%v-error__ifmissing", util.CamelToKebab(conf.Name)): fmt.Sprintf("localStorage.getItem('%vErrDisplay') ?? ''", conf.Name),
                 }... }
                 data-on-signal-patch={ fmt.Sprintf("localStorage.setItem('%vErrDisplay', $%vError)", conf.Name, conf.Name) }
                 data-text={ errorSignal }
