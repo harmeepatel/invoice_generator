@@ -21,14 +21,14 @@
     --ratio: 1.24
 }
 
-@media(width <= 1024px) {
+@media(width <=1024px) {
     :root {
         --text-base: 14px !important;
         --ratio: 1.18;
     }
 }
 
-@media(width <= 640px) {
+@media(width <=640px) {
     :root {
         --text-base: 12px !important;
         --ratio: 1.12;
@@ -73,6 +73,10 @@
 
     .table :where(th, td) {
         padding-block: .3rem !important;
+    }
+
+    .error {
+        --input-color: var(--color-error) !important;
     }
 }
 

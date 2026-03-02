@@ -108,7 +108,7 @@ templ Index(title string) {
 						<button
 							type="submit"
 							class="grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
-							data-attr:disabled="!$hasError"
+							data-attr:disabled="$hasError"
 							disabled
 						>
 							Generate Invoice
@@ -119,7 +119,7 @@ templ Index(title string) {
 							data-on:click="@post('/product/add')"
 							data-target="#products-list"
 							data-swap="innerHTML"
-							data-attr:disabled="!$productHasError"
+							data-attr:disabled="$productHasError"
 							disabled
 						>
 							<svg

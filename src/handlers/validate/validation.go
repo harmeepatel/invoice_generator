@@ -106,7 +106,7 @@ func Name(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validateName(name); err != nil {
 		signals.NameError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -175,7 +175,7 @@ func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validateGstin(gstin); err != nil {
 		signals.GstinError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -202,7 +202,7 @@ func Gst(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validateGst(model.Customer.GST); err != nil {
 		signals.GstError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -230,7 +230,7 @@ func Email(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validateEmail(model.Customer.Email); err != nil {
 		signals.EmailError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -264,7 +264,7 @@ func Phone(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePhone(model.Customer.Phone); err != nil {
 		signals.PhoneError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -296,7 +296,7 @@ func Remark(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validateRemark(model.Customer.Remark); err != nil {
 		signals.RemarkError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -330,7 +330,7 @@ func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validateShopNo(shopNo); err != nil {
 		signals.ShopNoError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -410,7 +410,7 @@ func City(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validateCity(model.Customer.City); err != nil {
 		signals.CityError = "Required"
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -447,7 +447,7 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePostalCode(model.Customer.State, model.Customer.PostalCode); err != nil {
 		signals.PostalCodeError = err.Error()
 	}
-	signals.HasError = allCustomerValid()
+	signals.HasError = !allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -503,7 +503,7 @@ func SerialNumber(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePsn(model.Product.SerialNumber); err != nil {
 		signals.SerialNumber = err.Error()
 	}
-	signals.ProductHasError = allProductValid()
+	signals.ProductHasError = !allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -531,7 +531,7 @@ func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePname(model.Product.Name); err != nil {
 		signals.ProductNameNumber = err.Error()
 	}
-	signals.ProductHasError = allProductValid()
+	signals.ProductHasError = !allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -563,7 +563,7 @@ func Hsn(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePhsn(model.Product.Hsn); err != nil {
 		signals.HsnNumber = err.Error()
 	}
-	signals.ProductHasError = allProductValid()
+	signals.ProductHasError = !allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -571,7 +571,7 @@ func Hsn(w http.ResponseWriter, req bunrouter.Request) error {
 func validatePquan(quantity int) error {
 	switch {
 	case quantity <= 0:
-		return errors.New("Atleast 1 Required")
+		return errors.New("Required")
 	}
 	return nil
 }
@@ -591,7 +591,7 @@ func Quantity(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePquan(model.Product.Quantity); err != nil {
 		signals.QuantityNumber = err.Error()
 	}
-	signals.ProductHasError = allProductValid()
+	signals.ProductHasError = !allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -619,7 +619,7 @@ func SellPrice(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePsp(model.Product.SellPrice); err != nil {
 		signals.SellPriceNumber = err.Error()
 	}
-	signals.ProductHasError = allProductValid()
+	signals.ProductHasError = !allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -647,7 +647,7 @@ func Discount(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePdisc(model.Product.Discount); err != nil {
 		signals.DiscountNumber = err.Error()
 	}
-	signals.ProductHasError = allProductValid()
+	signals.ProductHasError = !allProductValid()
 
 	return patchSignal(w, req, signals)
 }
