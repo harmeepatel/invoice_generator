@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -12,8 +13,8 @@ import (
 	"ae_invoice/src/handlers/validate"
 	"ae_invoice/src/logger"
 	model "ae_invoice/src/models"
+	"ae_invoice/src/util"
 
-	// model "ae_invoice/src/models"
 	component "ae_invoice/src/web/components"
 	page "ae_invoice/src/web/pages"
 
@@ -32,6 +33,9 @@ func notFoundHandler(w http.ResponseWriter, req bunrouter.Request) error {
 	)
 	return nil
 }
+
+//go:embed web/*
+var webFS embed.FS
 
 func newRouter() *bunrouter.Router {
 	router := bunrouter.New(
@@ -61,6 +65,15 @@ func newRouter() *bunrouter.Router {
 	})
 
 	router.WithGroup("/invoice", func(fg *bunrouter.Group) {
+		if util.IsDev {
+			fg.GET("/", func(w http.ResponseWriter, req bunrouter.Request) error {
+				fs := http.FS(webFS)
+				file, _ := fs.Open("web/invoice.html")
+				http.ServeContent(w, req.Request, "invoice.html", time.Now(), file)
+				return nil
+			})
+		}
+
 		fg.WithGroup("/validate", func(vg *bunrouter.Group) {
 			vg.POST("/name", validate.Name)
 			vg.POST("/gstin", validate.Gstin)
