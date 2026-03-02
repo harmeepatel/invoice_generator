@@ -46,7 +46,7 @@ templ Field(conf FieldConfig) {
 					autocomplete="address-level1"
 					data-type="input"
 					data-bind={ conf.Name }
-					data-on:change="@post('/invoice/validate/postalCode')"
+					data-on:change={ fmt.Sprintf("@post('/invoice/validate/postalCode', {filterSignals: {include: /%[1]v/}})", conf.Name) }
 				>
 					for _, state := range util.StateNames {
 						<option selected?={ state=="Gujarat" } value={ state }>{ state }</option>
@@ -76,8 +76,7 @@ templ Field(conf FieldConfig) {
 						autocomplete="tel-national"
 						data-type="input"
 						data-bind={ conf.Name }
-						data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%v')",
-            conf.Name) }
+						data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /%[1]v/}})", conf.Name) }
 					/>
 				</div>
 			default:
@@ -90,7 +89,7 @@ templ Field(conf FieldConfig) {
 					autocomplete={ getAutocompleteToken(conf.Name) }
 					data-type="input"
 					data-bind={ conf.Name }
-					data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {signals: {%[1]v: $%[1]v}})", conf.Name) }
+					data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /%[1]v/}})", conf.Name) }
 				/>
 		}
 	</div>
