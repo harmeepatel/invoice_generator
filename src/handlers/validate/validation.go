@@ -356,33 +356,29 @@ func Line(w http.ResponseWriter, req bunrouter.Request) error {
 		return err
 	}
 
-	type Signals = struct {
-		HasError   bool   `json:"hasError"`
-		Line1Error string `json:"line1Error"`
-		Line2Error string `json:"line2Error"`
-		Line3Error string `json:"line3Error"`
-	}
-	signals := &Signals{}
-
 	lines := map[string]struct {
 		value      string
 		isRequired bool
-		setError   func(string)
 	}{
-		"line1": {model.Customer.Line1, true, func(e string) { signals.Line1Error = e }},
-		"line2": {model.Customer.Line2, false, func(e string) { signals.Line2Error = e }},
-		"line3": {model.Customer.Line3, false, func(e string) { signals.Line3Error = e }},
+		"line1": {model.Customer.Line1, true},
+		"line2": {model.Customer.Line2, false},
+		"line3": {model.Customer.Line3, false},
 	}
 
 	endpoint := path.Base(req.URL.Path)
 	if line, ok := lines[endpoint]; ok {
+		errMsg := ""
 		if err := validateLine(line.value, line.isRequired); err != nil {
-			line.setError(err.Error())
+			errMsg = err.Error()
 		}
-		signals.HasError = allCustomerValid()
+		signals := map[string]any{
+			endpoint + "Error": errMsg,
+			"hasError":         allCustomerValid(),
+		}
+		return patchSignal(w, req, signals)
 	}
 
-	return patchSignal(w, req, signals)
+	return nil
 }
 
 func validateCity(city string) error {
