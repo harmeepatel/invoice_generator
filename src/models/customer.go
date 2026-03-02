@@ -2,7 +2,7 @@ package model
 
 type ProductInfo struct {
 	Quantity     int    `json:"quantity"`
-	Price        float32 `json:"sellPrice"`
+	SellPrice        float32 `json:"sellPrice"`
 	Discount     float32 `json:"discount"`
 	SerialNumber string  `json:"serialNumber"`
 	Name         string  `json:"productName"`

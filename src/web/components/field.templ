@@ -22,18 +22,25 @@ func getAutocompleteToken(inputName string) string {
 templ Field(conf FieldConfig) {
 	{{ errorSignal := "$" + conf.Name + "Error" }}
 	<div class="fieldset min-w-0 pb-2">
-		<label class="py-0 fieldset-label text-xl text-gray-300 font-light flex justify-between items-end mb-1" for={ conf.Name }>
+		<label
+			class="py-0 fieldset-label text-xl text-gray-300 font-light flex justify-between items-end mb-1"
+			for={ conf.Name }
+		>
 			{ conf.Legend }
-			<span
-                id={conf.Name+"ErrDisplay"}
-				class="text-error text-base block wrap-break-word max-w-3/5"
-				data-text={ errorSignal }
-			></span>
+            <span
+                id={ conf.Name + "ErrDisplay" }
+                class="text-error text-base block wrap-break-word max-w-3/5"
+                { templ.Attributes{
+                    fmt.Sprintf("data-signals:%v-error__ifmissing", conf.Name): fmt.Sprintf("localStorage.getItem('%vErrDisplay') ?? ''", conf.Name),
+                }... }
+                data-on-signal-patch={ fmt.Sprintf("localStorage.setItem('%vErrDisplay', $%vError)", conf.Name, conf.Name) }
+                data-text={ errorSignal }
+            ></span>
 		</label>
 		switch conf.Type {
-			case "select":
+			case " select":
 				<select
-                    id={ conf.Name }
+					id={ conf.Name }
 					name={ conf.Name }
 					class="select w-full max-w-full text-lg h-auto px-4 py-2"
 					autocomplete="address-level1"

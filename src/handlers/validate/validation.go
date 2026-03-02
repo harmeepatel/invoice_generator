@@ -33,7 +33,50 @@ func patchSignal(w http.ResponseWriter, req bunrouter.Request, signals any) erro
 	return nil
 }
 
-// Customer
+func AllCustomerValid() bool { return allCustomerValid() }
+
+func allCustomerValid() bool {
+	c := model.Customer
+	if validateName(strings.ToUpper(strings.TrimSpace(c.Name))) != nil {
+		return false
+	}
+	if validateGstin(strings.ToUpper(strings.TrimSpace(c.GSTIN))) != nil {
+		return false
+	}
+	if validateGst(c.GST) != nil {
+		return false
+	}
+	if validateEmail(c.Email) != nil {
+		return false
+	}
+	if validatePhone(c.Phone) != nil {
+		return false
+	}
+	if validateRemark(c.Remark) != nil {
+		return false
+	}
+	if validateShopNo(strings.ToUpper(strings.TrimSpace(c.ShopNo))) != nil {
+		return false
+	}
+	if validateLine(c.Line1, true) != nil {
+		return false
+	}
+	if validateLine(c.Line2, false) != nil {
+		return false
+	}
+	if validateLine(c.Line3, false) != nil {
+		return false
+	}
+	if validateCity(c.City) != nil {
+		return false
+	}
+	if validatePostalCode(c.State, c.PostalCode) != nil {
+		return false
+	}
+	return true
+}
+
+// Customer {
 
 func validateName(name string) error {
 	switch {
@@ -61,8 +104,9 @@ func Name(w http.ResponseWriter, req bunrouter.Request) error {
 
 	name := strings.ToUpper(strings.TrimSpace(model.Customer.Name))
 	if err := validateName(name); err != nil {
-		signals.HasError, signals.NameError = true, err.Error()
+		signals.NameError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -129,8 +173,9 @@ func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
 
 	gstin := strings.ToUpper(strings.TrimSpace(model.Customer.GSTIN))
 	if err := validateGstin(gstin); err != nil {
-		signals.HasError, signals.GstinError = true, err.Error()
+		signals.GstinError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -155,8 +200,9 @@ func Gst(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validateGst(model.Customer.GST); err != nil {
-		signals.HasError, signals.GstError = true, err.Error()
+		signals.GstError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -182,8 +228,9 @@ func Email(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validateEmail(model.Customer.Email); err != nil {
-		signals.HasError, signals.EmailError = true, err.Error()
+		signals.EmailError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -215,8 +262,9 @@ func Phone(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validatePhone(model.Customer.Phone); err != nil {
-		signals.HasError, signals.PhoneError = true, err.Error()
+		signals.PhoneError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -246,8 +294,9 @@ func Remark(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validateRemark(model.Customer.Remark); err != nil {
-		signals.HasError, signals.RemarkError = true, err.Error()
+		signals.RemarkError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -279,27 +328,26 @@ func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
 
 	shopNo := strings.ToUpper(strings.TrimSpace(model.Customer.ShopNo))
 	if err := validateShopNo(shopNo); err != nil {
-		signals.HasError, signals.ShopNoError = true, err.Error()
+		signals.ShopNoError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
 
-func validateLine(value string) error {
-	required := false
-	if value == "line1" {
-		required = true
-	}
-
+func validateLine(value string, isRequired bool) error {
 	switch {
-	case required && len(value) == 0:
+	case isRequired && len(value) == 0:
 		return errors.New("Required")
 	case len(value) < 3 && !(len(value) == 0):
 		return errors.New("Too short")
 	case len(value) > 100:
 		return errors.New("Must be 100 characters or fewer")
 	}
-	return util.ContainsInvalidChar(value)
+	if err := util.ContainsInvalidChar(value); err != nil && len(value) > 0 {
+		return err
+	}
+	return nil
 }
 
 func Line(w http.ResponseWriter, req bunrouter.Request) error {
@@ -316,22 +364,22 @@ func Line(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	endpoint := path.Base(req.URL.Path)
 	lines := map[string]struct {
-		value    string
-		required bool
-		setError func(string)
+		value      string
+		isRequired bool
+		setError   func(string)
 	}{
 		"line1": {model.Customer.Line1, true, func(e string) { signals.Line1Error = e }},
 		"line2": {model.Customer.Line2, false, func(e string) { signals.Line2Error = e }},
 		"line3": {model.Customer.Line3, false, func(e string) { signals.Line3Error = e }},
 	}
 
+	endpoint := path.Base(req.URL.Path)
 	if line, ok := lines[endpoint]; ok {
-		if err := validateLine(line.value); err != nil {
-			signals.HasError = true
+		if err := validateLine(line.value, line.isRequired); err != nil {
 			line.setError(err.Error())
 		}
+		signals.HasError = allCustomerValid()
 	}
 
 	return patchSignal(w, req, signals)
@@ -364,8 +412,9 @@ func City(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validateCity(model.Customer.City); err != nil {
-		signals.HasError, signals.CityError = true, "Required"
+		signals.CityError = "Required"
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -400,13 +449,41 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validatePostalCode(model.Customer.State, model.Customer.PostalCode); err != nil {
-		signals.HasError, signals.PostalCodeError = true, err.Error()
+		signals.PostalCodeError = err.Error()
 	}
+	signals.HasError = allCustomerValid()
 
 	return patchSignal(w, req, signals)
 }
 
-// Product
+// }
+
+// Product {
+func AllProductValid() bool { return allProductValid() }
+
+func allProductValid() bool {
+	p := model.Product
+	if validatePsn(p.SerialNumber) != nil {
+		return false
+	}
+	if validatePname(p.Name) != nil {
+		return false
+	}
+	if validatePhsn(p.Hsn) != nil {
+		return false
+	}
+	if validatePquan(p.Quantity) != nil {
+		return false
+	}
+	if validatePsp(p.SellPrice) != nil {
+		return false
+	}
+	if validatePdisc(p.Discount) != nil {
+		return false
+	}
+	return true
+}
+
 func validatePsn(sn string) error {
 	switch {
 	case len(sn) == 0:
@@ -428,8 +505,9 @@ func SerialNumber(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validatePsn(model.Product.SerialNumber); err != nil {
-		signals.HasError, signals.SerialNumber = true, err.Error()
+		signals.SerialNumber = err.Error()
 	}
+	signals.HasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -455,8 +533,9 @@ func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validatePname(model.Product.Name); err != nil {
-		signals.HasError, signals.ProductNameNumber = true, err.Error()
+		signals.ProductNameNumber = err.Error()
 	}
+	signals.HasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -486,8 +565,9 @@ func Hsn(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validatePhsn(model.Product.Hsn); err != nil {
-		signals.HasError, signals.HsnNumber = true, err.Error()
+		signals.HsnNumber = err.Error()
 	}
+	signals.HasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -513,8 +593,9 @@ func Quantity(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validatePquan(model.Product.Quantity); err != nil {
-		signals.HasError, signals.QuantityNumber = true, err.Error()
+		signals.QuantityNumber = err.Error()
 	}
+	signals.HasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -539,9 +620,10 @@ func SellPrice(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePsp(model.Product.Price); err != nil {
-		signals.HasError, signals.SellPriceNumber = true, err.Error()
+	if err := validatePsp(model.Product.SellPrice); err != nil {
+		signals.SellPriceNumber = err.Error()
 	}
+	signals.HasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -567,8 +649,11 @@ func Discount(w http.ResponseWriter, req bunrouter.Request) error {
 	signals := &Signals{}
 
 	if err := validatePsp(model.Product.Discount); err != nil {
-		signals.HasError, signals.DiscountNumber = true, err.Error()
+		signals.DiscountNumber = err.Error()
 	}
+	signals.HasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
+
+// }

@@ -75,7 +75,6 @@ func newRouter() *bunrouter.Router {
 			vg.POST("/city", validate.City)
 			vg.POST("/state", validate.State)
 			vg.POST("/postalCode", validate.PostalCode)
-
 			vg.POST("/serialNumber", validate.SerialNumber)
 			vg.POST("/productName", validate.ProductName)
 			vg.POST("/hsn", validate.Hsn)
@@ -125,7 +124,10 @@ func newRouter() *bunrouter.Router {
 			return nil
 		})
 
-		fg.POST("/product", func(w http.ResponseWriter, req bunrouter.Request) error {
+	})
+
+	router.WithGroup("/product", func(pg *bunrouter.Group) {
+		pg.POST("/add", func(w http.ResponseWriter, req bunrouter.Request) error {
 			productInput := &model.ProductInfo{}
 			if err := datastar.ReadSignals(req.Request, productInput); err != nil {
 				logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", productInput, err.Error()))
@@ -154,7 +156,7 @@ func newRouter() *bunrouter.Router {
 			return nil
 		})
 
-		fg.DELETE("/product/:id", func(w http.ResponseWriter, req bunrouter.Request) error {
+		pg.DELETE("/:id", func(w http.ResponseWriter, req bunrouter.Request) error {
 			id, err := strconv.Atoi(req.Param("id"))
 			if err != nil {
 				logger.Logger.Error("Failed to convert param id to int")

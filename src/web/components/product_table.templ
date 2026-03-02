@@ -6,19 +6,19 @@ import (
 	"strconv"
 )
 
-templ ProductRow(index int, product model.Product) {
+templ ProductRow(index int, product model.ProductInfo) {
 	<tr class="group hover:bg-base-content/5">
 		<th class="group-hover:bg-[#252020]">{ strconv.Itoa(index) }</th>
-		<td class="w-12">{ product.Serial }</td>
+		<td class="w-12">{ product.SerialNumber }</td>
 		<td>{ product.Name }</td>
 		<td>{ product.Hsn }</td>
 		<td>{ strconv.Itoa(int(product.Quantity)) }</td>
-		<td>{ fmt.Sprintf("%.2f", product.Price) }</td>
+		<td>{ fmt.Sprintf("%.2f", product.SellPrice) }</td>
 		<td>{ fmt.Sprintf("%.2f", product.Discount) }</td>
 		<th class="group-hover:bg-[#252020]">
 			<button
 				class="btn bg-base-100 hover:bg-red-500/75 p-0 w-8 h-8 lg:w-12 lg:h-12"
-				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/form/product/%d")`, index) }
+				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/product/%d")`, index) }
 			>
 				<img src="static/images/trash.svg" class="w-4 h-4 lg:w-6 lg:h-6"/>
 			</button>

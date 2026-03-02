@@ -37,7 +37,7 @@ templ Index(title string) {
             </div>
 
 			<section id="party-info" class="w-full mb-12">
-				<form data-on:submit="@post('/form/submit', {contentType: 'form'})" method="POST">
+				<form data-on:submit="@post('/form/submit', {contentType: 'form'})" method="POST" >
 
 					<div id="customer-info" class="w-full mb-4 flex-col sm:flex-row flex gap-4">
                         <fieldset id="left" class="w-full min-w-0">
@@ -80,17 +80,19 @@ templ Index(title string) {
                         <button
                             type="submit"
                             class="grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
-                            data-attr:disabled="$hasError"
+                            data-attr:disabled="!$hasError"
                             disabled
                         >
                             Generate Invoice
                         </button>
                         <button
-                            class="grow-2 btn btn-primary btn-lg disabled:cursor-not-allowed"
-                            data-on:click="@post('/form/product')"
+                            class="grow-2 btn btn-primary btn-lg brightness-200 disabled:cursor-not-allowed"
+                            type="button"
+                            data-on:click="@post('/product/add')"
                             data-target="#products-list"
                             data-swap="innerHTML"
-                            type="button"
+                            data-attr:disabled="!$hasError"
+                            disabled
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                                 <path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/>
