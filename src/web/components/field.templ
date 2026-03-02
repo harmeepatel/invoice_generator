@@ -21,7 +21,7 @@ func getAutocompleteToken(inputName string) string {
 
 templ Field(conf FieldConfig) {
 	{{ errorSignal := "$" + conf.Name + "Error" }}
-	<div class="fieldset min-w-0 pb-2">
+	<div class="fieldset min-w-0 pb-3">
 		<label
 			class="py-0 fieldset-label text-xl text-gray-300 font-light flex justify-between items-end mb-1"
 			for={ conf.Name }
@@ -38,7 +38,7 @@ templ Field(conf FieldConfig) {
             ></span>
 		</label>
 		switch conf.Type {
-			case " select":
+			case "select":
 				<select
 					id={ conf.Name }
 					name={ conf.Name }
@@ -46,7 +46,7 @@ templ Field(conf FieldConfig) {
 					autocomplete="address-level1"
 					data-type="input"
 					data-bind={ conf.Name }
-					data-on:change="@post('/form/validate/postalCode')"
+					data-on:change="@post('/invoice/validate/postalCode')"
 				>
 					for _, state := range util.StateNames {
 						<option selected?={ state=="Gujarat" } value={ state }>{ state }</option>
@@ -76,7 +76,7 @@ templ Field(conf FieldConfig) {
 						autocomplete="tel-national"
 						data-type="input"
 						data-bind={ conf.Name }
-						data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')",
+						data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%v')",
             conf.Name) }
 					/>
 				</div>
@@ -90,7 +90,7 @@ templ Field(conf FieldConfig) {
 					autocomplete={ getAutocompleteToken(conf.Name) }
 					data-type="input"
 					data-bind={ conf.Name }
-					data-on:keyup={ fmt.Sprintf("@post('/form/validate/%v')", conf.Name) }
+					data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {signals: {%[1]v: $%[1]v}})", conf.Name) }
 				/>
 		}
 	</div>

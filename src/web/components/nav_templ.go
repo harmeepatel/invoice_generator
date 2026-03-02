@@ -29,7 +29,7 @@ func Nav() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" class=\"navbar mb-4 shadow-lg bg-base-100/40 backdrop-blur-lg sticky px-0 top-0 z-50\"><div class=\"max-w-7xl m-auto w-full px-4 2xl:px-0 flex justify-between \"><div><a class=\"text-xl\" href=\"/\"><div tabindex=\"0\" class=\"avatar\"><img src=\"/static/images/logo.svg\" class=\"w-10\"></div></a></div><input id=\"search\" type=\"text\" placeholder=\"Search\" class=\"input input-bordered max-w-1/2\"></div></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" class=\"navbar mb-4 shadow-lg bg-base-100/40 backdrop-blur-lg sticky px-0 top-0 z-50\"><div class=\"max-w-7xl m-auto w-full px-4 2xl:px-0 flex items-center justify-between \"><div><a class=\"text-xl\" href=\"/\"><div tabindex=\"0\" class=\"avatar\"><img src=\"/static/images/logo.svg\" class=\"w-10\"></div></a></div><input id=\"search\" type=\"text\" placeholder=\"Search\" class=\"input input-bordered max-w-1/2\"><ul class=\"menu menu-horizontal px-1\"><li><a href=\"/product\">Products</a></li></ul></div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

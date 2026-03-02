@@ -60,7 +60,7 @@ func newRouter() *bunrouter.Router {
 		return nil
 	})
 
-	router.WithGroup("/form", func(fg *bunrouter.Group) {
+	router.WithGroup("/invoice", func(fg *bunrouter.Group) {
 		fg.WithGroup("/validate", func(vg *bunrouter.Group) {
 			vg.POST("/name", validate.Name)
 			vg.POST("/gstin", validate.Gstin)
@@ -124,65 +124,66 @@ func newRouter() *bunrouter.Router {
 			return nil
 		})
 
-	})
+		router.WithGroup("/product", func(pg *bunrouter.Group) {
+			pg.POST("/add", func(w http.ResponseWriter, req bunrouter.Request) error {
+				productInput := &model.ProductInfo{}
+				if err := datastar.ReadSignals(req.Request, productInput); err != nil {
+					logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", productInput, err.Error()))
+					return err
+				}
 
-	router.WithGroup("/product", func(pg *bunrouter.Group) {
-		pg.POST("/add", func(w http.ResponseWriter, req bunrouter.Request) error {
-			productInput := &model.ProductInfo{}
-			if err := datastar.ReadSignals(req.Request, productInput); err != nil {
-				logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", productInput, err.Error()))
-				return err
-			}
+				model.Customer.Products = append(model.Customer.Products, *productInput)
 
-			model.Customer.Products = append(model.Customer.Products, *productInput)
+				newIndex := len(model.Customer.Products)
+				var buf bytes.Buffer
+				if err := component.ProductRow(newIndex, *productInput).Render(req.Context(), &buf); err != nil {
+					return err
+				}
 
-			newIndex := len(model.Customer.Products)
-			var buf bytes.Buffer
-			if err := component.ProductRow(newIndex, *productInput).Render(req.Context(), &buf); err != nil {
-				return err
-			}
+				sse := datastar.NewSSE(w, req.Request)
+				sse.PatchElements(buf.String(),
+					datastar.WithSelector("#product-tbody"),
+					datastar.WithMode("append"),
+				)
 
-			sse := datastar.NewSSE(w, req.Request)
-			sse.PatchElements(buf.String(),
-				datastar.WithSelector("#product-tbody"),
-				datastar.WithMode("append"),
-			)
+				if err := sse.MarshalAndPatchSignals(productInput); err != nil {
+					logger.Logger.Error(fmt.Sprintf("Failed to MarshalAndPatchSignals %+v with error: %+v", productInput, err.Error()))
+					return err
+				}
 
-			if err := sse.MarshalAndPatchSignals(productInput); err != nil {
-				logger.Logger.Error(fmt.Sprintf("Failed to MarshalAndPatchSignals %+v with error: %+v", productInput, err.Error()))
-				return err
-			}
+				return nil
+			})
 
-			return nil
+			pg.DELETE("/:id", func(w http.ResponseWriter, req bunrouter.Request) error {
+				id, err := strconv.Atoi(req.Param("id"))
+				if err != nil {
+					logger.Logger.Error("Failed to convert param id to int")
+				}
+				id = id - 1
+
+				model.Customer.Products = slices.Delete(model.Customer.Products, id, id+1)
+
+				var buf bytes.Buffer
+				if err := component.ProductBody().Render(req.Context(), &buf); err != nil {
+					return err
+				}
+
+				sse := datastar.NewSSE(w, req.Request)
+				sse.PatchElements(buf.String(),
+					datastar.WithSelector("#product-tbody"),
+					datastar.WithMode("replace"),
+				)
+
+				if err := sse.MarshalAndPatchSignals(model.Customer.Products); err != nil {
+					logger.Logger.Error(fmt.Sprintf("Failed to MarshalAndPatchSignals %+v with error: %+v", model.Customer.Products, err.Error()))
+					return err
+				}
+
+				return nil
+			})
+
 		})
 
-		pg.DELETE("/:id", func(w http.ResponseWriter, req bunrouter.Request) error {
-			id, err := strconv.Atoi(req.Param("id"))
-			if err != nil {
-				logger.Logger.Error("Failed to convert param id to int")
-			}
-			id = id - 1
-
-			model.Customer.Products = slices.Delete(model.Customer.Products, id, id+1)
-
-			var buf bytes.Buffer
-			if err := component.ProductBody().Render(req.Context(), &buf); err != nil {
-				return err
-			}
-
-			sse := datastar.NewSSE(w, req.Request)
-			sse.PatchElements(buf.String(),
-				datastar.WithSelector("#product-tbody"),
-				datastar.WithMode("replace"),
-			)
-
-			if err := sse.MarshalAndPatchSignals(model.Customer.Products); err != nil {
-				logger.Logger.Error(fmt.Sprintf("Failed to MarshalAndPatchSignals %+v with error: %+v", model.Customer.Products, err.Error()))
-				return err
-			}
-
-			return nil
-		})
 	})
 
 	return router

@@ -2,7 +2,9 @@ package main
 
 import (
 	"ae_invoice/src/logger"
+	"ae_invoice/src/util"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
@@ -19,9 +21,12 @@ func init() {
 	logger.SetupLogger()
 	log := logger.Logger
 
+	flag.BoolVar(&util.IsDev, "is-dev", true, "Bool: production level [DEV, PROD]")
+	flag.Parse()
+
 	staticDir := "src/web/static"
 
-	// pass 1
+	// pass 1 - delete compressed files if last modified time is > 1sec
 	log.Info(fmt.Sprintf("Pass 1 @ %v", staticDir))
 	filepath.WalkDir(staticDir, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
@@ -47,7 +52,7 @@ func init() {
 		return nil
 	})
 
-	// pass 2
+	// pass 2 - only after removing stale files, recompress them
 	log.Info(fmt.Sprintf("Pass 2 @ %v", staticDir))
 	filepath.WalkDir(staticDir, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {

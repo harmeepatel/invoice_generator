@@ -499,15 +499,15 @@ func SerialNumber(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 
 	type Signals = struct {
-		HasError     bool   `json:"hasError"`
-		SerialNumber string `json:"serialNumberError"`
+		ProductHasError bool   `json:"productHasError"`
+		SerialNumber    string `json:"serialNumberError"`
 	}
 	signals := &Signals{}
 
 	if err := validatePsn(model.Product.SerialNumber); err != nil {
 		signals.SerialNumber = err.Error()
 	}
-	signals.HasError = allProductValid()
+	signals.ProductHasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -527,7 +527,7 @@ func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 
 	type Signals = struct {
-		HasError          bool   `json:"hasError"`
+		ProductHasError   bool   `json:"productHasError"`
 		ProductNameNumber string `json:"productNameError"`
 	}
 	signals := &Signals{}
@@ -535,7 +535,7 @@ func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePname(model.Product.Name); err != nil {
 		signals.ProductNameNumber = err.Error()
 	}
-	signals.HasError = allProductValid()
+	signals.ProductHasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -559,15 +559,15 @@ func Hsn(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 
 	type Signals = struct {
-		HasError  bool   `json:"hasError"`
-		HsnNumber string `json:"hsnError"`
+		ProductHasError bool   `json:"productHasError"`
+		HsnNumber       string `json:"hsnError"`
 	}
 	signals := &Signals{}
 
 	if err := validatePhsn(model.Product.Hsn); err != nil {
 		signals.HsnNumber = err.Error()
 	}
-	signals.HasError = allProductValid()
+	signals.ProductHasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -587,15 +587,15 @@ func Quantity(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 
 	type Signals = struct {
-		HasError       bool   `json:"hasError"`
-		QuantityNumber string `json:"quantityError"`
+		ProductHasError bool   `json:"productHasError"`
+		QuantityNumber  string `json:"quantityError"`
 	}
 	signals := &Signals{}
 
 	if err := validatePquan(model.Product.Quantity); err != nil {
 		signals.QuantityNumber = err.Error()
 	}
-	signals.HasError = allProductValid()
+	signals.ProductHasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
@@ -615,7 +615,7 @@ func SellPrice(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 
 	type Signals = struct {
-		HasError        bool   `json:"hasError"`
+		ProductHasError bool   `json:"productHasError"`
 		SellPriceNumber string `json:"sellPriceError"`
 	}
 	signals := &Signals{}
@@ -623,14 +623,14 @@ func SellPrice(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := validatePsp(model.Product.SellPrice); err != nil {
 		signals.SellPriceNumber = err.Error()
 	}
-	signals.HasError = allProductValid()
+	signals.ProductHasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }
 
 func validatePdisc(discount float32) error {
 	switch {
-	case discount < 0 || discount > 100:
+	case discount < -0.1 || discount > 100.0:
 		return errors.New("Invalid")
 	}
 	return nil
@@ -643,15 +643,15 @@ func Discount(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 
 	type Signals = struct {
-		HasError       bool   `json:"hasError"`
-		DiscountNumber string `json:"discountError"`
+		ProductHasError bool   `json:"productHasError"`
+		DiscountNumber  string `json:"discountError"`
 	}
 	signals := &Signals{}
 
-	if err := validatePsp(model.Product.Discount); err != nil {
+	if err := validatePdisc(model.Product.Discount); err != nil {
 		signals.DiscountNumber = err.Error()
 	}
-	signals.HasError = allProductValid()
+	signals.ProductHasError = allProductValid()
 
 	return patchSignal(w, req, signals)
 }

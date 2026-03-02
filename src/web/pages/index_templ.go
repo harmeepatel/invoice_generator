@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"ae_invoice/src/util"
 	component "ae_invoice/src/web/components"
 	layout "ae_invoice/src/web/layouts"
 )
@@ -40,6 +41,38 @@ func tableHeader() templ.Component {
 		}
 		return nil
 	})
+}
+
+var businessDetails = [2][]component.FieldConfig{
+	{
+		{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"},
+		{Type: "text", Name: "gstin", PlaceHolder: "24ABCPM1234L1Z5", Legend: "GSTIN"},
+		{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST"},
+		{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)"},
+		{Type: "tel", Name: "phone", PlaceHolder: "11111 99999", Legend: "Phone"},
+		{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)"},
+	},
+	{
+		{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No"},
+		{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1"},
+		{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2 (Optional)"},
+		{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3 (Optional)"},
+		{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City"},
+		{Type: "select", Name: "state", PlaceHolder: "Gujarat", Legend: "State"},
+		{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"},
+	},
+}
+var productDetails = [2][]component.FieldConfig{
+	{
+		{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial #"},
+		{Type: "text", Name: "productName", PlaceHolder: "Bib Cock", Legend: "Name"},
+		{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"},
+	},
+	{
+		{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"},
+		{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"},
+		{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"},
+	},
 }
 
 func Index(title string) templ.Component {
@@ -75,99 +108,63 @@ func Index(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span id=\"tmp\"></span><main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto mb-4 px-4 2xl:px-0\"><div class=\"flex items-center justify-between\"><h1 class=\"text-4xl\">Party Information</h1><label class=\"label text-sm\"><input type=\"checkbox\" checked=\"checked\" class=\"checkbox\" disabled> Use same as Billing Address</label></div><section id=\"party-info\" class=\"w-full mb-12\"><form data-on:submit=\"@post('/form/submit', {contentType: 'form'})\" method=\"POST\"><div id=\"customer-info\" class=\"w-full mb-4 flex-col sm:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Business Details</legend>")
+			if util.IsDev {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<script>\n    function clearLocalStorage() {\n        console.log(\"localStorage cleared\")\n        localStorage.clear()\n    }\n</script>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " <span id=\"tmp\"></span><main role=\"main\" id=\"main\" class=\"max-w-7xl m-auto mb-4 px-4 2xl:px-0\"><div class=\"flex items-center justify-between sm:mb-4\"><h1 class=\"text-4xl\">Party Information</h1>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"}).Render(ctx, templ_7745c5c3_Buffer)
+			if util.IsDev {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button class=\"btn btn-accent\" onclick=\"clearLocalStorage()\">clear local storage</button>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><section id=\"party-info\" class=\"w-full mb-12\"><form data-on:submit=\"@post('/invoice/submit', {contentType: 'form'})\" method=\"POST\"><div id=\"customer-info\" class=\"w-full mb-6 sm:mb-3 flex-col sm:flex-row flex gap-4\"><fieldset id=\"left\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-light text-sm\">Business Details</legend> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "gstin", PlaceHolder: "24ABCPM1234L1Z5", Legend: "GSTIN"}).Render(ctx, templ_7745c5c3_Buffer)
+			for _, field := range businessDetails[0] {
+				templ_7745c5c3_Err = component.Field(field).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</fieldset><fieldset id=\"right\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-light text-sm\">Billing Address</legend> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST"}).Render(ctx, templ_7745c5c3_Buffer)
+			for _, field := range businessDetails[1] {
+				templ_7745c5c3_Err = component.Field(field).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</fieldset></div><fieldset id=\"product-info\" class=\"flex md:gap-2 flex-col md:flex-row\"><legend class=\"fieldset-legend font-light text-sm\">Product Details</legend><div class=\"flex gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
+			for _, field := range productDetails[0] {
+				templ_7745c5c3_Err = component.Field(field).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div class=\"flex gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "tel", Name: "phone", PlaceHolder: "11111 99999", Legend: "Phone"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+			for _, field := range productDetails[1] {
+				templ_7745c5c3_Err = component.Field(field).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</fieldset><fieldset id=\"right\" class=\"w-full min-w-0\"><legend class=\"fieldset-legend font-extralight opacity-75\">Billing Address</legend>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2 (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3 (Optional)"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "select", Name: "state", PlaceHolder: "Gujarat", Legend: "State"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</fieldset></div><fieldset id=\"product-info\" class=\"flex md:gap-2 flex-col md:flex-row\"><legend class=\"fieldset-legend font-extralight opacity-75\">Product Details</legend><div class=\"flex gap-2\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial #"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "productName", PlaceHolder: "Bib Cock", Legend: "Name"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div class=\"flex gap-2\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = component.Field(component.FieldConfig{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"!$hasError\" disabled>Generate Invoice</button> <button class=\"grow-2 btn btn-primary btn-lg brightness-200 disabled:cursor-not-allowed\" type=\"button\" data-on:click=\"@post('/product/add')\" data-target=\"#products-list\" data-swap=\"innerHTML\" data-attr:disabled=\"!$hasError\" disabled><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto max-h-[640px] lg:max-h-[1024px]\"><table class=\"table table-pin-rows table-pin-cols text-balance\"><thead class=\"text-lg font-light\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></fieldset><div class=\"flex w-full gap-2 mt-4\"><button type=\"submit\" class=\"grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed\" data-attr:disabled=\"!$hasError\" disabled>Generate Invoice</button> <button class=\"grow-2 btn btn-primary btn-lg brightness-200 disabled:cursor-not-allowed\" type=\"button\" data-on:click=\"@post('/product/add')\" data-target=\"#products-list\" data-swap=\"innerHTML\" data-attr:disabled=\"!$productHasError\" disabled><svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#e3e3e3\"><path d=\"M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z\"></path></svg></button></div></form></section><section id=\"product-list\" class=\"overflow-x-auto max-h-[640px] lg:max-h-[1024px]\"><table class=\"table table-pin-rows table-pin-cols text-balance\"><thead class=\"text-lg font-light\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -175,7 +172,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</thead>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</thead>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -183,7 +180,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<tfoot class=\"text-lg font-light\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<tfoot class=\"text-lg font-light\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -191,7 +188,7 @@ func Index(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</tfoot></table></section></main>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</tfoot></table></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

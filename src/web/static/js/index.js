@@ -11,4 +11,3 @@ for (let elem of fieldset) {
     })
 }
 console.log(localStorage)
-

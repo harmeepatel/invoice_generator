@@ -1,120 +1,151 @@
 package page;
 
 import (
+	"ae_invoice/src/util"
 	component "ae_invoice/src/web/components"
 	layout "ae_invoice/src/web/layouts"
 )
 
 templ tableHeader() {
-    <tr>
-        <th>#</th>
-        <td>Serial #</td>
-        <td>Name</td>
-        <td>HSN</td>
-        <td>Quantity</td>
-        <td>Price ₹</td>
-        <td>Discount</td>
-        <th>
+	<tr>
+		<th>#</th>
+		<td>Serial #</td>
+		<td>Name</td>
+		<td>HSN</td>
+		<td>Quantity</td>
+		<td>Price ₹</td>
+		<td>Discount</td>
+		<th>
 			<button class="btn p-0 w-8 h-8 lg:w-12 lg:h-12" disabled="disabled">
 				<img src="static/images/trash.svg" class="w-4 h-4 lg:w-6 lg:h-6"/>
 			</button>
-        </th>
-    </tr>
+		</th>
+	</tr>
+}
+
+var businessDetails = [2][]component.FieldConfig{
+	{
+		{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"},
+		{Type: "text", Name: "gstin", PlaceHolder: "24ABCPM1234L1Z5", Legend: "GSTIN"},
+		{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST"},
+		{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)"},
+		{Type: "tel", Name: "phone", PlaceHolder: "11111 99999", Legend: "Phone"},
+		{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)"},
+	},
+	{
+		{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No"},
+		{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1"},
+		{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2 (Optional)"},
+		{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3 (Optional)"},
+		{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City"},
+		{Type: "select", Name: "state", PlaceHolder: "Gujarat", Legend: "State"},
+		{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"},
+	},
+}
+var productDetails = [2][]component.FieldConfig{
+	{
+		{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial #"},
+		{Type: "text", Name: "productName", PlaceHolder: "Bib Cock", Legend: "Name"},
+		{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"},
+	},
+	{
+		{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"},
+		{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"},
+		{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"},
+	},
 }
 
 templ Index(title string) {
 	@layout.Base(title) {
-        <span id="tmp"></span>
+		if (util.IsDev) {
+			<script>
+    function clearLocalStorage() {
+        console.log("localStorage cleared")
+        localStorage.clear()
+    }
+</script>
+		}
+		<span id="tmp"></span>
 		<main role="main" id="main" class="max-w-7xl m-auto mb-4 px-4 2xl:px-0">
-            <div class="flex items-center justify-between">
-                <h1 class="text-4xl">
-                    Party Information
-                </h1>
-                <label class="label text-sm">
-                    <input type="checkbox" checked="checked" class="checkbox" disabled />
-                    Use same as Billing Address
-                </label>
-            </div>
-
+			<div class="flex items-center justify-between sm:mb-4">
+				<h1 class="text-4xl">
+					Party Information
+				</h1>
+				if (util.IsDev) {
+					<button class="btn btn-accent" onclick="clearLocalStorage()">clear local storage</button>
+				}
+			</div>
 			<section id="party-info" class="w-full mb-12">
-				<form data-on:submit="@post('/form/submit', {contentType: 'form'})" method="POST" >
-
-					<div id="customer-info" class="w-full mb-4 flex-col sm:flex-row flex gap-4">
-                        <fieldset id="left" class="w-full min-w-0">
-                            <legend class="fieldset-legend font-extralight opacity-75">Business Details</legend>
-                            @component.Field(component.FieldConfig{Type: "text", Name: "name", PlaceHolder: "Rohit Patel", Legend: "Name"})
-                            @component.Field(component.FieldConfig{Type: "text", Name: "gstin", PlaceHolder:"24ABCPM1234L1Z5", Legend: "GSTIN"})
-                            @component.Field(component.FieldConfig{Type: "number", Name: "gst", PlaceHolder: "5.0", Legend: "GST"})
-                            @component.Field(component.FieldConfig{Type: "email", Name: "email", PlaceHolder: "abc@xyz.com", Legend: "Email (Optional)"})
-                            @component.Field(component.FieldConfig{Type: "tel", Name: "phone", PlaceHolder: "11111 99999", Legend: "Phone"})
-                            @component.Field(component.FieldConfig{Type: "text", Name: "remark", PlaceHolder: "XYZ Missing in this order", Legend: "Remark (Optional)"})
-                        </fieldset>
-
-                        <fieldset id="right" class="w-full min-w-0">
-                            <legend class="fieldset-legend font-extralight opacity-75">Billing Address</legend>
-							@component.Field(component.FieldConfig{Type: "text", Name: "shopNo", PlaceHolder: "A123", Legend: "Shop No"})
-							@component.Field(component.FieldConfig{Type: "text", Name: "line1", PlaceHolder: "Complex / Plaza", Legend: "Line 1"})
-							@component.Field(component.FieldConfig{Type: "text", Name: "line2", PlaceHolder: "Landmark", Legend: "Line 2 (Optional)"})
-							@component.Field(component.FieldConfig{Type: "text", Name: "line3", PlaceHolder: "Street Name", Legend: "Line 3 (Optional)"})
-							@component.Field(component.FieldConfig{Type: "text", Name: "city", PlaceHolder: "Ahmedabad", Legend: "City"})
-							@component.Field(component.FieldConfig{Type: "select", Name: "state", PlaceHolder: "Gujarat", Legend: "State"})
-							@component.Field(component.FieldConfig{Type: "number", Name: "postalCode", PlaceHolder: "382424", Legend: "Postal Code"})
-                        </fieldset>
+				<form data-on:submit="@post('/invoice/submit', {contentType: 'form'})" method="POST">
+					<div id="customer-info" class="w-full mb-6 sm:mb-3 flex-col sm:flex-row flex gap-4">
+						<fieldset id="left" class="w-full min-w-0">
+							<legend class="fieldset-legend font-light text-sm">Business Details</legend>
+							for _, field := range businessDetails[0] {
+								@component.Field(field)
+							}
+						</fieldset>
+						<fieldset id="right" class="w-full min-w-0">
+							<legend class="fieldset-legend font-light text-sm">Billing Address</legend>
+							for _, field := range businessDetails[1] {
+								@component.Field(field)
+							}
+						</fieldset>
 					</div>
-
-                    <fieldset id="product-info" class="flex md:gap-2 flex-col md:flex-row">
-                        <legend class="fieldset-legend font-extralight opacity-75">Product Details</legend>
-                        <div class="flex gap-2">
-                            @component.Field(component.FieldConfig{Type: "text", Name: "serialNumber", PlaceHolder: "A1B2C3", Legend: "Serial #"})
-                            @component.Field(component.FieldConfig{Type: "text", Name: "productName", PlaceHolder: "Bib Cock", Legend: "Name"})
-                            @component.Field(component.FieldConfig{Type: "text", Name: "hsn", PlaceHolder: "123456", Legend: "HSN"})
-                        </div>
-                        <div class="flex gap-2">
-                            @component.Field(component.FieldConfig{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"})
-                            @component.Field(component.FieldConfig{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"})
-                            @component.Field(component.FieldConfig{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"})
-                        </div>
-                    </fieldset>
-
-                    <div class="flex w-full gap-2 mt-4">
-                        <button
-                            type="submit"
-                            class="grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
-                            data-attr:disabled="!$hasError"
-                            disabled
-                        >
-                            Generate Invoice
-                        </button>
-                        <button
-                            class="grow-2 btn btn-primary btn-lg brightness-200 disabled:cursor-not-allowed"
-                            type="button"
-                            data-on:click="@post('/product/add')"
-                            data-target="#products-list"
-                            data-swap="innerHTML"
-                            data-attr:disabled="!$hasError"
-                            disabled
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                                <path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/>
-                            </svg>
-                        </button>
-                    </div>
+					<fieldset id="product-info" class="flex md:gap-2 flex-col md:flex-row">
+						<legend class="fieldset-legend font-light text-sm">Product Details</legend>
+						<div class="flex gap-2">
+							for _, field := range productDetails[0] {
+								@component.Field(field)
+							}
+						</div>
+						<div class="flex gap-2">
+							for _, field := range productDetails[1] {
+								@component.Field(field)
+							}
+						</div>
+					</fieldset>
+					<div class="flex w-full gap-2 mt-4">
+						<button
+							type="submit"
+							class="grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
+							data-attr:disabled="!$hasError"
+							disabled
+						>
+							Generate Invoice
+						</button>
+						<button
+							class="grow-2 btn btn-primary btn-lg brightness-200 disabled:cursor-not-allowed"
+							type="button"
+							data-on:click="@post('/product/add')"
+							data-target="#products-list"
+							data-swap="innerHTML"
+							data-attr:disabled="!$productHasError"
+							disabled
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								height="24px"
+								viewBox="0 -960 960 960"
+								width="24px"
+								fill="#e3e3e3"
+							>
+								<path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"></path>
+							</svg>
+						</button>
+					</div>
 				</form>
 			</section>
-
-            <section id="product-list" class="overflow-x-auto max-h-[640px] lg:max-h-[1024px]">
-                <table class="table table-pin-rows table-pin-cols text-balance">
-                    <thead class="text-lg font-light">
-                        @tableHeader()
-                    </thead>
-                    @component.ProductBody()
-                    <tfoot class="text-lg font-light">
-                        @tableHeader()
-                    </tfoot>
-                </table>
-            </section>
+			<section id="product-list" class="overflow-x-auto max-h-[640px] lg:max-h-[1024px]">
+				<table class="table table-pin-rows table-pin-cols text-balance">
+					<thead class="text-lg font-light">
+						@tableHeader()
+					</thead>
+					@component.ProductBody()
+					<tfoot class="text-lg font-light">
+						@tableHeader()
+					</tfoot>
+				</table>
+			</section>
 		</main>
 	}
 }
-
-

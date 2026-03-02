@@ -36,7 +36,7 @@
 }
 
 @theme {
-    --font-sans: "RobotoMono", sans-serif;
+    --font-sans: "RobotoMono", monospace;
 
     --text-xs: calc(var(--text-sm) / var(--ratio)) !important;
     --text-sm: calc(var(--text-base) / var(--ratio)) !important;
