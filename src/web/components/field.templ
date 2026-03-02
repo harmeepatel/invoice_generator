@@ -91,7 +91,7 @@ templ Field(conf FieldConfig) {
 					autocomplete={ getAutocompleteToken(conf.Name) }
 					data-type="input"
 					data-bind={ conf.Name }
-					data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /%[1]v/}})", conf.Name) }
+					data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /(?:%[1]v|state)/}})", conf.Name) }
                     data-class:error={ fmt.Sprintf("%v != ''", errorSignal) }
 				/>
 		}

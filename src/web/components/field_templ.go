@@ -469,9 +469,9 @@ func Field(conf FieldConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /%[1]v/}})", conf.Name))
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /(?:%[1]v|state)/}})", conf.Name))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/components/field.templ`, Line: 94, Col: 116}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/components/field.templ`, Line: 94, Col: 126}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {

@@ -1,6 +1,7 @@
 package layout;
 
 import "ae_invoice/src/web/components"
+import "ae_invoice/src/util"
 
 templ Base(title string) {
 	<!DOCTYPE html>
@@ -12,7 +13,11 @@ templ Base(title string) {
 			<meta name="description" content="Protfolio website with my resume and some useful blogs."/>
 			<link rel="stylesheet" href="/static/css/index.css"/>
 			<script type="module" src="/static/js/datastar.js"></script>
-			<script type="module" src="/static/js/index.js"></script>
+			if (util.IsDev) {
+				<script type="module" src="/static/js/DEV_index.js"></script>
+			} else {
+				<script type="module" src="/static/js/index.js"></script>
+			}
 			<title>{ title }</title>
 		</head>
 		<body>

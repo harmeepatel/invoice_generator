@@ -1,9 +1,8 @@
 // DESC: retain form info on refresh
 
-const fieldset = document.getElementsByClassName("fieldset")
+const inputs = document.querySelectorAll(`[data-type="input"]`)
 
-for (let elem of fieldset) {
-    const input = elem.querySelector(`[data-type="input"]`)
+for (let input of inputs) {
     input.value = localStorage.getItem(input.name) || input.value
 
     input.addEventListener("input", () => {

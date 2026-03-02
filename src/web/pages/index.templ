@@ -76,7 +76,7 @@ templ Index(title string) {
 				}
 			</div>
 			<section id="party-info" class="w-full mb-12">
-				<form data-on:submit="@post('/invoice/submit', {contentType: 'form'})" method="POST">
+				<form data-on:submit="@post('/invoice/submit', {contentType: 'form'})" data-init="@get('/invoice/validate/all', {contentType: 'form'})">
 					<div id="customer-info" class="w-full mb-6 sm:mb-3 flex-col sm:flex-row flex gap-4">
 						<fieldset id="left" class="w-full min-w-0">
 							<legend class="fieldset-legend font-light text-sm">Business Details</legend>
@@ -114,7 +114,7 @@ templ Index(title string) {
 							Generate Invoice
 						</button>
 						<button
-							class="grow-2 btn btn-primary btn-lg brightness-200 disabled:cursor-not-allowed"
+							class="grow-2 btn btn-primary btn-lg brightness-300 disabled:cursor-not-allowed"
 							type="button"
 							data-on:click="@post('/product/add')"
 							data-target="#products-list"

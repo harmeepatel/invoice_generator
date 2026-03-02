@@ -38,39 +38,51 @@ func AllCustomerValid() bool { return allCustomerValid() }
 func allCustomerValid() bool {
 	c := model.Customer
 	if validateName(strings.ToUpper(strings.TrimSpace(c.Name))) != nil {
+		// fmt.Println("name")
 		return false
 	}
 	if validateGstin(strings.ToUpper(strings.TrimSpace(c.GSTIN))) != nil {
+		// fmt.Println("gstin")
 		return false
 	}
 	if validateGst(c.GST) != nil {
+		// fmt.Println("gst")
 		return false
 	}
 	if validateEmail(c.Email) != nil {
+		// fmt.Println("email")
 		return false
 	}
 	if validatePhone(c.Phone) != nil {
+		// fmt.Println("phone")
 		return false
 	}
 	if validateRemark(c.Remark) != nil {
+		// fmt.Println("remark")
 		return false
 	}
 	if validateShopNo(strings.ToUpper(strings.TrimSpace(c.ShopNo))) != nil {
+		// fmt.Println("shopno")
 		return false
 	}
 	if validateLine(c.Line1, true) != nil {
+		// fmt.Println("line1")
 		return false
 	}
 	if validateLine(c.Line2, false) != nil {
+		// fmt.Println("line2")
 		return false
 	}
 	if validateLine(c.Line3, false) != nil {
+		// fmt.Println("line3")
 		return false
 	}
 	if validateCity(c.City) != nil {
+		// fmt.Println("city")
 		return false
 	}
 	if validatePostalCode(c.State, c.PostalCode) != nil {
+		// fmt.Println("postalcode")
 		return false
 	}
 	return true

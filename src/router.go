@@ -81,12 +81,68 @@ func newRouter() *bunrouter.Router {
 			vg.POST("/quantity", validate.Quantity)
 			vg.POST("/sellPrice", validate.SellPrice)
 			vg.POST("/discount", validate.Discount)
+
+			vg.GET("/all", func(w http.ResponseWriter, req bunrouter.Request) error {
+				err := req.ParseForm()
+				if err != nil {
+					logger.Logger.Error("Failed to parse form on /invoice/validate/all")
+					return err
+				}
+
+				gst, _ := strconv.ParseFloat(req.Form.Get("gst"), 32)
+				postalCode, _ := strconv.ParseUint(req.Form.Get("postalCode"), 10, 64)
+				model.Customer = &model.CustomerInfo{
+					Name:       req.Form.Get("name"),
+					GSTIN:      req.Form.Get("gstin"),
+					GST:        float32(gst),
+					Email:      req.Form.Get("email"),
+					Phone:      req.Form.Get("phone"),
+					PhoneExt:   req.Form.Get("phoneExt"),
+					Remark:     req.Form.Get("remark"),
+					ShopNo:     req.Form.Get("shopNo"),
+					Line1:      req.Form.Get("line1"),
+					Line2:      req.Form.Get("line2"),
+					Line3:      req.Form.Get("line3"),
+					City:       req.Form.Get("city"),
+					State:      req.Form.Get("state"),
+					PostalCode: uint(postalCode),
+				}
+
+				qty, _ := strconv.Atoi(req.Form.Get("quantity"))
+				sellPrice, _ := strconv.ParseFloat(req.Form.Get("sellPrice"), 32)
+				discount, _ := strconv.ParseFloat(req.Form.Get("discount"), 32)
+				model.Product = &model.ProductInfo{
+					Quantity:     qty,
+					SellPrice:    float32(sellPrice),
+					Discount:     float32(discount),
+					SerialNumber: req.Form.Get("serialNumber"),
+					Name:         req.Form.Get("productName"),
+					Hsn:          req.Form.Get("hsn"),
+				}
+
+				type Signals struct {
+					HasError        bool `json:"hasError"`
+					ProductHasError bool `json:"productHasError"`
+				}
+				signals := &Signals{}
+
+				signals.HasError = !validate.AllCustomerValid()
+				signals.ProductHasError = !validate.AllProductValid()
+
+				sse := datastar.NewSSE(w, req.Request)
+				if err := sse.MarshalAndPatchSignals(signals); err != nil {
+					logger.Logger.Error(fmt.Sprintf("Failed to Marshal %+v with error: %+v", signals, err.Error()))
+					return err
+				}
+				return nil
+
+			})
 		})
 
 		fg.POST("/submit", func(w http.ResponseWriter, req bunrouter.Request) error {
 			err := req.ParseForm()
 			if err != nil {
-				logger.Logger.Error("Failed to parse form on /validate/submit")
+				logger.Logger.Error("Failed to parse form on /invoice/submit")
 				return err
 			}
 
