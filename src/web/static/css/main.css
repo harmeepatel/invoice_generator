@@ -17,6 +17,20 @@
     font-stretch: 20% 200%;
 }
 
+@font-face {
+    font-family: "Cascadia";
+    src: url("../fonts/Cascadia.ttf") format("woff2");
+    font-weight: 50 1000;
+    font-stretch: 20% 200%;
+}
+
+@font-face {
+    font-family: "Motterdam";
+    src: url("../fonts/Motterdam.ttf") format("woff2");
+    font-weight: 50 1000;
+    font-stretch: 20% 200%;
+}
+
 :root {
     --ratio: 1.24
 }
@@ -37,6 +51,8 @@
 
 @theme {
     --font-sans: "RobotoMono", monospace;
+    --font-cascadia: "Cascadia", monospace;
+    --font-motterdam: "Motterdam", monospace;
 
     --text-xs: calc(var(--text-sm) / var(--ratio)) !important;
     --text-sm: calc(var(--text-base) / var(--ratio)) !important;
@@ -65,10 +81,6 @@
         &:hover {
             background-color: color-mix(in oklch, var(--color-primary) 64%, white) !important;
         }
-    }
-
-    .fieldset-label {
-        color: #e6e6e6 !important;
     }
 
     .table :where(th, td) {

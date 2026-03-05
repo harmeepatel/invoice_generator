@@ -35,7 +35,7 @@ for (let input of inputs) {
         case "quantity":
             input.value = 1
             break
-        case "sellPrice":
+        case "rate":
             input.value = 1
             break
         case "phoneExt":

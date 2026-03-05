@@ -35,7 +35,7 @@ func tableHeader() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<tr><th>#</th><td>Serial #</td><td>Name</td><td>HSN</td><td>Quantity</td><td>Price ₹</td><td>Discount</td><th><button class=\"btn p-0 w-8 h-8 lg:w-12 lg:h-12\" disabled=\"disabled\"><img src=\"static/images/trash.svg\" class=\"w-4 h-4 lg:w-6 lg:h-6\"></button></th></tr>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<tr><th>#</th><td>Serial #</td><td>Name</td><td>HSN</td><td>Quantity</td><td>₹ Rate</td><td>Discount</td><th><button class=\"btn p-0 w-8 h-8 lg:w-12 lg:h-12\" disabled=\"disabled\"><img src=\"static/images/trash.svg\" class=\"w-4 h-4 lg:w-6 lg:h-6\"></button></th></tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +70,7 @@ var productDetails = [2][]component.FieldConfig{
 	},
 	{
 		{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"},
-		{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"},
+		{Type: "number", Name: "rate", PlaceHolder: "256", Legend: "₹ Rate"},
 		{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"},
 	},
 }

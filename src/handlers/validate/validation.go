@@ -483,7 +483,7 @@ func allProductValid() bool {
 	if validatePquan(p.Quantity) != nil {
 		return false
 	}
-	if validatePsp(p.SellPrice) != nil {
+	if validatePsp(p.Rate) != nil {
 		return false
 	}
 	if validatePdisc(p.Discount) != nil {
@@ -616,7 +616,7 @@ func validatePsp(price float32) error {
 	return nil
 }
 
-func SellPrice(w http.ResponseWriter, req bunrouter.Request) error {
+func Rate(w http.ResponseWriter, req bunrouter.Request) error {
 	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
 		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
 		return err
@@ -624,12 +624,12 @@ func SellPrice(w http.ResponseWriter, req bunrouter.Request) error {
 
 	type Signals = struct {
 		ProductHasError bool   `json:"productHasError"`
-		SellPriceNumber string `json:"sellPriceError"`
+		RateNumber      string `json:"rateError"`
 	}
 	signals := &Signals{}
 
-	if err := validatePsp(model.Product.SellPrice); err != nil {
-		signals.SellPriceNumber = err.Error()
+	if err := validatePsp(model.Product.Rate); err != nil {
+		signals.RateNumber = err.Error()
 	}
 	signals.ProductHasError = !allProductValid()
 

@@ -1,11 +1,8 @@
 package layout;
 
-import "ae_invoice/src/web/components"
-import "ae_invoice/src/util"
-
-templ Base(title string) {
+templ InvoiceBase(title string) {
 	<!DOCTYPE html>
-	<html id="main-html" lang="en" data-theme="dark" class="scroll-smooth">
+	<html id="main-html" lang="en" class="scroll-smooth bg-neutral-200 print:bg-white">
 		<head>
 			<meta charset="utf-8"/>
 			<link rel="icon" href="/static/images/achal-logo-in-bw.svg"/>
@@ -13,15 +10,22 @@ templ Base(title string) {
 			<meta name="description" content="Protfolio website with my resume and some useful blogs."/>
 			<link rel="stylesheet" href="/static/css/index.css"/>
 			<script type="module" src="/static/js/datastar.js"></script>
-			if (util.IsDev) {
-				<script type="module" src="/static/js/DEV_index.js"></script>
-			} else {
-				<script type="module" src="/static/js/index.js"></script>
-			}
 			<title>{ title }</title>
+			<style>
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
 		</head>
-		<body>
-			@component.Nav()
+		<body class="m-0 p-8 print:p-0">
 			{ children... }
 		</body>
 	</html>

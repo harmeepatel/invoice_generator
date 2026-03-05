@@ -13,7 +13,7 @@ templ ProductRow(index int, product model.ProductInfo) {
 		<td>{ product.Name }</td>
 		<td>{ product.Hsn }</td>
 		<td>{ strconv.Itoa(int(product.Quantity)) }</td>
-		<td>{ fmt.Sprintf("%.2f", product.SellPrice) }</td>
+		<td>{ fmt.Sprintf("%.2f", product.Rate) }</td>
 		<td>{ fmt.Sprintf("%.2f", product.Discount) }</td>
 		<th class="group-hover:bg-[#252020]">
 			<button

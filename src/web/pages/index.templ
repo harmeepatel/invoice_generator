@@ -13,7 +13,7 @@ templ tableHeader() {
 		<td>Name</td>
 		<td>HSN</td>
 		<td>Quantity</td>
-		<td>Price ₹</td>
+		<td>₹ Rate</td>
 		<td>Discount</td>
 		<th>
 			<button class="btn p-0 w-8 h-8 lg:w-12 lg:h-12" disabled="disabled">
@@ -50,7 +50,7 @@ var productDetails = [2][]component.FieldConfig{
 	},
 	{
 		{Type: "number", Name: "quantity", PlaceHolder: "4", Legend: "Quantity"},
-		{Type: "number", Name: "sellPrice", PlaceHolder: "256", Legend: "Price ₹"},
+		{Type: "number", Name: "rate", PlaceHolder: "256", Legend: "₹ Rate"},
 		{Type: "number", Name: "discount", PlaceHolder: "5", Legend: "Discount"},
 	},
 }
@@ -76,7 +76,10 @@ templ Index(title string) {
 				}
 			</div>
 			<section id="party-info" class="w-full mb-12">
-				<form data-on:submit="@post('/invoice/submit', {contentType: 'form'})" data-init="@get('/invoice/validate/all', {contentType: 'form'})">
+				<form
+					data-on:submit="@post('/invoice/submit', {contentType: 'form'})"
+					data-init="@get('/invoice/validate/all', {contentType: 'form'})"
+				>
 					<div id="customer-info" class="w-full mb-6 sm:mb-3 flex-col sm:flex-row flex gap-4">
 						<fieldset id="left" class="w-full min-w-0">
 							<legend class="fieldset-legend font-light text-sm">Business Details</legend>

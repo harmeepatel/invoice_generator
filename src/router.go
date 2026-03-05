@@ -59,17 +59,17 @@ func newRouter() *bunrouter.Router {
 	))
 
 	router.GET("/", func(w http.ResponseWriter, req bunrouter.Request) error {
-		w.Header().Set("Cache-Control", "public, max-age=60")
+		w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", 24*int(time.Hour)))
 		templ.Handler(page.Index("Invoice")).ServeHTTP(w, req.Request)
 		return nil
 	})
 
 	router.WithGroup("/invoice", func(fg *bunrouter.Group) {
+
 		if util.IsDev {
 			fg.GET("/", func(w http.ResponseWriter, req bunrouter.Request) error {
-				fs := http.FS(webFS)
-				file, _ := fs.Open("web/invoice.html")
-				http.ServeContent(w, req.Request, "invoice.html", time.Now(), file)
+				w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", 24*int(time.Hour)))
+				templ.Handler(page.Invoice("AE Invoice")).ServeHTTP(w, req.Request)
 				return nil
 			})
 		}
@@ -92,7 +92,7 @@ func newRouter() *bunrouter.Router {
 			vg.POST("/productName", validate.ProductName)
 			vg.POST("/hsn", validate.Hsn)
 			vg.POST("/quantity", validate.Quantity)
-			vg.POST("/sellPrice", validate.SellPrice)
+			vg.POST("/rate", validate.Rate)
 			vg.POST("/discount", validate.Discount)
 
 			vg.GET("/all", func(w http.ResponseWriter, req bunrouter.Request) error {
@@ -122,11 +122,11 @@ func newRouter() *bunrouter.Router {
 				}
 
 				qty, _ := strconv.Atoi(req.Form.Get("quantity"))
-				sellPrice, _ := strconv.ParseFloat(req.Form.Get("sellPrice"), 32)
+				rate, _ := strconv.ParseFloat(req.Form.Get("rate"), 32)
 				discount, _ := strconv.ParseFloat(req.Form.Get("discount"), 32)
 				model.Product = &model.ProductInfo{
 					Quantity:     qty,
-					SellPrice:    float32(sellPrice),
+					Rate:    float32(rate),
 					Discount:     float32(discount),
 					SerialNumber: req.Form.Get("serialNumber"),
 					Name:         req.Form.Get("productName"),
