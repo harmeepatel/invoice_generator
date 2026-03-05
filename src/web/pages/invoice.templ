@@ -28,10 +28,10 @@ templ header() {
 		field := "text-sm flex justify-between items-center " + fieldGap
 		infoContainer := "flex flex-col justify-between p-4 rounded-xl"
 	}}
-	<header class="flex flex-col text-justify justify-between gap-4">
+	<header class="flex flex-col text-justify justify-between gap-4 mb-6">
 		<div class={ "grow flex items-center justify-between " + fieldGap }>
 			<h1 class="font-motterdam pt-[23px] pl-[9px] pr-[5px] text-6xl">Invoice</h1>
-			<div class="w-fit flex flex-col justify-between p-4 rounded-xl border border-primary/30">
+			<div class="w-fit flex flex-col justify-between rounded-xl">
 				<p class={ field + " " + "font-bold" }><span class={ label }>Invoice No.:</span>123456</p>
 				<p class={ field }><span class={ label }>Date:</span>{ time.Now().Format("02-01-2006") }</p>
 				<p class={ field }>
@@ -39,9 +39,9 @@ templ header() {
 				</p>
 				<p class={ field }><span class={ label }>Remark:</span>Transporter</p>
 			</div>
-			<img src="/static/images/flogo.svg" class="w-16"/>
+			<img src="/static/images/flogo.svg" class="w-24"/>
 		</div>
-		<div class="flex">
+		<div class={ "flex " + fieldGap }>
 			<div class={ infoContainer + " bg-[#f1f1f1]" }>
 				<div class="flex justify-between">
 					<h2 class={ h2 }>to:</h2>
@@ -64,13 +64,22 @@ templ header() {
 					<div class={ company }>Achal Enterprise</div>
 				</div>
 				<div>
-					<p class={ field + " " + "font-bold" }><span class={ label }>Name:</span>Rohit Patel</p>
-					<p class={ field }><span class={ label }>GSTIN:</span>24ABCDE1234F1Z5</p>
-					<p class={ field }><span class={ label }>Email:</span>abc@xyz.com</p>
-					<p class={ field }><span class={ label }>Phone:</span>+91 95588 90077</p>
+					<p class={ field + " " + "font-bold" }><span class={ label }>Name:</span></p>
+					<p class={ field }><span class={ label }>GSTIN:</span>24AAZPP2696Q1ZE</p>
+					<p class={ field }><span class={ label }>Email:</span>achalenterprise@yahoo.com</p>
+					<p class={ field }>
+						<span class={ label }>Phone:</span>
+						+91 95588 90077
+						<br/>
+						+91 70963 04530
+					</p>
 					<p class={ "text-sm flex justify-between " + fieldGap }>
 						<span class={ label + " pt-0.5" }>Address:</span>
-						Shop No, Area, Road, City, State - 123456
+						G.F.-40, Chanakya Plaza, Nr.Swagat-3,
+						<br/>
+						New C.G. Road, Chandkheda, Ahmedabad,
+						<br/>
+						GUJARAT - 382424,
 					</p>
 				</div>
 			</div>
