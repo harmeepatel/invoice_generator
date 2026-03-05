@@ -127,16 +127,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"><h1 class=\"font-motterdam pt-[23px] pl-[9px] pr-[5px] text-6xl\">Invoice</h1><div class=\"w-fit flex flex-col justify-between rounded-xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 = []any{field + " " + "font-bold"}
+		var templ_7745c5c3_Var6 = []any{"flex items-center " + fieldGap}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -149,16 +149,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><img src=\" /static/images/flogo.svg\" class=\"w-24\"><h1 class=\"font-motterdam pt-[30px] pl-[11px] pr-1.5 text-7xl print:p-0 print:pt-[17px]\">Invoice</h1></div><div class=\"w-[180px] flex flex-col justify-between rounded-xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 = []any{label}
+		var templ_7745c5c3_Var8 = []any{field + " " + "font-bold"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -171,16 +171,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">Invoice No.:</span>123456</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 = []any{field}
+		var templ_7745c5c3_Var10 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -193,16 +193,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">Invoice No.:</span>123456</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 = []any{label}
+		var templ_7745c5c3_Var12 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -215,51 +215,51 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">Date:</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("02-01-2006"))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 36, Col: 90}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		var templ_7745c5c3_Var14 = []any{label}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 = []any{field}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var14).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\">Date:</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var15).String())
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("02-01-2006"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 39, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var17 = []any{label}
+		var templ_7745c5c3_Var17 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var17...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -272,51 +272,51 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\">Due Date:</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().AddDate(0, 0, 15).Format("02-01-2006"))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 38, Col: 94}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+		var templ_7745c5c3_Var19 = []any{label}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var19...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var20 = []any{field}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var20...)
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var19).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\">Due Date:</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var21 string
-		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var20).String())
+		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().AddDate(0, 0, 15).Format("02-01-2006"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 41, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var22 = []any{label}
+		var templ_7745c5c3_Var22 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var22...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -329,16 +329,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\">Remark:</span>Transporter</p></div><img src=\"/static/images/flogo.svg\" class=\"w-24\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var24 = []any{"flex " + fieldGap}
+		var templ_7745c5c3_Var24 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var24...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -351,11 +351,11 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\">Remark:</span>Transporter</p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var26 = []any{infoContainer + " bg-[#f1f1f1]"}
+		var templ_7745c5c3_Var26 = []any{"flex " + fieldGap}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -373,16 +373,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"><div class=\"flex justify-between\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var28 = []any{h2}
+		var templ_7745c5c3_Var28 = []any{infoContainer + " bg-[#f1f1f1]"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var28...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<h2 class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -395,16 +395,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\">to:</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\"><div class=\"flex justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var30 = []any{company}
+		var templ_7745c5c3_Var30 = []any{h2}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var30...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<h2 class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -417,16 +417,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\">XYZ Company</div></div><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\">to:</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var32 = []any{field + " " + "font-bold"}
+		var templ_7745c5c3_Var32 = []any{company}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var32...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -439,16 +439,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\">XYZ Company</div></div><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var34 = []any{label}
+		var templ_7745c5c3_Var34 = []any{field + " " + "font-bold"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var34...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -461,16 +461,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\">Name:</span>Jane Doe</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var36 = []any{field}
+		var templ_7745c5c3_Var36 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var36...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -483,16 +483,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\">Name:</span>Jane Doe</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var38 = []any{label}
+		var templ_7745c5c3_Var38 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var38...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -505,16 +505,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\">GSTIN:</span>24ABCDE1234F1Z5</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var40 = []any{field}
+		var templ_7745c5c3_Var40 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var40...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -527,16 +527,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "\">GSTIN:</span>24ABCDE1234F1Z5</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var42 = []any{label}
+		var templ_7745c5c3_Var42 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var42...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -549,16 +549,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\">Email:</span>abc@xyz.com</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var44 = []any{field}
+		var templ_7745c5c3_Var44 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var44...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -571,16 +571,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\">Email:</span>abc@xyz.com</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var46 = []any{label}
+		var templ_7745c5c3_Var46 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var46...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -593,16 +593,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\">Phone:</span>+91 95588 90077</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var48 = []any{"text-sm flex justify-between " + fieldGap}
+		var templ_7745c5c3_Var48 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var48...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -615,16 +615,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "\">Phone:</span>+91 95588 90077</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var50 = []any{label + " pt-0.5"}
+		var templ_7745c5c3_Var50 = []any{"text-sm flex justify-between " + fieldGap}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var50...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -637,16 +637,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "\">Address:</span> Shop No, Area, Road, City, State - 123456</p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var52 = []any{infoContainer + " border border-primary/30"}
+		var templ_7745c5c3_Var52 = []any{label + " pt-0.5"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var52...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -659,16 +659,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\"><div class=\"flex justify-between\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\">Address:</span> Shop No, Area, Road, City, State - 123456</p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var54 = []any{h2}
+		var templ_7745c5c3_Var54 = []any{infoContainer + " border border-primary/30"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var54...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<h2 class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -681,16 +681,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "\">From:</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "\"><div class=\"flex justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var56 = []any{company}
+		var templ_7745c5c3_Var56 = []any{h2}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var56...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<h2 class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -703,16 +703,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\">Achal Enterprise</div></div><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\">From:</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var58 = []any{field + " " + "font-bold"}
+		var templ_7745c5c3_Var58 = []any{company}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var58...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -725,16 +725,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\">Achal Enterprise</div></div><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var60 = []any{label}
+		var templ_7745c5c3_Var60 = []any{field + " " + "font-bold"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var60...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -747,16 +747,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "\">Name:</span></p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var62 = []any{field}
+		var templ_7745c5c3_Var62 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var62...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -769,16 +769,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\">Name:</span></p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var64 = []any{label}
+		var templ_7745c5c3_Var64 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var64...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -791,16 +791,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "\">GSTIN:</span>24AAZPP2696Q1ZE</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var66 = []any{field}
+		var templ_7745c5c3_Var66 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var66...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -813,16 +813,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "\">GSTIN:</span>24AAZPP2696Q1ZE</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var68 = []any{label}
+		var templ_7745c5c3_Var68 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var68...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -835,16 +835,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "\">Email:</span>achalenterprise@yahoo.com</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var70 = []any{field}
+		var templ_7745c5c3_Var70 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var70...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -857,16 +857,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "\">Email:</span>achalenterprise@yahoo.com</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var72 = []any{label}
+		var templ_7745c5c3_Var72 = []any{field}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var72...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -879,16 +879,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "\">Phone:</span> +91 95588 90077<br>+91 70963 04530</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var74 = []any{"text-sm flex justify-between " + fieldGap}
+		var templ_7745c5c3_Var74 = []any{label}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var74...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "<p class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -901,16 +901,16 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "\">Phone:</span> +91 95588 90077<br>+91 70963 04530</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var76 = []any{label + " pt-0.5"}
+		var templ_7745c5c3_Var76 = []any{"text-sm flex justify-between " + fieldGap}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var76...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<p class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -923,7 +923,29 @@ func header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "\">Address:</span> G.F.-40, Chanakya Plaza, Nr.Swagat-3,<br>New C.G. Road, Chandkheda, Ahmedabad,<br>GUJARAT - 382424,</p></div></div></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var78 = []any{label + " pt-0.5"}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var78...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "<span class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var79 string
+		templ_7745c5c3_Var79, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var78).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `src/web/pages/invoice.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var79))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "\">Address:</span> G.F.-40, Chanakya Plaza, Nr.Swagat-3,<br>New C.G. Road, Chandkheda, Ahmedabad,<br>GUJARAT - 382424,</p></div></div></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -947,12 +969,12 @@ func footer() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var78 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var78 == nil {
-			templ_7745c5c3_Var78 = templ.NopComponent
+		templ_7745c5c3_Var80 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var80 == nil {
+			templ_7745c5c3_Var80 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-neutral-100\"><div class=\"space-y-6\"><div><h3 class=\"text-xs font-semibold uppercase text-neutral-400 mb-3\">Terms & Conditions</h3><ol class=\"text-[10px] text-neutral-500 list-none\"><li class=\"flex gap-2\"><span class=\"\">1.</span> <span>We are not responsible for breakage color & size variation.</span></li><li class=\"flex gap-2\"><span class=\"\">2.</span> <span>Responsibility ceases after delivery from our shop.</span></li><li class=\"flex gap-2\"><span class=\"\">3.</span> <span>24% interest on delayed payments beyond 15 days.</span></li><li class=\"flex gap-2\"><span class=\"\">4.</span> <span>Goods once sold will not be taken back.</span></li><li class=\"flex gap-2\"><span class=\"\">5.</span> <span>Subject to Gandhinagar Jurisdiction only.</span></li></ol></div><div class=\"bg-neutral-50 p-4 rounded-lg border border-neutral-100 text-xs\"><h3 class=\"text-xs font-semibold uppercase text-neutral-400 mb-2\">Bank Details</h3><p>Bank: ICICI Bank Ltd.</p><p>Branch: New C.G. Road, Chandkheda</p><p>A/c: 062505500142</p><p>IFSC: ICIC0000625</p></div></div><div class=\"space-y-3 text-sm\"><div class=\"flex justify-between\"><span>Sub Total</span><span>45,350.00</span></div><div class=\"flex justify-between\"><span>CGST</span><span>4,081.50</span></div><div class=\"flex justify-between\"><span>SGST</span><span>4,081.50</span></div><div class=\"flex justify-between font-bold border-t border-neutral-100 pt-2\"><span>Total Tax</span><span>8,163.00</span></div><div class=\"flex justify-between bg-blue-50 p-4 rounded-lg mt-4 border border-blue-100\"><span class=\"text-lg font-display font-bold text-blue-600\">Grand Total</span> <span class=\"text-2xl font-display font-bold text-blue-600\">₹53,513.00</span></div><div class=\"text-right pt-10\"><p class=\"text-[10px] text-neutral-400 uppercase  mb-12\">Authorised Signature</p><p class=\"font-bold border-t-2 border-neutral-900 pt-2 inline-block px-4\">ACHAL ENTERPRISE</p></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-neutral-100\"><div class=\"space-y-6\"><div><h3 class=\"text-xs font-semibold uppercase text-neutral-400 mb-3\">Terms & Conditions</h3><ol class=\"text-[10px] text-neutral-500 list-none\"><li class=\"flex gap-2\"><span class=\"\">1.</span> <span>We are not responsible for breakage color & size variation.</span></li><li class=\"flex gap-2\"><span class=\"\">2.</span> <span>Responsibility ceases after delivery from our shop.</span></li><li class=\"flex gap-2\"><span class=\"\">3.</span> <span>24% interest on delayed payments beyond 15 days.</span></li><li class=\"flex gap-2\"><span class=\"\">4.</span> <span>Goods once sold will not be taken back.</span></li><li class=\"flex gap-2\"><span class=\"\">5.</span> <span>Subject to Gandhinagar Jurisdiction only.</span></li></ol></div><div class=\"bg-neutral-50 p-4 rounded-lg border border-neutral-100 text-xs\"><h3 class=\"text-xs font-semibold uppercase text-neutral-400 mb-2\">Bank Details</h3><p>Bank: ICICI Bank Ltd.</p><p>Branch: New C.G. Road, Chandkheda</p><p>A/c: 062505500142</p><p>IFSC: ICIC0000625</p></div></div><div class=\"space-y-3 text-sm\"><div class=\"flex justify-between\"><span>Sub Total</span><span>45,350.00</span></div><div class=\"flex justify-between\"><span>CGST</span><span>4,081.50</span></div><div class=\"flex justify-between\"><span>SGST</span><span>4,081.50</span></div><div class=\"flex justify-between font-bold border-t border-neutral-100 pt-2\"><span>Total Tax</span><span>8,163.00</span></div><div class=\"flex justify-between bg-blue-50 p-4 rounded-lg mt-4 border border-blue-100\"><span class=\"text-lg font-display font-bold text-blue-600\">Grand Total</span> <span class=\"text-2xl font-display font-bold text-blue-600\">₹53,513.00</span></div><div class=\"text-right pt-10\"><p class=\"text-[10px] text-neutral-400 uppercase  mb-12\">Authorised Signature</p><p class=\"font-bold border-t-2 border-neutral-900 pt-2 inline-block px-4\">ACHAL ENTERPRISE</p></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -976,9 +998,9 @@ func info() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var79 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var79 == nil {
-			templ_7745c5c3_Var79 = templ.NopComponent
+		templ_7745c5c3_Var81 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var81 == nil {
+			templ_7745c5c3_Var81 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		return nil
@@ -1001,12 +1023,12 @@ func table() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var80 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var80 == nil {
-			templ_7745c5c3_Var80 = templ.NopComponent
+		templ_7745c5c3_Var82 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var82 == nil {
+			templ_7745c5c3_Var82 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "<div class=\"overflow-x-auto\"><table class=\"w-full text-sm text-left border-collapse\"><thead><tr class=\"border-y border-neutral-200 bg-neutral-50/50 text-neutral-600\"><th class=\"py-3 px-2 text-center\">Sr.</th><th class=\"py-3 px-4\">Item Name</th><th class=\"py-3 px-2 text-center\">HSN</th><th class=\"py-3 px-2 text-center\">Qty</th><th class=\"py-3 px-2 text-right\">Rate</th><th class=\"py-3 px-2 text-center\">Disc%</th><th class=\"py-3 px-2 text-center\">GST</th><th class=\"py-3 px-4 text-right\">Amount</th></tr></thead> <tbody class=\"divide-y divide-neutral-100\"><tr><td class=\"py-4 px-2 text-center\">1</td><td class=\"py-4 px-4 font-medium\">Premium Ceramic Wall Tiles 300x600mm</td><td class=\"py-4 px-2 text-center\">6907</td><td class=\"py-4 px-2 text-center\">45</td><td class=\"py-4 px-2 text-right\">450.00</td><td class=\"py-4 px-2 text-center\">5%</td><td class=\"py-4 px-2 text-center\">18%</td><td class=\"py-4 px-4 text-right font-semibold\">19,237.50</td></tr><tr><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-4 font-medium\">Digital Vitrified Tiles 600x600mm</td><td class=\"py-4 px-2 text-center\">6907</td><td class=\"py-4 px-2 text-center\">20</td><td class=\"py-4 px-2 text-right\">850.00</td><td class=\"py-4 px-2 text-center\">0%</td><td class=\"py-4 px-2 text-center\">18%</td><td class=\"py-4 px-4 text-right font-semibold\">17,000.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr></tbody></table></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "<div class=\"overflow-x-auto\"><table class=\"w-full text-sm text-left border-collapse\"><thead><tr class=\"border-y border-neutral-200 bg-neutral-50/50 text-neutral-600\"><th class=\"py-3 px-2 text-center\">Sr.</th><th class=\"py-3 px-4\">Item Name</th><th class=\"py-3 px-2 text-center\">HSN</th><th class=\"py-3 px-2 text-center\">Qty</th><th class=\"py-3 px-2 text-right\">Rate</th><th class=\"py-3 px-2 text-center\">Disc%</th><th class=\"py-3 px-2 text-center\">GST</th><th class=\"py-3 px-4 text-right\">Amount</th></tr></thead> <tbody class=\"divide-y divide-neutral-100\"><tr><td class=\"py-4 px-2 text-center\">1</td><td class=\"py-4 px-4 font-medium\">Premium Ceramic Wall Tiles 300x600mm</td><td class=\"py-4 px-2 text-center\">6907</td><td class=\"py-4 px-2 text-center\">45</td><td class=\"py-4 px-2 text-right\">450.00</td><td class=\"py-4 px-2 text-center\">5%</td><td class=\"py-4 px-2 text-center\">18%</td><td class=\"py-4 px-4 text-right font-semibold\">19,237.50</td></tr><tr><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-4 font-medium\">Digital Vitrified Tiles 600x600mm</td><td class=\"py-4 px-2 text-center\">6907</td><td class=\"py-4 px-2 text-center\">20</td><td class=\"py-4 px-2 text-right\">850.00</td><td class=\"py-4 px-2 text-center\">0%</td><td class=\"py-4 px-2 text-center\">18%</td><td class=\"py-4 px-4 text-right font-semibold\">17,000.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr><tr><td class=\"py-4 px-2 text-center\">3</td><td class=\"py-4 px-4 font-medium\">Designer Sanitary Ware - Basin</td><td class=\"py-4 px-2 text-center\">6910</td><td class=\"py-4 px-2 text-center\">2</td><td class=\"py-4 px-2 text-right\">4,500.00</td><td class=\"py-4 px-2 text-center\">10%</td><td class=\"py-4 px-2 text-center\">12%</td><td class=\"py-4 px-4 text-right font-semibold\">8,100.00</td></tr></tbody></table></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

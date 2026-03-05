@@ -30,8 +30,11 @@ templ header() {
 	}}
 	<header class="flex flex-col text-justify justify-between gap-4 mb-6">
 		<div class={ "grow flex items-center justify-between " + fieldGap }>
-			<h1 class="font-motterdam pt-[23px] pl-[9px] pr-[5px] text-6xl">Invoice</h1>
-			<div class="w-fit flex flex-col justify-between rounded-xl">
+			<div class={ "flex items-center " + fieldGap }>
+				<img src=" /static/images/flogo.svg" class="w-24"/>
+				<h1 class="font-motterdam pt-[30px] pl-[11px] pr-1.5 text-7xl print:p-0 print:pt-[17px]">Invoice</h1>
+			</div>
+			<div class="w-[180px] flex flex-col justify-between rounded-xl">
 				<p class={ field + " " + "font-bold" }><span class={ label }>Invoice No.:</span>123456</p>
 				<p class={ field }><span class={ label }>Date:</span>{ time.Now().Format("02-01-2006") }</p>
 				<p class={ field }>
@@ -39,7 +42,6 @@ templ header() {
 				</p>
 				<p class={ field }><span class={ label }>Remark:</span>Transporter</p>
 			</div>
-			<img src="/static/images/flogo.svg" class="w-24"/>
 		</div>
 		<div class={ "flex " + fieldGap }>
 			<div class={ infoContainer + " bg-[#f1f1f1]" }>
