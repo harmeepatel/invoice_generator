@@ -3,16 +3,22 @@ package page
 import "ae_invoice/src/web/layouts"
 import "time"
 
+const gap = "gap-6"
+const h2 = "text-lg font-light uppercase"
 const border = "border border-primary/20"
 const bgBorder = "bg-primary/5" + " " + border
+const infodd = "max-w-7/10"
+const infoCompany = "text-lg text-end font-bold"
+const infoField = "text-sm flex justify-between " + gap
+const infoLabel = "text-xs font-light pt-0.5 opacity-60"
+const infoContainer = "flex flex-col p-4 rounded-xl " + gap
 
 templ Invoice(title string) {
 	@layout.InvoiceBase(title) {
 		<main class="flex justify-center">
 			<div
 				id="main-page"
-				class="p-8 font-cascadia text-black m-auto w-[210mm] min-h-[297mm] bg-white
-                shadow-xl print:p-0 print:shadow-none"
+				class="flex flex-col gap-6 p-8 font-cascadia text-black m-auto w-[210mm] min-h-[297mm] bg-white shadow-xl print:p-0 print:shadow-none"
 			>
 				@header()
 				@info()
@@ -24,128 +30,120 @@ templ Invoice(title string) {
 }
 
 templ header() {
-	{{
-		fieldGap := "gap-6"
-		h2 := "text-lg font-light uppercase"
-		company := "text-lg text-end font-bold"
-		field := "text-sm flex justify-between " + fieldGap
-		label := "text-xs font-light pt-0.5 opacity-60"
-		infoContainer := "flex flex-col p-4 rounded-xl " + fieldGap
-	}}
-	<header class={ "flex flex-col text-justify justify-between mb-6 " + fieldGap }>
-		<div class={ "grow flex items-center justify-between " + fieldGap }>
-			<div class={ "flex items-center " + fieldGap }>
+	<header class={ "flex flex-col text-justify justify-between " + gap }>
+		<div class={ "grow flex items-center justify-between " + gap }>
+			<div class={ "flex items-center " + gap }>
 				<img src="/static/images/flogo.svg" class="w-24" alt="Company logo"/>
 				<h1 class="font-bold text-7xl print:p-0">
 					Invoice
 				</h1>
 			</div>
 			<dl class="w-[180px] flex flex-col justify-between rounded-xl">
-				<div class={ field + " font-bold" }>
-					<dt class={ label }>Invoice No.</dt>
+				<div class={ infoField + " font-bold" }>
+					<dt class={ infoLabel }>Invoice No.</dt>
 					<dd>123456</dd>
 				</div>
-				<div class={ field }>
-					<dt class={ label }>Date</dt>
+				<div class={ infoField }>
+					<dt class={ infoLabel }>Date</dt>
 					<dd>
 						<time datetime={ time.Now().Format("2006-01-02") }>
 							{ time.Now().Format("02-01-2006") }
 						</time>
 					</dd>
 				</div>
-				<div class={ field }>
-					<dt class={ label }>Due Date</dt>
+				<div class={ infoField }>
+					<dt class={ infoLabel }>Due Date</dt>
 					<dd>
 						<time datetime={ time.Now().AddDate(0, 0, 15).Format("2006-01-02") }>
 							{ time.Now().AddDate(0,0,15).Format("02-01-2006") }
 						</time>
 					</dd>
 				</div>
-				<div class={ field }>
-					<dt class={ label }>Remark</dt>
+				<div class={ infoField }>
+					<dt class={ infoLabel }>Remark</dt>
 					<dd>Transporter</dd>
 				</div>
 			</dl>
 		</div>
-		<div class={ "flex " + fieldGap }>
+		<div class={ "flex " + gap }>
 			<section class={ infoContainer + " w-1/2 " + bgBorder }>
 				<header class="flex justify-between items-center">
 					<h2 class={ h2 }>To</h2>
-					<span class={ company }>XYZ Company</span>
+					<span class={ infoCompany }>XYZ Company</span>
 				</header>
-				<address class="not-italic">
+				<div>
 					<dl class="flex flex-col gap-1">
-						<div class={ field + " font-bold" }>
-							<dt class={ label }>Name</dt>
-							<dd>Jane Doe</dd>
+						<div class={ infoField + " font-bold" }>
+							<dt class={ infoLabel }>Name</dt>
+							<dd class={ infodd }>Jane Doe</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>GSTIN</dt>
-							<dd>24ABCDE1234F1Z5</dd>
+						<div class={ infoField }>
+							<dt class={ infoLabel }>GSTIN</dt>
+							<dd class={ infodd }>24ABCDE1234F1Z5</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>Email</dt>
-							<dd>abc@xyz.com</dd>
+						<div class={ infoField }>
+							<dt class={ infoLabel }>Email</dt>
+							<dd class={ infodd }>abc@xyz.com</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>Phone</dt>
-							<dd>
+						<div class={ infoField }>
+							<dt class={ infoLabel }>Phone</dt>
+							<dd class={ infodd }>
 								+91 95588 90077
 								<br/>
 								<br/>
 							</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>Address</dt>
-							<dd>Shop No, Area, Road, City, State - 123456</dd>
-						</div>
+						<address class={ infoField + " " + "not-italic" }>
+							<dt class={ infoLabel }>Address</dt>
+							<dd class={ infodd }>Shop No, Area, Road, City, State - 123456</dd>
+						</address>
 					</dl>
-				</address>
+				</div>
 			</section>
 			<section class={ infoContainer + " w-1/2 " + border }>
 				<header class="flex justify-between items-center">
 					<h2 class={ h2 }>From</h2>
-					<span class={ company }>Achal Enterprise</span>
+					<span class={ infoCompany }>Achal Enterprise</span>
 				</header>
-				<address class="not-italic">
+				<div>
 					<dl class="flex flex-col gap-1">
-						<div class={ field + " font-bold" }>
-							<dt class={ label }>Name</dt>
-							<dd>Rohit Patel</dd>
+						<div class={ infoField + " font-bold" }>
+							<dt class={ infoLabel }>Name</dt>
+							<dd class={ infodd }>Rohit Patel</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>GSTIN</dt>
-							<dd>24AAZPP2696Q1ZE</dd>
+						<div class={ infoField }>
+							<dt class={ infoLabel }>GSTIN</dt>
+							<dd class={ infodd }>24AAZPP2696Q1ZE</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>Email</dt>
-							<dd>achalenterprise@yahoo.com</dd>
+						<div class={ infoField }>
+							<dt class={ infoLabel }>Email</dt>
+							<dd class={ infodd }>achalenterprise@yahoo.com</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>Phone</dt>
-							<dd>
+						<div class={ infoField }>
+							<dt class={ infoLabel }>Phone</dt>
+							<dd class={ infodd }>
 								+91 95588 90077
 								<br/>
 								+91 70963 04530
 							</dd>
 						</div>
-						<div class={ field }>
-							<dt class={ label }>Address</dt>
-							<dd>
+						<address class={ infoField + " " + "not-italic" }>
+							<dt class={ infoLabel }>Address</dt>
+							<dd class={ infodd }>
 								G.F.-40, Chanakya Plaza, Nr.Swagat-3,
 								New C.G. Road, Chandkheda, Ahmedabad,
 								GUJARAT - 382424
 							</dd>
-						</div>
+						</address>
 					</dl>
-				</address>
+				</div>
 			</section>
 		</div>
 	</header>
 }
 
 templ footer() {
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-neutral-100">
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
 		<div class="space-y-6">
 			<div>
 				<h3 class="text-xs font-semibold uppercase text-neutral-400 mb-3">Terms & Conditions</h3>
@@ -184,7 +182,7 @@ templ footer() {
 			<div class="flex justify-between"><span>Sub Total</span><span>45,350.00</span></div>
 			<div class="flex justify-between"><span>CGST</span><span>4,081.50</span></div>
 			<div class="flex justify-between"><span>SGST</span><span>4,081.50</span></div>
-			<div class="flex justify-between font-bold border-t border-neutral-100 pt-2">
+			<div class="flex justify-between font-bold border-t pt-2">
 				<span>
 					Total
 					Tax
