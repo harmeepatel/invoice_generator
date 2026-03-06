@@ -3,12 +3,16 @@ package page
 import "ae_invoice/src/web/layouts"
 import "time"
 
+const border = "border border-primary/20"
+const bgBorder = "bg-primary/5" + " " + border
+
 templ Invoice(title string) {
 	@layout.InvoiceBase(title) {
 		<main class="flex justify-center">
 			<div
 				id="main-page"
-				class="p-8 font-cascadia text-black m-auto w-[210mm] min-h-[297mm] bg-white shadow-xl print:shadow-none"
+				class="p-8 font-cascadia text-black m-auto w-[210mm] min-h-[297mm] bg-white
+                shadow-xl print:p-0 print:shadow-none"
 			>
 				@header()
 				@info()
@@ -22,69 +26,120 @@ templ Invoice(title string) {
 templ header() {
 	{{
 		fieldGap := "gap-6"
-		h2 := "text-sm font-light uppercase"
-		company := "text-lg text-end mb-4"
-		label := "text-xs font-light opacity-60"
-		field := "text-sm flex justify-between items-center " + fieldGap
-		infoContainer := "flex flex-col justify-between p-4 rounded-xl"
+		h2 := "text-lg font-light uppercase"
+		company := "text-lg text-end font-bold"
+		field := "text-sm flex justify-between " + fieldGap
+		label := "text-xs font-light pt-0.5 opacity-60"
+		infoContainer := "flex flex-col p-4 rounded-xl " + fieldGap
 	}}
-	<header class="flex flex-col text-justify justify-between gap-4 mb-6">
+	<header class={ "flex flex-col text-justify justify-between mb-6 " + fieldGap }>
 		<div class={ "grow flex items-center justify-between " + fieldGap }>
 			<div class={ "flex items-center " + fieldGap }>
-				<img src=" /static/images/flogo.svg" class="w-24"/>
-				<h1 class="font-motterdam pt-[30px] pl-[11px] pr-1.5 text-7xl print:p-0 print:pt-[17px]">Invoice</h1>
+				<img src="/static/images/flogo.svg" class="w-24" alt="Company logo"/>
+				<h1 class="font-bold text-7xl print:p-0">
+					Invoice
+				</h1>
 			</div>
-			<div class="w-[180px] flex flex-col justify-between rounded-xl">
-				<p class={ field + " " + "font-bold" }><span class={ label }>Invoice No.:</span>123456</p>
-				<p class={ field }><span class={ label }>Date:</span>{ time.Now().Format("02-01-2006") }</p>
-				<p class={ field }>
-					<span class={ label }>Due Date:</span>{ time.Now().AddDate(0, 0, 15).Format("02-01-2006") }
-				</p>
-				<p class={ field }><span class={ label }>Remark:</span>Transporter</p>
-			</div>
+			<dl class="w-[180px] flex flex-col justify-between rounded-xl">
+				<div class={ field + " font-bold" }>
+					<dt class={ label }>Invoice No.</dt>
+					<dd>123456</dd>
+				</div>
+				<div class={ field }>
+					<dt class={ label }>Date</dt>
+					<dd>
+						<time datetime={ time.Now().Format("2006-01-02") }>
+							{ time.Now().Format("02-01-2006") }
+						</time>
+					</dd>
+				</div>
+				<div class={ field }>
+					<dt class={ label }>Due Date</dt>
+					<dd>
+						<time datetime={ time.Now().AddDate(0, 0, 15).Format("2006-01-02") }>
+							{ time.Now().AddDate(0,0,15).Format("02-01-2006") }
+						</time>
+					</dd>
+				</div>
+				<div class={ field }>
+					<dt class={ label }>Remark</dt>
+					<dd>Transporter</dd>
+				</div>
+			</dl>
 		</div>
 		<div class={ "flex " + fieldGap }>
-			<div class={ infoContainer + " bg-[#f1f1f1]" }>
-				<div class="flex justify-between">
-					<h2 class={ h2 }>to:</h2>
-					<div class={ company }>XYZ Company</div>
-				</div>
-				<div>
-					<p class={ field + " " + "font-bold" }><span class={ label }>Name:</span>Jane Doe</p>
-					<p class={ field }><span class={ label }>GSTIN:</span>24ABCDE1234F1Z5</p>
-					<p class={ field }><span class={ label }>Email:</span>abc@xyz.com</p>
-					<p class={ field }><span class={ label }>Phone:</span>+91 95588 90077</p>
-					<p class={ "text-sm flex justify-between " + fieldGap }>
-						<span class={ label + " pt-0.5" }>Address:</span>
-						Shop No, Area, Road, City, State - 123456
-					</p>
-				</div>
-			</div>
-			<div class={ infoContainer + " border border-primary/30" }>
-				<div class="flex justify-between">
-					<h2 class={ h2 }>From:</h2>
-					<div class={ company }>Achal Enterprise</div>
-				</div>
-				<div>
-					<p class={ field + " " + "font-bold" }><span class={ label }>Name:</span></p>
-					<p class={ field }><span class={ label }>GSTIN:</span>24AAZPP2696Q1ZE</p>
-					<p class={ field }><span class={ label }>Email:</span>achalenterprise@yahoo.com</p>
-					<p class={ field }>
-						<span class={ label }>Phone:</span>
-						+91 95588 90077
-						<br/>
-						+91 70963 04530
-					</p>
-					<p class={ "text-sm flex justify-between " + fieldGap }>
-						<span class={ label + " pt-0.5" }>Address:</span>
-						G.F.-40, Chanakya Plaza, Nr.Swagat-3,
-						<br/>
-						New C.G. Road, Chandkheda, Ahmedabad,
-						<br/>
-						GUJARAT - 382424,
-					</p>
-				</div>
-			</div>
+			<section class={ infoContainer + " w-1/2 " + bgBorder }>
+				<header class="flex justify-between items-center">
+					<h2 class={ h2 }>To</h2>
+					<span class={ company }>XYZ Company</span>
+				</header>
+				<address class="not-italic">
+					<dl class="flex flex-col gap-1">
+						<div class={ field + " font-bold" }>
+							<dt class={ label }>Name</dt>
+							<dd>Jane Doe</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>GSTIN</dt>
+							<dd>24ABCDE1234F1Z5</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>Email</dt>
+							<dd>abc@xyz.com</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>Phone</dt>
+							<dd>
+								+91 95588 90077
+								<br/>
+								<br/>
+							</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>Address</dt>
+							<dd>Shop No, Area, Road, City, State - 123456</dd>
+						</div>
+					</dl>
+				</address>
+			</section>
+			<section class={ infoContainer + " w-1/2 " + border }>
+				<header class="flex justify-between items-center">
+					<h2 class={ h2 }>From</h2>
+					<span class={ company }>Achal Enterprise</span>
+				</header>
+				<address class="not-italic">
+					<dl class="flex flex-col gap-1">
+						<div class={ field + " font-bold" }>
+							<dt class={ label }>Name</dt>
+							<dd>Rohit Patel</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>GSTIN</dt>
+							<dd>24AAZPP2696Q1ZE</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>Email</dt>
+							<dd>achalenterprise@yahoo.com</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>Phone</dt>
+							<dd>
+								+91 95588 90077
+								<br/>
+								+91 70963 04530
+							</dd>
+						</div>
+						<div class={ field }>
+							<dt class={ label }>Address</dt>
+							<dd>
+								G.F.-40, Chanakya Plaza, Nr.Swagat-3,
+								New C.G. Road, Chandkheda, Ahmedabad,
+								GUJARAT - 382424
+							</dd>
+						</div>
+					</dl>
+				</address>
+			</section>
 		</div>
 	</header>
 }
@@ -185,6 +240,106 @@ templ table() {
 					<td class="py-4 px-2 text-center">0%</td>
 					<td class="py-4 px-2 text-center">18%</td>
 					<td class="py-4 px-4 text-right font-semibold">17,000.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
+				</tr>
+				<tr>
+					<td class="py-4 px-2 text-center">3</td>
+					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
+					<td class="py-4 px-2 text-center">6910</td>
+					<td class="py-4 px-2 text-center">2</td>
+					<td class="py-4 px-2 text-right">4,500.00</td>
+					<td class="py-4 px-2 text-center">10%</td>
+					<td class="py-4 px-2 text-center">12%</td>
+					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
 				</tr>
 				<tr>
 					<td class="py-4 px-2 text-center">3</td>

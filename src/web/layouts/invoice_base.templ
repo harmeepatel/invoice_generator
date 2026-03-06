@@ -13,9 +13,15 @@ templ InvoiceBase(title string) {
 			<title>{ title }</title>
 			<style>
         @media print {
+            :root {
+                --text-base: 12px !important;
+                --ratio: 1.18;
+            }
+
             @page {
                 size: A4;
-                margin: 0;
+                margin: 2rem 2.25rem;
+                background-color: white;
             }
 
             * {
