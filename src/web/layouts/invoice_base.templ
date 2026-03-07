@@ -13,9 +13,14 @@ templ InvoiceBase(title string) {
 			<title>{ title }</title>
 			<style>
         @media print {
-            :root {
-                --text-base: 13px !important;
-                --ratio: 1.18;
+            /* :root { */
+            /*     --text-base: 13px !important; */
+            /*     --ratio: 1.18; */
+            /* } */
+
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
 
             @page {
@@ -24,14 +29,15 @@ templ InvoiceBase(title string) {
                 background-color: white;
             }
 
-            * {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+
+            #main-page {
+                min-height: unset !important;
+                padding: 0 !important;
             }
         }
     </style>
 		</head>
-		<body class="m-0 p-8 print:p-0">
+		<body class="p-8 print:p-0">
 			{ children... }
 		</body>
 	</html>

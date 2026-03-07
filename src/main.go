@@ -118,6 +118,6 @@ func (w *brotliResponseWriter) Write(b []byte) (int, error) {
 }
 
 func main() {
-	sid := NewApp()
-	sid.RunApp()
+	aei := NewApp()
+	aei.RunApp()
 }

@@ -41,12 +41,12 @@ func allCustomerValid() bool {
 		// fmt.Println("name")
 		return false
 	}
-	if validateGstin(strings.ToUpper(strings.TrimSpace(c.GSTIN))) != nil {
-		// fmt.Println("gstin")
+	if validateName(strings.ToUpper(strings.TrimSpace(c.CompanyName))) != nil {
+		// fmt.Println("companyName")
 		return false
 	}
-	if validateGst(c.GST) != nil {
-		// fmt.Println("gst")
+	if validateGstin(strings.ToUpper(strings.TrimSpace(c.GSTIN))) != nil {
+		// fmt.Println("gstin")
 		return false
 	}
 	if validateEmail(c.Email) != nil {
@@ -213,33 +213,6 @@ func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
 	return patchSignal(w, req, signals)
 }
 
-func validateGst(gst float32) error {
-	if gst < 0 || gst > 40 {
-		return errors.New("GST must be 0% - 40%")
-	}
-	return nil
-}
-
-func Gst(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
-		return err
-	}
-
-	type Signals = struct {
-		HasError bool   `json:"hasError"`
-		GstError string `json:"gstError"`
-	}
-	signals := &Signals{}
-
-	if err := validateGst(model.Customer.GST); err != nil {
-		signals.GstError = err.Error()
-	}
-	signals.HasError = !allCustomerValid()
-
-	return patchSignal(w, req, signals)
-}
-
 func validateEmail(email string) error {
 	_, err := mail.ParseAddress(email)
 	if len(email) > 0 && err != nil {
@@ -369,6 +342,11 @@ func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
 }
 
 func validateLine(value string, isRequired bool) error {
+	if !isRequired && len(value) == 0 {
+		fmt.Println("asdf")
+		return nil
+	}
+
 	switch {
 	case isRequired && len(value) == 0:
 		return errors.New("Required")
@@ -377,6 +355,7 @@ func validateLine(value string, isRequired bool) error {
 	case len(value) > 100:
 		return errors.New("Must be 100 characters or fewer")
 	}
+
 	if err := util.ContainsInvalidChar(value); err != nil && len(value) > 0 {
 		return err
 	}
@@ -401,13 +380,15 @@ func Line(w http.ResponseWriter, req bunrouter.Request) error {
 	endpoint := path.Base(req.URL.Path)
 	if line, ok := lines[endpoint]; ok {
 		errMsg := ""
-		if err := validateLine(line.value, line.isRequired); err != nil {
+		var err error
+		if err = validateLine(line.value, line.isRequired); err != nil {
 			errMsg = err.Error()
 		}
 		signals := map[string]any{
 			endpoint + "Error": errMsg,
-			"hasError":         allCustomerValid(),
+			"hasError":         !allCustomerValid(),
 		}
+		fmt.Printf("value: %v, error: %+v, signals: %+v\n", line.value, err, signals)
 		return patchSignal(w, req, signals)
 	}
 
@@ -458,6 +439,9 @@ func State(w http.ResponseWriter, req bunrouter.Request) error {
 }
 
 func validatePostalCode(state string, pc uint) error {
+	if pc == 0 {
+		return errors.New("Required")
+	}
 	stateMinPc, stateMaxPc := util.States[state].MinCode, util.States[state].MaxCode
 	if pc < uint(stateMinPc) || pc > uint(stateMaxPc) {
 		return fmt.Errorf("Out of range [%v - %v]", stateMinPc, stateMaxPc)
@@ -499,6 +483,10 @@ func allProductValid() bool {
 		return false
 	}
 	if validatePhsn(p.Hsn) != nil {
+		return false
+	}
+	if validateGst(p.GST) != nil {
+		// fmt.Println("gst")
 		return false
 	}
 	if validatePquan(p.Quantity) != nil {
@@ -569,6 +557,33 @@ func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
 	return patchSignal(w, req, signals)
 }
 
+func validateGst(gst float64) error {
+	if gst < 0 || gst > 40 {
+		return errors.New("GST must be 0% - 40%")
+	}
+	return nil
+}
+
+func Gst(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals = struct {
+		HasError bool   `json:"hasError"`
+		GstError string `json:"gstError"`
+	}
+	signals := &Signals{}
+
+	if err := validateGst(model.Product.GST); err != nil {
+		signals.GstError = err.Error()
+	}
+	signals.HasError = !allCustomerValid()
+
+	return patchSignal(w, req, signals)
+}
+
 func validatePhsn(hsn string) error {
 	switch {
 	case len(hsn) == 0:
@@ -629,7 +644,7 @@ func Quantity(w http.ResponseWriter, req bunrouter.Request) error {
 	return patchSignal(w, req, signals)
 }
 
-func validatePsp(price float32) error {
+func validatePsp(price float64) error {
 	switch {
 	case price <= 0:
 		return errors.New("Invalid")
@@ -657,7 +672,7 @@ func Rate(w http.ResponseWriter, req bunrouter.Request) error {
 	return patchSignal(w, req, signals)
 }
 
-func validatePdisc(discount float32) error {
+func validatePdisc(discount float64) error {
 	switch {
 	case discount < -0.1 || discount > 100.0:
 		return errors.New("Invalid")

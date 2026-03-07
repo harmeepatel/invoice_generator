@@ -33,7 +33,7 @@ for (let input of inputs) {
             input.value = 1222
             break
         case "quantity":
-            input.value = 1
+            input.value = 2
             break
         case "rate":
             input.value = 1
@@ -46,7 +46,7 @@ for (let input of inputs) {
             console.log(input.id, input.value)
             break
         default:
-            input.value = "asdf"
+            input.value = "Aasdf"
             break
     }
 }

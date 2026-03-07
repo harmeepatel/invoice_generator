@@ -3,6 +3,8 @@
 go.sum
 *.pdf
 
+*_templ.go
+
 
 .logs/
 .air/

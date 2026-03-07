@@ -4,7 +4,6 @@ import (
 	"ae_invoice/src/models"
 	"ae_invoice/src/util"
 	"ae_invoice/src/web/layouts"
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -30,14 +29,6 @@ templ Invoice(title string) {
 				id="main-page"
 				class="flex flex-col gap-6 p-8 font-cascadia text-black m-auto w-[210mm] min-h-[297mm] bg-white shadow-xl print:p-0 print:shadow-none"
 			>
-				if util.IsDev {
-					<pre>
-						<code lang="json">
-							{{ a, _ := json.MarshalIndent(model.Customer, "", " ") }}
-							{ fmt.Sprintf("%+v\n", string(a)) }
-						</code>
-					</pre>
-				}
 				@header()
 				@table()
 				@footer()
@@ -47,6 +38,11 @@ templ Invoice(title string) {
 }
 
 templ header() {
+	{{
+		today := time.Now()
+		todayf := today.Format("02-01-2006")
+		dueDatef := today.AddDate(0, 0, 15).Format("2006-01-02")
+	}}
 	<header class={ "flex flex-col text-justify justify-between" , gap }>
 		<div class={ "grow flex items-center justify-between" , gap }>
 			<div class={ "flex items-center" , gap }>
@@ -63,22 +59,26 @@ templ header() {
 				<div class={ infoField }>
 					<dt class={ infoLabel }>Date</dt>
 					<dd>
-						<time datetime={ time.Now().Format("2006-01-02") }>
-							{ time.Now().Format("02-01-2006") }
+						<time datetime={ todayf }>
+							{ todayf }
 						</time>
 					</dd>
 				</div>
 				<div class={ infoField }>
 					<dt class={ infoLabel }>Due Date</dt>
 					<dd>
-						<time datetime={ time.Now().AddDate(0, 0, 15).Format("2006-01-02") }>
-							{ time.Now().AddDate(0,0,15).Format("02-01-2006") }
+						<time datetime={ dueDatef }>
+							{ dueDatef }
 						</time>
 					</dd>
 				</div>
 				<div class={ infoField }>
 					<dt class={ infoLabel }>Remark</dt>
-					<dd>Transporter</dd>
+					if model.Customer.Remark == "" {
+						<dd>---</dd>
+					} else {
+						<dd>{ model.Customer.Remark }</dd>
+					}
 				</div>
 			</dl>
 		</div>
@@ -86,33 +86,38 @@ templ header() {
 			<section class={ infoContainer, "w-1/2" , bgBorder }>
 				<header class="flex justify-between items-center">
 					<h2 class={ h2 }>To</h2>
-					<span class={ infoCompany }>XYZ Company</span>
+					<span class={ infoCompany }>{ model.Customer.CompanyName }</span>
 				</header>
 				<div>
 					<dl class="flex flex-col gap-1">
 						<div class={ infoField, "font-bold" }>
 							<dt class={ infoLabel }>Name</dt>
-							<dd class={ infodd }>Jane Doe</dd>
+							<dd class={ infodd }>{ model.Customer.Name }</dd>
 						</div>
 						<div class={ infoField }>
 							<dt class={ infoLabel }>GSTIN</dt>
-							<dd class={ infodd }>24ABCDE1234F1Z5</dd>
+							<dd class={ infodd }>{ model.Customer.GSTIN }</dd>
 						</div>
 						<div class={ infoField }>
 							<dt class={ infoLabel }>Email</dt>
-							<dd class={ infodd }>abc@xyz.com</dd>
+							if model.Customer.Email == "" {
+								<dd class={ infodd }>---</dd>
+							} else {
+								<dd class={ infodd }>{ model.Customer.Email }</dd>
+							}
 						</div>
 						<div class={ infoField }>
 							<dt class={ infoLabel }>Phone</dt>
 							<dd class={ infodd }>
-								+91 95588 90077
+								+{ model.Customer.PhoneExt }
+								{ model.Customer.Phone }
 								<br/>
 								<br/>
 							</dd>
 						</div>
 						<address class={ infoField, "not-italic" }>
 							<dt class={ infoLabel }>Address</dt>
-							<dd class={ infodd }>Shop No, Area, Road, City, State - 123456</dd>
+							<dd class={ infodd }>{ model.Customer.Address() }</dd>
 						</address>
 					</dl>
 				</div>
@@ -159,7 +164,7 @@ templ header() {
 	</header>
 }
 
-func formatFloat(n float32) string {
+func formatFloat(n float64) string {
 	s := fmt.Sprintf("%.2f", n)
 
 	dot := strings.IndexByte(s, '.')
@@ -179,22 +184,75 @@ func formatFloat(n float32) string {
 	return string(out) + fracPart
 }
 
-templ tableRow(num uint, name string, hsn, qty uint, rate, disc, gst float32) {
+type Amount struct {
+	beforeDisc float64
+	discAmount float64
+	afterDisc  float64
+	gstAmount  float64
+	total      float64
+}
+
+func newAmounts(qty int, rate, disc, gst float64) Amount {
+	beforeDisc := (rate * float64(qty))
+	discAmount := beforeDisc * (disc * 0.01)
+	afterDisc := beforeDisc - discAmount
+	gstAmount := afterDisc * (gst * 0.01)
+	total := afterDisc + gstAmount
+	return Amount{
+		beforeDisc: beforeDisc,
+		discAmount: discAmount,
+		afterDisc:  afterDisc,
+		gstAmount:  gstAmount,
+		total:      total,
+	}
+}
+
+type Amounts struct {
+	amountMap map[string]Amount
+	subTotal  float64
+	cgst      float64
+	sgst      float64
+	igst      float64
+}
+
+func newAmountMap(list []model.ProductInfo) Amounts {
+	am := Amounts{}
+	for idx, item := range list {
+		var key string
+		if util.IsDev {
+			key = fmt.Sprintf("%v%v", item.SerialNumber, idx)
+		} else {
+			key = item.SerialNumber
+		}
+		am.amountMap[key] = newAmounts(item.Quantity, item.Rate, item.Discount, item.GST)
+	}
+	return am
+}
+
+var amountMap = newAmountMap(model.Customer.Products)
+
+templ tableRow(idx uint, srnum, name, hsn string, qty int, rate, disc, gst float64) {
 	{{
-		beforeDisc := (rate * float32(qty))
+		beforeDisc := (rate * float64(qty))
 		discAmount := beforeDisc * (disc * 0.01)
 		afterDisc := beforeDisc - discAmount
-		total := afterDisc + (afterDisc * (gst * 0.01))
+		gstAmount := afterDisc * (gst * 0.01)
+		total := afterDisc + gstAmount
 	}}
 	<tr>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)), "rounded-tl-md rounded-bl-md" }>{ num }</td>
-		<td class={ tblRow, templ.KV("bg-black/5", (num%2==0)) }>{ name }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ hsn }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ qty }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ fmt.Sprintf("%.2f", rate) }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ disc }%</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ gst }%</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)), "rounded-tr-md rounded-br-md" }>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)), "rounded-tl-md rounded-bl-md" }>{ idx }</td>
+		<td class={ tblRow, templ.KV("bg-black/5", (idx%2==0)) }>{ srnum }</td>
+		<td class={ tblRow, templ.KV("bg-black/5", (idx%2==0)) }>{ name }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ hsn }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ qty }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ fmt.Sprintf("%.2f", rate) }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ disc }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ gst }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>
+			{ fmt.Sprintf("%.2f",
+        gstAmount) }
+		</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)), "rounded-tr-md rounded-br-md" }>
 			{ formatFloat(total) }
 		</td>
 	</tr>
@@ -205,39 +263,23 @@ templ table() {
 		<table class="w-full text-sm text-left">
 			<thead>
 				<tr class="text-base border-b text-black/80">
-					<th class={ tblHead, tc }>Sr.</th>
+					<th class={ tblHead, tc }>#</th>
+					<th class={ tblHead }>S/N</th>
 					<th class={ tblHead }>Item Name</th>
 					<th class={ tblHead, tc }>HSN</th>
 					<th class={ tblHead, tc }>Qty</th>
 					<th class={ tblHead, tc }>Rate</th>
-					<th class={ tblHead, tc }>Disc%</th>
-					<th class={ tblHead, tc }>GST</th>
+					<th class={ tblHead, tc }>Disc(%)</th>
+					<th class={ tblHead, tc }>GST(%)</th>
+					<th class={ tblHead, tc }>GST(₹)</th>
 					<th class={ tblHead, tc }>Amount</th>
 				</tr>
 			</thead>
 			<tbody>
-				@tableRow(1, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(2, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(3, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(4, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(5, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(6, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(7, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(8, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(9, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(10, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(11, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(12, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(13, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(14, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(15, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(16, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(17, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(18, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(19, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(20, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
-				@tableRow(21, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
-				@tableRow(22, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				for idx, item := range model.Customer.Products {
+					@tableRow(uint(idx)+1, item.SerialNumber, item.Name, item.Hsn, item.Quantity, item.Rate, item.Discount,
+						item.GST)
+				}
 			</tbody>
 		</table>
 	</div>
@@ -272,7 +314,7 @@ templ footer() {
 				</ol>
 			</div>
 			<div class="w-1/2">
-				<dl class="flex flex-col">
+				<dl class="flex flex-col justify-between h-full">
 					<div class={ infoField }>
 						<dt>Sub Total</dt>
 						<dd class={ infodd }>45,350.00</dd>
@@ -314,7 +356,10 @@ templ footer() {
 					</div>
 				</dl>
 			</div>
-			<div class={ "w-1/2 flex flex-col justify-between p-4 rounded-xl h-[-webkit-fill-available]" , bgBorder }>
+			<div
+				class={ "w-1/2 flex flex-col justify-between items-end p-4 rounded-xl h-[-webkit-fill-available]" ,
+            bgBorder }
+			>
 				<span class="text-sm text-primary">Grand Total</span>
 				<span class="text-2xl font-bold text-primary">₹53,513.00</span>
 			</div>
