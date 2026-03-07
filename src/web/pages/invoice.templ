@@ -1,7 +1,10 @@
 package page
 
 import (
+	"ae_invoice/src/models"
+	"ae_invoice/src/util"
 	"ae_invoice/src/web/layouts"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -27,6 +30,14 @@ templ Invoice(title string) {
 				id="main-page"
 				class="flex flex-col gap-6 p-8 font-cascadia text-black m-auto w-[210mm] min-h-[297mm] bg-white shadow-xl print:p-0 print:shadow-none"
 			>
+				if util.IsDev {
+					<pre>
+						<code lang="json">
+							{{ a, _ := json.MarshalIndent(model.Customer, "", " ") }}
+							{ fmt.Sprintf("%+v\n", string(a)) }
+						</code>
+					</pre>
+				}
 				@header()
 				@table()
 				@footer()

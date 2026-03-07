@@ -76,6 +76,7 @@ func newRouter() *bunrouter.Router {
 
 		fg.WithGroup("/validate", func(vg *bunrouter.Group) {
 			vg.POST("/name", validate.Name)
+			vg.POST("/companyName", validate.CompanyName)
 			vg.POST("/gstin", validate.Gstin)
 			vg.POST("/gst", validate.Gst)
 			vg.POST("/email", validate.Email)
@@ -126,7 +127,7 @@ func newRouter() *bunrouter.Router {
 				discount, _ := strconv.ParseFloat(req.Form.Get("discount"), 32)
 				model.Product = &model.ProductInfo{
 					Quantity:     qty,
-					Rate:    float32(rate),
+					Rate:         float32(rate),
 					Discount:     float32(discount),
 					SerialNumber: req.Form.Get("serialNumber"),
 					Name:         req.Form.Get("productName"),

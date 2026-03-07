@@ -123,6 +123,27 @@ func Name(w http.ResponseWriter, req bunrouter.Request) error {
 	return patchSignal(w, req, signals)
 }
 
+func CompanyName(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals struct {
+		HasError         bool   `json:"hasError"`
+		CompanyNameError string `json:"companyNameError"`
+	}
+	signals := &Signals{}
+
+	name := strings.ToUpper(strings.TrimSpace(model.Customer.CompanyName))
+	if err := validateName(name); err != nil {
+		signals.CompanyNameError = err.Error()
+	}
+	signals.HasError = !allCustomerValid()
+
+	return patchSignal(w, req, signals)
+}
+
 func validateGstin(gstin string) error {
 	var validatePan = func(panInput string) error {
 		pan := strings.ToUpper(strings.TrimSpace(panInput))
