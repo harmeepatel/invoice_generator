@@ -1,7 +1,11 @@
 package page
 
-import "ae_invoice/src/web/layouts"
-import "time"
+import (
+	"ae_invoice/src/web/layouts"
+	"fmt"
+	"strings"
+	"time"
+)
 
 const gap = "gap-6"
 const h2 = "text-lg font-light uppercase"
@@ -12,6 +16,9 @@ const infoCompany = "text-lg text-end font-bold"
 const infoField = "text-sm flex justify-between " + gap
 const infoLabel = "text-xs font-light pt-0.5 opacity-60"
 const infoContainer = "flex flex-col p-4 rounded-xl " + gap
+const tblHead = "pt-1 pb-2 px-1"
+const tblRow = "py-2 px-1"
+const tc = " text-center"
 
 templ Invoice(title string) {
 	@layout.InvoiceBase(title) {
@@ -21,7 +28,6 @@ templ Invoice(title string) {
 				class="flex flex-col gap-6 p-8 font-cascadia text-black m-auto w-[210mm] min-h-[297mm] bg-white shadow-xl print:p-0 print:shadow-none"
 			>
 				@header()
-				@info()
 				@table()
 				@footer()
 			</div>
@@ -30,16 +36,16 @@ templ Invoice(title string) {
 }
 
 templ header() {
-	<header class={ "flex flex-col text-justify justify-between " + gap }>
-		<div class={ "grow flex items-center justify-between " + gap }>
-			<div class={ "flex items-center " + gap }>
+	<header class={ "flex flex-col text-justify justify-between" , gap }>
+		<div class={ "grow flex items-center justify-between" , gap }>
+			<div class={ "flex items-center" , gap }>
 				<img src="/static/images/flogo.svg" class="w-24" alt="Company logo"/>
 				<h1 class="font-bold text-7xl print:p-0">
 					Invoice
 				</h1>
 			</div>
 			<dl class="w-[180px] flex flex-col justify-between rounded-xl">
-				<div class={ infoField + " font-bold" }>
+				<div class={ infoField, "font-bold" }>
 					<dt class={ infoLabel }>Invoice No.</dt>
 					<dd>123456</dd>
 				</div>
@@ -65,15 +71,15 @@ templ header() {
 				</div>
 			</dl>
 		</div>
-		<div class={ "flex " + gap }>
-			<section class={ infoContainer + " w-1/2 " + bgBorder }>
+		<div class={ "flex" , gap }>
+			<section class={ infoContainer, "w-1/2" , bgBorder }>
 				<header class="flex justify-between items-center">
 					<h2 class={ h2 }>To</h2>
 					<span class={ infoCompany }>XYZ Company</span>
 				</header>
 				<div>
 					<dl class="flex flex-col gap-1">
-						<div class={ infoField + " font-bold" }>
+						<div class={ infoField, "font-bold" }>
 							<dt class={ infoLabel }>Name</dt>
 							<dd class={ infodd }>Jane Doe</dd>
 						</div>
@@ -93,21 +99,21 @@ templ header() {
 								<br/>
 							</dd>
 						</div>
-						<address class={ infoField + " " + "not-italic" }>
+						<address class={ infoField, "not-italic" }>
 							<dt class={ infoLabel }>Address</dt>
 							<dd class={ infodd }>Shop No, Area, Road, City, State - 123456</dd>
 						</address>
 					</dl>
 				</div>
 			</section>
-			<section class={ infoContainer + " w-1/2 " + border }>
+			<section class={ infoContainer, "w-1/2" , border }>
 				<header class="flex justify-between items-center">
 					<h2 class={ h2 }>From</h2>
 					<span class={ infoCompany }>Achal Enterprise</span>
 				</header>
 				<div>
 					<dl class="flex flex-col gap-1">
-						<div class={ infoField + " font-bold" }>
+						<div class={ infoField, "font-bold" }>
 							<dt class={ infoLabel }>Name</dt>
 							<dd class={ infodd }>Rohit Patel</dd>
 						</div>
@@ -127,7 +133,7 @@ templ header() {
 								+91 70963 04530
 							</dd>
 						</div>
-						<address class={ infoField + " " + "not-italic" }>
+						<address class={ infoField, "not-italic" }>
 							<dt class={ infoLabel }>Address</dt>
 							<dd class={ infodd }>
 								G.F.-40, Chanakya Plaza, Nr.Swagat-3,
@@ -142,10 +148,94 @@ templ header() {
 	</header>
 }
 
+func formatFloat(n float32) string {
+	s := fmt.Sprintf("%.2f", n)
+
+	dot := strings.IndexByte(s, '.')
+	intPart := s[:dot]
+	fracPart := s[dot:]
+
+	var out []byte
+	l := len(intPart)
+
+	for i := range l {
+		if i > 0 && (l-i)%3 == 0 {
+			out = append(out, ',')
+		}
+		out = append(out, intPart[i])
+	}
+
+	return string(out) + fracPart
+}
+
+templ tableRow(num uint, name string, hsn, qty uint, rate, disc, gst float32) {
+	{{
+		beforeDisc := (rate * float32(qty))
+		discAmount := beforeDisc * (disc * 0.01)
+		afterDisc := beforeDisc - discAmount
+		total := afterDisc + (afterDisc * (gst * 0.01))
+	}}
+	<tr>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)), "rounded-tl-md rounded-bl-md" }>{ num }</td>
+		<td class={ tblRow, templ.KV("bg-black/5", (num%2==0)) }>{ name }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ hsn }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ qty }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ fmt.Sprintf("%.2f", rate) }</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ disc }%</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)) }>{ gst }%</td>
+		<td class={ tblRow, tc, templ.KV("bg-black/5", (num%2==0)), "rounded-tr-md rounded-br-md" }>
+			{ formatFloat(total) }
+		</td>
+	</tr>
+}
+
+templ table() {
+	<div class="overflow-x-auto">
+		<table class="w-full text-sm text-left">
+			<thead>
+				<tr class="text-base border-b text-black/80">
+					<th class={ tblHead, tc }>Sr.</th>
+					<th class={ tblHead }>Item Name</th>
+					<th class={ tblHead, tc }>HSN</th>
+					<th class={ tblHead, tc }>Qty</th>
+					<th class={ tblHead, tc }>Rate</th>
+					<th class={ tblHead, tc }>Disc%</th>
+					<th class={ tblHead, tc }>GST</th>
+					<th class={ tblHead, tc }>Amount</th>
+				</tr>
+			</thead>
+			<tbody>
+				@tableRow(1, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(2, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(3, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(4, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(5, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(6, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(7, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(8, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(9, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(10, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(11, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(12, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(13, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(14, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(15, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(16, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(17, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(18, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(19, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(20, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+				@tableRow(21, "Premium Ceramic Wall Tiles 300x600mm", 6907, 45, 450.00, 5, 18)
+				@tableRow(22, "Digital Vitrified Tiles 600x600mm", 6907, 20, 100, 5, 5)
+			</tbody>
+		</table>
+	</div>
+}
+
 templ footer() {
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-		<div class="space-y-6">
-			<div>
+	<div class={ "flex flex-col justify-between" , gap }>
+		<div class={ "flex justify-between" , gap }>
+			<div class="w-1/2">
 				<h3 class="text-xs font-semibold uppercase text-neutral-400 mb-3">Terms & Conditions</h3>
 				<ol class="text-[10px] text-neutral-500 list-none">
 					<li class="flex gap-2">
@@ -170,256 +260,56 @@ templ footer() {
 					</li>
 				</ol>
 			</div>
-			<div class="bg-neutral-50 p-4 rounded-lg border border-neutral-100 text-xs">
-				<h3 class="text-xs font-semibold uppercase text-neutral-400 mb-2">Bank Details</h3>
-				<p>Bank: ICICI Bank Ltd.</p>
-				<p>Branch: New C.G. Road, Chandkheda</p>
-				<p>A/c: 062505500142</p>
-				<p>IFSC: ICIC0000625</p>
+			<div class="w-1/2">
+				<dl class="flex flex-col">
+					<div class={ infoField }>
+						<dt>Sub Total</dt>
+						<dd class={ infodd }>45,350.00</dd>
+					</div>
+					<div class={ infoField }>
+						<dt>CGST</dt>
+						<dd class={ infodd }>4,081.50</dd>
+					</div>
+					<div class={ infoField }>
+						<dt>SGST</dt>
+						<dd class={ infodd }>4,081.50</dd>
+					</div>
+					<div class="flex justify-between font-bold border-t pt-2">
+						<dt>Total Tax</dt>
+						<dd>8,163.00</dd>
+					</div>
+				</dl>
 			</div>
 		</div>
-		<div class="space-y-3 text-sm">
-			<div class="flex justify-between"><span>Sub Total</span><span>45,350.00</span></div>
-			<div class="flex justify-between"><span>CGST</span><span>4,081.50</span></div>
-			<div class="flex justify-between"><span>SGST</span><span>4,081.50</span></div>
-			<div class="flex justify-between font-bold border-t pt-2">
-				<span>
-					Total
-					Tax
-				</span><span>8,163.00</span>
+		<div class={ "flex justify-between items-center text-sm" , gap }>
+			<div class={ "w-1/2 p-4 rounded-xl text-xs" , border }>
+				<h3 class="text-sm mb-2">Bank Details</h3>
+				<dl class="flex flex-col">
+					<div class={ infoField }>
+						<dt class={ infoLabel }>Bank</dt>
+						<dd class={ infodd }>ICICI Bank Ltd.</dd>
+					</div>
+					<div class={ infoField }>
+						<dt class={ infoLabel }>Branch</dt>
+						<dd class={ infodd }>New C.G. Road, Chandkheda</dd>
+					</div>
+					<div class={ infoField }>
+						<dt class={ infoLabel }>A/C</dt>
+						<dd class={ infodd }>062505500142</dd>
+					</div>
+					<div class={ infoField }>
+						<dt class={ infoLabel }>IFSC</dt>
+						<dd class={ infodd }>ICIC0000625</dd>
+					</div>
+				</dl>
 			</div>
-			<div class="flex justify-between bg-blue-50 p-4 rounded-lg mt-4 border border-blue-100">
-				<span class="text-lg font-display font-bold text-blue-600">Grand Total</span>
-				<span class="text-2xl font-display font-bold text-blue-600">₹53,513.00</span>
-			</div>
-			<div class="text-right pt-10">
-				<p class="text-[10px] text-neutral-400 uppercase  mb-12">Authorised Signature</p>
-				<p class="font-bold border-t-2 border-neutral-900 pt-2 inline-block px-4">ACHAL ENTERPRISE</p>
+			<div class={ "w-1/2 flex flex-col justify-between p-4 rounded-xl h-[-webkit-fill-available]" , bgBorder }>
+				<span class="text-sm text-primary">Grand Total</span>
+				<span class="text-2xl font-bold text-primary">₹53,513.00</span>
 			</div>
 		</div>
-	</div>
-}
-
-templ info() {
-}
-
-templ table() {
-	<div class="overflow-x-auto">
-		<table class="w-full text-sm text-left border-collapse">
-			<thead>
-				<tr class="border-y border-neutral-200 bg-neutral-50/50 text-neutral-600">
-					<th class="py-3 px-2 text-center">Sr.</th>
-					<th class="py-3 px-4">Item Name</th>
-					<th class="py-3 px-2 text-center">HSN</th>
-					<th class="py-3 px-2 text-center">Qty</th>
-					<th class="py-3 px-2 text-right">Rate</th>
-					<th class="py-3 px-2 text-center">Disc%</th>
-					<th class="py-3 px-2 text-center">GST</th>
-					<th class="py-3 px-4 text-right">Amount</th>
-				</tr>
-			</thead>
-			<tbody class="divide-y divide-neutral-100">
-				<tr>
-					<td class="py-4 px-2 text-center">1</td>
-					<td class="py-4 px-4 font-medium">Premium Ceramic Wall Tiles 300x600mm</td>
-					<td class="py-4 px-2 text-center">6907</td>
-					<td class="py-4 px-2 text-center">45</td>
-					<td class="py-4 px-2 text-right">450.00</td>
-					<td class="py-4 px-2 text-center">5%</td>
-					<td class="py-4 px-2 text-center">18%</td>
-					<td class="py-4 px-4 text-right font-semibold">19,237.50</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-4 font-medium">Digital Vitrified Tiles 600x600mm</td>
-					<td class="py-4 px-2 text-center">6907</td>
-					<td class="py-4 px-2 text-center">20</td>
-					<td class="py-4 px-2 text-right">850.00</td>
-					<td class="py-4 px-2 text-center">0%</td>
-					<td class="py-4 px-2 text-center">18%</td>
-					<td class="py-4 px-4 text-right font-semibold">17,000.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-				<tr>
-					<td class="py-4 px-2 text-center">3</td>
-					<td class="py-4 px-4 font-medium">Designer Sanitary Ware - Basin</td>
-					<td class="py-4 px-2 text-center">6910</td>
-					<td class="py-4 px-2 text-center">2</td>
-					<td class="py-4 px-2 text-right">4,500.00</td>
-					<td class="py-4 px-2 text-center">10%</td>
-					<td class="py-4 px-2 text-center">12%</td>
-					<td class="py-4 px-4 text-right font-semibold">8,100.00</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="text-right pt-12">
+			<p class="font-light border-t pt-2 inline-block px-4">Achal Enterprise</p>
+		</div>
 	</div>
 }

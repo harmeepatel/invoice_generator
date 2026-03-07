@@ -42,7 +42,7 @@ func InvoiceBase(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><style>\n        @media print {\n            :root {\n                --text-base: 13px !important;\n                --ratio: 1.18;\n            }\n\n            @page {\n                size: A4;\n                margin: 2rem 2.25rem;\n                background-color: white;\n            }\n\n            * {\n                -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n            }\n        }\n    </style></head><body class=\"m-0 p-8 print:p-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><style>\n        @media print {\n            :root {\n                --text-base: 13px !important;\n                --ratio: 1.18;\n            }\n\n            @page {\n                size: A4;\n                margin: 2rem;\n                background-color: white;\n            }\n\n            * {\n                -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n            }\n        }\n    </style></head><body class=\"m-0 p-8 print:p-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

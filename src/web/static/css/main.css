@@ -12,21 +12,21 @@
 
 @font-face {
     font-family: "RobotoMono";
-    src: url("../fonts/RobotoMono.ttf") format("woff2");
+    src: url("../fonts/RobotoMono.ttf") format("truetype");
     font-weight: 50 1000;
     font-stretch: 20% 200%;
 }
 
 @font-face {
     font-family: "Cascadia";
-    src: url("../fonts/Cascadia.ttf") format("woff2");
+    src: url("../fonts/Cascadia.ttf") format("truetype");
     font-weight: 50 1000;
     font-stretch: 20% 200%;
 }
 
 @font-face {
     font-family: "Motterdam";
-    src: url("../fonts/Motterdam.ttf") format("woff2");
+    src: url("../fonts/Motterdam.ttf") format("truetype");
     font-weight: 50 1000;
     font-stretch: 20% 200%;
 }
