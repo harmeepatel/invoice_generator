@@ -502,6 +502,10 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals.HasError = !allCustomerValid()
 
+	if model.Customer.State == "Gujarat" {
+		model.Customer.Igst = 0
+	}
+
 	return patchSignal(w, req, signals)
 }
 
