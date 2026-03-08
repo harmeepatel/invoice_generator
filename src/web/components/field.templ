@@ -46,7 +46,7 @@ templ Field(conf FieldConfig) {
 					autocomplete="address-level1"
 					data-type="input"
 					data-bind={ conf.Name }
-					data-on:change={ fmt.Sprintf("@post('/invoice/validate/postalCode', {filterSignals: {include: /%[1]v/}})", conf.Name) }
+					data-on:change={ fmt.Sprintf(`@post('/invoice/validate/postalCode', {filterSignals: {include: /%[1]v/}})`, conf.Name) }
                     data-class:error={ fmt.Sprintf("%v != ''", errorSignal) }
 				>
 					for _, state := range util.StateNames {
@@ -82,18 +82,18 @@ templ Field(conf FieldConfig) {
 					/>
 				</div>
 			default:
-				<input
-					id={ conf.Name }
-					type={ conf.Type }
-					name={ conf.Name }
-					class="input w-full max-w-full text-lg h-auto px-4 py-2"
-					placeholder={ conf.PlaceHolder }
-					autocomplete={ getAutocompleteToken(conf.Name) }
-					data-type="input"
-					data-bind={ conf.Name }
-					data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /(?:%[1]v|state)/}})", conf.Name) }
+                <input
+                    id={ conf.Name }
+                    type={ conf.Type }
+                    name={ conf.Name }
+                    class="input w-full max-w-full text-lg h-auto px-4 py-2"
+                    placeholder={ conf.PlaceHolder }
+                    autocomplete={ getAutocompleteToken(conf.Name) }
+                    data-type="input"
+                    data-bind={ conf.Name }
+                    data-on:keyup={ fmt.Sprintf("@post('/invoice/validate/%[1]v', {filterSignals: {include: /(?:%[1]v|state)/}})", conf.Name) }
                     data-class:error={ fmt.Sprintf("%v != ''", errorSignal) }
-				/>
+                />
 		}
 	</div>
 }

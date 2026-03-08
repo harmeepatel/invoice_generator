@@ -2,6 +2,7 @@ package util
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"regexp"
 	"strings"
@@ -61,4 +62,24 @@ func CamelToKebab(s string) string {
 func RoundFloat(val float64) float64 {
 	ratio := math.Pow(10, float64(2))
 	return math.Round(val*ratio) / ratio
+}
+
+func FormatFloat(n float64) string {
+	s := fmt.Sprintf("%.2f", n)
+
+	dot := strings.IndexByte(s, '.')
+	intPart := s[:dot]
+	fracPart := s[dot:]
+
+	var out []byte
+	l := len(intPart)
+
+	for i := range l {
+		if i > 0 && (l-i)%3 == 0 {
+			out = append(out, ',')
+		}
+		out = append(out, intPart[i])
+	}
+
+	return string(out) + fracPart
 }

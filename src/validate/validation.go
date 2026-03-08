@@ -45,7 +45,11 @@ func allCustomerValid() bool {
 		// fmt.Println("companyName")
 		return false
 	}
-	if validateGstin(strings.ToUpper(strings.TrimSpace(c.GSTIN))) != nil {
+	if validateIgst(c.State, c.Igst) != nil {
+		// fmt.Println("igst")
+		return false
+	}
+	if validateGstin(strings.ToUpper(strings.TrimSpace(c.Gstin))) != nil {
 		// fmt.Println("gstin")
 		return false
 	}
@@ -144,6 +148,34 @@ func CompanyName(w http.ResponseWriter, req bunrouter.Request) error {
 	return patchSignal(w, req, signals)
 }
 
+func validateIgst(_ string, gst float64) error {
+	if gst < 0 || gst > 40 {
+		return errors.New("Must be 0% - 40%")
+	}
+	return nil
+}
+
+func Igst(w http.ResponseWriter, req bunrouter.Request) error {
+	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+		return err
+	}
+
+	type Signals struct {
+		HasError  bool   `json:"hasError"`
+		IgstError string `json:"igstError"`
+	}
+	signals := &Signals{}
+
+	if err := validateIgst(model.Customer.State, model.Customer.Igst); err != nil {
+		signals.IgstError = err.Error()
+		model.Customer.Igst = 0
+	}
+	signals.HasError = !allCustomerValid()
+
+	return patchSignal(w, req, signals)
+}
+
 func validateGstin(gstin string) error {
 	var validatePan = func(panInput string) error {
 		pan := strings.ToUpper(strings.TrimSpace(panInput))
@@ -204,7 +236,7 @@ func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	gstin := strings.ToUpper(strings.TrimSpace(model.Customer.GSTIN))
+	gstin := strings.ToUpper(strings.TrimSpace(model.Customer.Gstin))
 	if err := validateGstin(gstin); err != nil {
 		signals.GstinError = err.Error()
 	}
@@ -485,7 +517,7 @@ func allProductValid() bool {
 	if validatePhsn(p.Hsn) != nil {
 		return false
 	}
-	if validateGst(p.GST) != nil {
+	if validateGst(p.Gst) != nil {
 		// fmt.Println("gst")
 		return false
 	}
@@ -559,7 +591,7 @@ func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
 
 func validateGst(gst float64) error {
 	if gst < 0 || gst > 40 {
-		return errors.New("GST must be 0% - 40%")
+		return errors.New("Must be 0% - 40%")
 	}
 	return nil
 }
@@ -576,7 +608,7 @@ func Gst(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validateGst(model.Product.GST); err != nil {
+	if err := validateGst(model.Product.Gst); err != nil {
 		signals.GstError = err.Error()
 	}
 	signals.HasError = !allCustomerValid()

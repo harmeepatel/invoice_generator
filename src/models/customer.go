@@ -10,7 +10,7 @@ type ProductInfo struct {
 	Quantity     int     `json:"quantity"`
 	Rate         float64 `json:"rate"`
 	Discount     float64 `json:"discount"`
-	GST          float64 `json:"gst"`
+	Gst          float64 `json:"gst"`
 	SerialNumber string  `json:"serialNumber"`
 	Name         string  `json:"productName"`
 	Hsn          string  `json:"hsn"`
@@ -19,7 +19,8 @@ type ProductInfo struct {
 type CustomerInfo struct {
 	Name        string        `json:"name"`
 	CompanyName string        `json:"companyName"`
-	GSTIN       string        `json:"gstin"`
+	Igst        float64       `json:"igst"`
+	Gstin       string        `json:"gstin"`
 	Email       string        `json:"email"`
 	Phone       string        `json:"phone"`
 	PhoneExt    string        `json:"phoneExt"`
@@ -100,7 +101,7 @@ func (ci *CustomerInfo) GenerateAmounts() {
 		if util.IsDev {
 			key = fmt.Sprintf("%v%v", key, idx)
 		}
-		ci.Amount.Map[key] = newAmounts(item.Quantity, item.Rate, item.Discount, item.GST)
+		ci.Amount.Map[key] = newAmounts(item.Quantity, item.Rate, item.Discount, item.Gst)
 		ci.Amount.GstTotal += ci.Amount.Map[key].GstAmount
 		ci.Amount.SubTotal += ci.Amount.Map[key].AfterDisc
 		ci.Amount.Total += ci.Amount.Map[key].Total
@@ -108,6 +109,7 @@ func (ci *CustomerInfo) GenerateAmounts() {
 
 	ci.Amount.Cgst = ci.Amount.GstTotal / 2
 	ci.Amount.Sgst = ci.Amount.GstTotal / 2
+	ci.Amount.Igst = ci.Amount.SubTotal * (ci.Igst * 0.01)
 
 	ci.Amount.SubTotal = util.RoundFloat(ci.Amount.SubTotal)
 	ci.Amount.GstTotal = util.RoundFloat(ci.Amount.GstTotal)

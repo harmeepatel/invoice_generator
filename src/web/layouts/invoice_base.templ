@@ -13,10 +13,10 @@ templ InvoiceBase(title string) {
 			<title>{ title }</title>
 			<style>
         @media print {
-            /* :root { */
-            /*     --text-base: 13px !important; */
-            /*     --ratio: 1.18; */
-            /* } */
+            :root {
+                --text-base: 13px !important;
+                --ratio: 1.2;
+            }
 
             * {
                 -webkit-print-color-adjust: exact;
@@ -26,9 +26,16 @@ templ InvoiceBase(title string) {
             @page {
                 size: A4;
                 margin: 2rem;
+                margin-bottom: 2.5rem;
                 background-color: white;
-            }
 
+                @bottom-center {
+                    content: counter(page) "/" counter(pages);
+                    font-size: 6pt;
+                    color: #000;
+                    font-family: monospace;
+                }
+            }
 
             #main-page {
                 min-height: unset !important;

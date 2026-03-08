@@ -2,24 +2,38 @@ package component
 
 import (
 	"ae_invoice/src/models"
+	"ae_invoice/src/util"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
-templ ProductRow(index int, product model.ProductInfo) {
+templ ProductRow(idx int, product model.ProductInfo) {
+	{{
+		key := strings.ToLower(product.SerialNumber)
+		if util.IsDev {
+			key = fmt.Sprintf("%v%v", key, idx-1)
+		}
+	}}
 	<tr class="group hover:bg-base-content/5">
-		<th class="group-hover:bg-[#252020]">{ strconv.Itoa(index) }</th>
+		<th class="group-hover:bg-[#252020]">{ strconv.Itoa(idx) }</th>
 		<td class="w-12">{ product.SerialNumber }</td>
 		<td>{ product.Name }</td>
 		<td>{ product.Hsn }</td>
 		<td>{ strconv.Itoa(int(product.Quantity)) }</td>
-		<td>{ fmt.Sprintf("%.2f", product.Rate) }</td>
-		<td>{ fmt.Sprintf("%.2f", product.Discount) }</td>
-		<td>{ fmt.Sprintf("%.2f", product.GST) }</td>
+		<td>{ util.FormatFloat(product.Rate) } </td>
+		<td>
+			{ util.FormatFloat(product.Discount) }
+			<span class="text-xs font-light">[{ util.FormatFloat(model.Customer.Amount.Map[key].DiscAmount) }]</span>
+		</td>
+		<td>
+			{ util.FormatFloat(product.Gst) }
+			<span class="text-xs font-light">[{ util.FormatFloat(model.Customer.Amount.Map[key].GstAmount) }]</span>
+		</td>
 		<th class="group-hover:bg-[#252020]">
 			<button
 				class="btn bg-base-100 hover:bg-red-500/75 p-0 w-8 h-8 lg:w-12 lg:h-12"
-				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/product/%d")`, index) }
+				data-on:click={ fmt.Sprintf(`confirm("Are you sure?") && @delete("/product/%d")`, idx) }
 			>
 				<img src="static/images/trash.svg" class="w-4 h-4 lg:w-6 lg:h-6"/>
 			</button>

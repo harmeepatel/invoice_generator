@@ -17,6 +17,7 @@ func Validate(vg *bunrouter.Group) {
 			vg.POST("/city", validate.City)
 			vg.POST("/companyName", validate.CompanyName)
 			vg.POST("/email", validate.Email)
+			vg.POST("/igst", validate.Igst)
 			vg.POST("/gstin", validate.Gstin)
 			vg.POST("/line1", validate.Line)
 			vg.POST("/line2", validate.Line)
@@ -47,7 +48,7 @@ func Validate(vg *bunrouter.Group) {
 				model.Customer = &model.CustomerInfo{
 					Name:        req.Form.Get("name"),
 					CompanyName: req.Form.Get("companyName"),
-					GSTIN:       req.Form.Get("gstin"),
+					Gstin:       req.Form.Get("gstin"),
 					Email:       req.Form.Get("email"),
 					Phone:       req.Form.Get("phone"),
 					PhoneExt:    req.Form.Get("phoneExt"),
@@ -69,7 +70,7 @@ func Validate(vg *bunrouter.Group) {
 					Quantity:     qty,
 					Rate:         rate,
 					Discount:     discount,
-					GST:          gst,
+					Gst:          gst,
 					SerialNumber: req.Form.Get("serialNumber"),
 					Name:         req.Form.Get("productName"),
 					Hsn:          req.Form.Get("hsn"),
