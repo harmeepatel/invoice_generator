@@ -184,76 +184,34 @@ func formatFloat(n float64) string {
 	return string(out) + fracPart
 }
 
-type Amount struct {
-	beforeDisc float64
-	discAmount float64
-	afterDisc  float64
-	gstAmount  float64
-	total      float64
-}
-
-func newAmounts(qty int, rate, disc, gst float64) Amount {
-	beforeDisc := (rate * float64(qty))
-	discAmount := beforeDisc * (disc * 0.01)
-	afterDisc := beforeDisc - discAmount
-	gstAmount := afterDisc * (gst * 0.01)
-	total := afterDisc + gstAmount
-	return Amount{
-		beforeDisc: beforeDisc,
-		discAmount: discAmount,
-		afterDisc:  afterDisc,
-		gstAmount:  gstAmount,
-		total:      total,
-	}
-}
-
-type Amounts struct {
-	amountMap map[string]Amount
-	subTotal  float64
-	cgst      float64
-	sgst      float64
-	igst      float64
-}
-
-func newAmountMap(list []model.ProductInfo) Amounts {
-	am := Amounts{}
-	for idx, item := range list {
-		var key string
-		if util.IsDev {
-			key = fmt.Sprintf("%v%v", item.SerialNumber, idx)
-		} else {
-			key = item.SerialNumber
-		}
-		am.amountMap[key] = newAmounts(item.Quantity, item.Rate, item.Discount, item.GST)
-	}
-	return am
-}
-
-var amountMap = newAmountMap(model.Customer.Products)
-
 templ tableRow(idx uint, srnum, name, hsn string, qty int, rate, disc, gst float64) {
 	{{
-		beforeDisc := (rate * float64(qty))
-		discAmount := beforeDisc * (disc * 0.01)
-		afterDisc := beforeDisc - discAmount
-		gstAmount := afterDisc * (gst * 0.01)
-		total := afterDisc + gstAmount
+		var bg string
+		key := strings.ToLower(srnum)
+		if util.IsDev {
+			key = fmt.Sprintf("%v%v", key, idx)
+		}
+		if idx%2 != 0 {
+			bg = "bg-black/5"
+		}
 	}}
 	<tr>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)), "rounded-tl-md rounded-bl-md" }>{ idx }</td>
-		<td class={ tblRow, templ.KV("bg-black/5", (idx%2==0)) }>{ srnum }</td>
-		<td class={ tblRow, templ.KV("bg-black/5", (idx%2==0)) }>{ name }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ hsn }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ qty }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ fmt.Sprintf("%.2f", rate) }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ disc }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>{ gst }</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)) }>
-			{ fmt.Sprintf("%.2f",
-        gstAmount) }
+		<td class={ tblRow, tc, bg, "rounded-tl-md rounded-bl-md" }>{ idx+1 }</td>
+		<td class={ tblRow, bg }>{ srnum }</td>
+		<td class={ tblRow, bg }>{ name }</td>
+		<td class={ tblRow, tc, bg }>{ hsn }</td>
+		<td class={ tblRow, tc, bg }>{ qty }</td>
+		<td class={ tblRow, tc, bg }>{ fmt.Sprintf("%.2f", rate) }</td>
+		<td class={ tblRow, tc, bg }>
+			{ disc }%
+			[₹{ model.Customer.Amount.Map[key].DiscAmount }]
 		</td>
-		<td class={ tblRow, tc, templ.KV("bg-black/5", (idx%2==0)), "rounded-tr-md rounded-br-md" }>
-			{ formatFloat(total) }
+		<td class={ tblRow, tc, bg }>
+			{ gst }%
+			[₹{ fmt.Sprintf("%.2f", model.Customer.Amount.Map[key].GstAmount) }]
+		</td>
+		<td class={ tblRow, tc, bg, "rounded-tr-md rounded-br-md" }>
+			{ formatFloat(model.Customer.Amount.Map[key].AfterDisc) }
 		</td>
 	</tr>
 }
@@ -267,17 +225,16 @@ templ table() {
 					<th class={ tblHead }>S/N</th>
 					<th class={ tblHead }>Item Name</th>
 					<th class={ tblHead, tc }>HSN</th>
-					<th class={ tblHead, tc }>Qty</th>
-					<th class={ tblHead, tc }>Rate</th>
-					<th class={ tblHead, tc }>Disc(%)</th>
-					<th class={ tblHead, tc }>GST(%)</th>
-					<th class={ tblHead, tc }>GST(₹)</th>
-					<th class={ tblHead, tc }>Amount</th>
+					<th class={ tblHead, tc }>Qty<sup>(Q)</sup></th>
+					<th class={ tblHead, tc }>Rate<sup>(R)</sup></th>
+					<th class={ tblHead, tc }>Disc</th>
+					<th class={ tblHead, tc }>GST</th>
+					<th class={ tblHead, tc }>Amt<sup>(Qx(R-D))</sup></th>
 				</tr>
 			</thead>
 			<tbody>
 				for idx, item := range model.Customer.Products {
-					@tableRow(uint(idx)+1, item.SerialNumber, item.Name, item.Hsn, item.Quantity, item.Rate, item.Discount,
+					@tableRow(uint(idx), item.SerialNumber, item.Name, item.Hsn, item.Quantity, item.Rate, item.Discount,
 						item.GST)
 				}
 			</tbody>
@@ -315,22 +272,30 @@ templ footer() {
 			</div>
 			<div class="w-1/2">
 				<dl class="flex flex-col justify-between h-full">
-					<div class={ infoField }>
-						<dt>Sub Total</dt>
-						<dd class={ infodd }>45,350.00</dd>
+					<div class={ infoField, "font-bold" }>
+						<dt class="text-base">Sub Total</dt>
+						<dd class={ infodd, "text-base" }>{ fmt.Sprintf("%.2f", model.Customer.Amount.SubTotal) }</dd>
+					</div>
+					<div class={ infoField, "font-bold" }>
+						<dt>GST</dt>
+						<dd class={ infodd }>{ fmt.Sprintf("%.2f", model.Customer.Amount.GstTotal) }</dd>
 					</div>
 					<div class={ infoField }>
 						<dt>CGST</dt>
-						<dd class={ infodd }>4,081.50</dd>
+						<dd class={ infodd }>{ fmt.Sprintf("%.2f", model.Customer.Amount.Cgst) }</dd>
 					</div>
 					<div class={ infoField }>
 						<dt>SGST</dt>
-						<dd class={ infodd }>4,081.50</dd>
+						<dd class={ infodd }>{ fmt.Sprintf("%.2f", model.Customer.Amount.Sgst) }</dd>
 					</div>
-					<div class="flex justify-between font-bold border-t pt-2">
-						<dt>Total Tax</dt>
-						<dd>8,163.00</dd>
+					<div class={ infoField }>
+						<dt>IGST</dt>
+						<dd class={ infodd }>---</dd>
 					</div>
+					//<div class="flex justify-between font-bold border-t pt-2">
+					// <dt>Total</dt>
+					// <dd>{ fmt.Sprintf("%.2f", model.Customer.Amount.Total ) }</dd>
+					//</div>
 				</dl>
 			</div>
 		</div>
@@ -360,8 +325,8 @@ templ footer() {
 				class={ "w-1/2 flex flex-col justify-between items-end p-4 rounded-xl h-[-webkit-fill-available]" ,
             bgBorder }
 			>
-				<span class="text-sm text-primary">Grand Total</span>
-				<span class="text-2xl font-bold text-primary">₹53,513.00</span>
+				<span class="text-primary font-semibold">TOTAL</span>
+				<span class="text-2xl font-bold text-primary">₹{ fmt.Sprintf("%.2f", model.Customer.Amount.Total) } </span>
 			</div>
 		</div>
 		<div class="text-right pt-12">

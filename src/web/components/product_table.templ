@@ -15,6 +15,7 @@ templ ProductRow(index int, product model.ProductInfo) {
 		<td>{ strconv.Itoa(int(product.Quantity)) }</td>
 		<td>{ fmt.Sprintf("%.2f", product.Rate) }</td>
 		<td>{ fmt.Sprintf("%.2f", product.Discount) }</td>
+		<td>{ fmt.Sprintf("%.2f", product.GST) }</td>
 		<th class="group-hover:bg-[#252020]">
 			<button
 				class="btn bg-base-100 hover:bg-red-500/75 p-0 w-8 h-8 lg:w-12 lg:h-12"

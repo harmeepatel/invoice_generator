@@ -17,6 +17,9 @@ for (let input of inputs) {
         case "gst":
             input.value = 5.0
             break
+        case "discount":
+            input.value = 1.0
+            break
         case "gstin":
             input.value = "24ABCPM1234L1Z5"
             break

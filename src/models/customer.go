@@ -1,6 +1,7 @@
 package model
 
 import (
+	"ae_invoice/src/util"
 	"fmt"
 	"strings"
 )
@@ -31,6 +32,7 @@ type CustomerInfo struct {
 	State       string        `json:"state"`
 	PostalCode  uint          `json:"postalCode"`
 	Products    []ProductInfo `json:"productList"`
+	Amount      Amounts
 }
 
 func (c *CustomerInfo) Address() string {
@@ -56,9 +58,63 @@ func (c *CustomerInfo) Address() string {
 	return addr
 }
 
-type ShippingAddr struct {
+type Amount struct {
+	BeforeDisc float64
+	DiscAmount float64
+	AfterDisc  float64
+	GstAmount  float64
+	Total      float64
 }
-type BillingAddr struct {
+
+func newAmounts(qty int, rate, disc, gst float64) Amount {
+	beforeDisc := (rate * float64(qty))
+	discAmount := beforeDisc * (disc * 0.01)
+	afterDisc := beforeDisc - discAmount
+	gstAmount := afterDisc * (gst * 0.01)
+	total := afterDisc + gstAmount
+	return Amount{
+		BeforeDisc: util.RoundFloat(beforeDisc),
+		DiscAmount: util.RoundFloat(discAmount),
+		AfterDisc:  util.RoundFloat(afterDisc),
+		GstAmount:  util.RoundFloat(gstAmount),
+		Total:      util.RoundFloat(total),
+	}
+}
+
+type Amounts struct {
+	Map      map[string]Amount
+	SubTotal float64
+	GstTotal float64
+	Cgst     float64
+	Sgst     float64
+	Igst     float64
+	Total    float64
+}
+
+func (ci *CustomerInfo) GenerateAmounts() {
+	ci.Amount = Amounts{
+		Map: make(map[string]Amount),
+	}
+	for idx, item := range ci.Products {
+		key := strings.ToLower(item.SerialNumber)
+		if util.IsDev {
+			key = fmt.Sprintf("%v%v", key, idx)
+		}
+		ci.Amount.Map[key] = newAmounts(item.Quantity, item.Rate, item.Discount, item.GST)
+		ci.Amount.GstTotal += ci.Amount.Map[key].GstAmount
+		ci.Amount.SubTotal += ci.Amount.Map[key].AfterDisc
+		ci.Amount.Total += ci.Amount.Map[key].Total
+	}
+
+	ci.Amount.Cgst = ci.Amount.GstTotal / 2
+	ci.Amount.Sgst = ci.Amount.GstTotal / 2
+
+	ci.Amount.SubTotal = util.RoundFloat(ci.Amount.SubTotal)
+	ci.Amount.GstTotal = util.RoundFloat(ci.Amount.GstTotal)
+	ci.Amount.Cgst = util.RoundFloat(ci.Amount.Cgst)
+	ci.Amount.Sgst = util.RoundFloat(ci.Amount.Sgst)
+	ci.Amount.Igst = util.RoundFloat(ci.Amount.Igst)
+	ci.Amount.Total = util.RoundFloat(ci.Amount.Total)
 }
 
 var Customer = &CustomerInfo{}
