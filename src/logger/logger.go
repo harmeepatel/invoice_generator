@@ -15,7 +15,7 @@ var Logger *log.Logger
 
 func getLogDir() string {
 	var logDir string
-	const programName = "ae_invoice"
+	const programName = "AE_invoice"
 
 	switch runtime.GOOS {
 	case "windows":

@@ -16,7 +16,31 @@ import (
 	"github.com/andybalholm/brotli"
 )
 
+func generateDb() (string, error) {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		return "", fmt.Errorf("Could not find user config dir: %w", err)
+	}
+
+	appDir := filepath.Join(configDir, "AE_invoice")
+
+	err = os.MkdirAll(appDir, 0744)
+	if err != nil {
+		return "", fmt.Errorf("Could not create app directory: %w", err)
+	}
+
+	dbPath := filepath.Join(appDir, "ae.db")
+
+	return dbPath, nil
+}
+
 func init() {
+	dbPath, err := generateDb()
+	util.DbPath = dbPath
+
+	if err != nil {
+		panic(err)
+	}
 	// compress static assets with brotli
 	logger.SetupLogger()
 	log := logger.Logger

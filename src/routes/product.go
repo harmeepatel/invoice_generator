@@ -5,6 +5,7 @@ import (
 	model "ae_invoice/src/models"
 	component "ae_invoice/src/web/components"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"slices"
@@ -16,6 +17,12 @@ import (
 
 // base: /product
 func Product(pg *bunrouter.Group) {
+	pg.GET("/", func(w http.ResponseWriter, req bunrouter.Request) error {
+		productJson, _ := json.MarshalIndent(model.Customer.Products, "", "  ")
+		w.Write(productJson)
+		return nil
+	})
+
 	pg.POST("/add", func(w http.ResponseWriter, req bunrouter.Request) error {
 		productInput := &model.ProductInfo{}
 		if err := datastar.ReadSignals(req.Request, productInput); err != nil {
@@ -25,7 +32,7 @@ func Product(pg *bunrouter.Group) {
 
 		model.Customer.Products = append(model.Customer.Products, *productInput)
 		model.Customer.GenerateAmounts()
-		
+
 		newIndex := len(model.Customer.Products)
 		var buf bytes.Buffer
 		if err := component.ProductRow(newIndex, *productInput).Render(req.Context(), &buf); err != nil {

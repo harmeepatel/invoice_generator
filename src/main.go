@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ae_invoice/src/logger"
 	"bytes"
 	"embed"
 	"io"
@@ -13,9 +14,13 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/andybalholm/brotli"
+
+	_ "github.com/duckdb/duckdb-go/v2"
 )
 
 const PORT = ":42069"
+
+var log = logger.Logger
 
 //go:embed web/static/*
 var assets embed.FS

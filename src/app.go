@@ -2,14 +2,18 @@ package main
 
 import (
 	"ae_invoice/src/logger"
+	"ae_invoice/src/util"
+	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type App struct {
 	server *http.Server
-	// db      *bun.DB
+	db     *sql.DB
 }
 
 func NewApp() *App {
@@ -18,16 +22,35 @@ func NewApp() *App {
 		Handler: newRouter(),
 	}
 
-	return &App{server: srv}
+	db, err := sql.Open("duckdb", fmt.Sprintf("%v?access_mode=READ_WRITE", util.DbPath))
+	if err != nil {
+		panic(fmt.Sprintf("Cannot open database: %v\n%+v", util.DbPath, err))
+	}
+	defer func() {
+		logger.Logger.Info("Closing Database")
+		if err != db.Close() {
+			panic(fmt.Sprintf("Cannot close database: %v\n%+v", util.DbPath, err))
+		}
+	}()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	return &App{
+		server: srv,
+		db:     db,
+	}
 }
 
 func (a *App) RunApp() {
 	logger.Logger.Info("link : localhost" + a.server.Addr)
-	// log.Info("pid  : " + strconv.Itoa(os.Getpid()))
+	logger.Logger.Info("pid  : " + strconv.Itoa(os.Getpid()))
 
 	// run server
 	if err := http.ListenAndServe(a.server.Addr, a.server.Handler); !errors.Is(err, http.ErrServerClosed) {
-		// log.Error("HTTP server error: " + err.Error())
+		logger.Logger.Error("HTTP server error: " + err.Error())
 		os.Exit(1)
 	}
 }
