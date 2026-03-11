@@ -124,5 +124,6 @@ func (w *brotliResponseWriter) Write(b []byte) (int, error) {
 
 func main() {
 	aei := NewApp()
+	defer aei.CloseDb()
 	aei.RunApp()
 }

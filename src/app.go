@@ -26,12 +26,6 @@ func NewApp() *App {
 	if err != nil {
 		panic(fmt.Sprintf("Cannot open database: %v\n%+v", util.DbPath, err))
 	}
-	defer func() {
-		logger.Logger.Info("Closing Database")
-		if err != db.Close() {
-			panic(fmt.Sprintf("Cannot close database: %v\n%+v", util.DbPath, err))
-		}
-	}()
 
 	err = db.Ping()
 	if err != nil {
@@ -52,5 +46,12 @@ func (a *App) RunApp() {
 	if err := http.ListenAndServe(a.server.Addr, a.server.Handler); !errors.Is(err, http.ErrServerClosed) {
 		logger.Logger.Error("HTTP server error: " + err.Error())
 		os.Exit(1)
+	}
+}
+
+func (a *App) CloseDb() {
+	logger.Logger.Info("Closing Database")
+	if err := a.db.Close(); err != nil {
+		panic(fmt.Sprintf("Cannot close database: %v\n%+v", util.DbPath, err))
 	}
 }
