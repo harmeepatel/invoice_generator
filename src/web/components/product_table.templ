@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-templ ProductRow(idx int, product model.ProductInfo) {
+templ ProductRow(idx int, product model.InvoiceItem) {
 	{{
 		key := strings.ToLower(product.SerialNumber)
 		if util.IsDev {
@@ -24,11 +24,11 @@ templ ProductRow(idx int, product model.ProductInfo) {
 		<td>{ util.FormatFloat(product.Rate) } </td>
 		<td>
 			{ util.FormatFloat(product.Discount) }
-			<span class="text-xs font-light">[{ util.FormatFloat(model.Customer.Amount.Map[key].DiscAmount) }]</span>
+			<span class="text-xs font-light">[{ util.FormatFloat(model.ActiveInvoice.Amount.Map[key].DiscAmount) }]</span>
 		</td>
 		<td>
 			{ util.FormatFloat(product.Gst) }
-			<span class="text-xs font-light">[{ util.FormatFloat(model.Customer.Amount.Map[key].GstAmount) }]</span>
+			<span class="text-xs font-light">[{ util.FormatFloat(model.ActiveInvoice.Amount.Map[key].GstAmount) }]</span>
 		</td>
 		<th class="group-hover:bg-[#252020]">
 			<button
@@ -43,7 +43,7 @@ templ ProductRow(idx int, product model.ProductInfo) {
 
 templ ProductBody() {
 	<tbody id="product-tbody" class="text-base text-gray-300">
-		for idx, product := range model.Customer.Products {
+		for idx, product := range model.ActiveInvoice.Items {
 			@ProductRow(idx+1, product)
 		}
 	</tbody>

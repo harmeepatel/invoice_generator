@@ -36,7 +36,7 @@ func patchSignal(w http.ResponseWriter, req bunrouter.Request, signals any) erro
 func AllCustomerValid() bool { return allCustomerValid() }
 
 func allCustomerValid() bool {
-	c := model.Customer
+	c := model.ActiveInvoice.Customer
 	if validateName(strings.ToUpper(strings.TrimSpace(c.Name))) != nil {
 		// fmt.Println("name")
 		return false
@@ -45,7 +45,7 @@ func allCustomerValid() bool {
 		// fmt.Println("companyName")
 		return false
 	}
-	if validateIgst(c.State, c.Igst) != nil {
+	if validateIgst(c.State, model.ActiveInvoice.IgstRate) != nil {
 		// fmt.Println("igst")
 		return false
 	}
@@ -107,8 +107,8 @@ func validateName(name string) error {
 }
 
 func Name(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -118,7 +118,7 @@ func Name(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	name := strings.ToUpper(strings.TrimSpace(model.Customer.Name))
+	name := strings.ToUpper(strings.TrimSpace(model.ActiveInvoice.Customer.Name))
 	if err := validateName(name); err != nil {
 		signals.NameError = err.Error()
 	}
@@ -128,8 +128,8 @@ func Name(w http.ResponseWriter, req bunrouter.Request) error {
 }
 
 func CompanyName(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -139,7 +139,7 @@ func CompanyName(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	name := strings.ToUpper(strings.TrimSpace(model.Customer.CompanyName))
+	name := strings.ToUpper(strings.TrimSpace(model.ActiveInvoice.Customer.CompanyName))
 	if err := validateName(name); err != nil {
 		signals.CompanyNameError = err.Error()
 	}
@@ -156,8 +156,8 @@ func validateIgst(_ string, gst float64) error {
 }
 
 func Igst(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -167,14 +167,14 @@ func Igst(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validateIgst(model.Customer.State, model.Customer.Igst); err != nil {
+	if err := validateIgst(model.ActiveInvoice.Customer.State, model.ActiveInvoice.IgstRate); err != nil {
 		signals.IgstError = err.Error()
-		model.Customer.Igst = 0
+		model.ActiveInvoice.IgstRate = 0
 	}
 	signals.HasError = !allCustomerValid()
 
-	if model.Customer.State == "Gujarat" {
-		model.Customer.Igst = 0
+	if model.ActiveInvoice.Customer.State == "Gujarat" {
+		model.ActiveInvoice.IgstRate = 0
 	}
 
 	return patchSignal(w, req, signals)
@@ -229,8 +229,8 @@ func validateGstin(gstin string) error {
 
 // ae: 24AAZPP2696Q1ZE
 func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -240,7 +240,7 @@ func Gstin(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	gstin := strings.ToUpper(strings.TrimSpace(model.Customer.Gstin))
+	gstin := strings.ToUpper(strings.TrimSpace(model.ActiveInvoice.Customer.Gstin))
 	if err := validateGstin(gstin); err != nil {
 		signals.GstinError = err.Error()
 	}
@@ -258,8 +258,8 @@ func validateEmail(email string) error {
 }
 
 func Email(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -269,7 +269,7 @@ func Email(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validateEmail(model.Customer.Email); err != nil {
+	if err := validateEmail(model.ActiveInvoice.Customer.Email); err != nil {
 		signals.EmailError = err.Error()
 	}
 	signals.HasError = !allCustomerValid()
@@ -292,8 +292,8 @@ func validatePhone(phone string) error {
 }
 
 func Phone(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -303,7 +303,7 @@ func Phone(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePhone(model.Customer.Phone); err != nil {
+	if err := validatePhone(model.ActiveInvoice.Customer.Phone); err != nil {
 		signals.PhoneError = err.Error()
 	}
 	signals.HasError = !allCustomerValid()
@@ -324,8 +324,8 @@ func validateRemark(remark string) error {
 }
 
 func Remark(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -335,7 +335,7 @@ func Remark(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validateRemark(model.Customer.Remark); err != nil {
+	if err := validateRemark(model.ActiveInvoice.Customer.Remark); err != nil {
 		signals.RemarkError = err.Error()
 	}
 	signals.HasError = !allCustomerValid()
@@ -357,8 +357,8 @@ func validateShopNo(shopNo string) error {
 }
 
 func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -368,7 +368,7 @@ func ShopNo(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	shopNo := strings.ToUpper(strings.TrimSpace(model.Customer.ShopNo))
+	shopNo := strings.ToUpper(strings.TrimSpace(model.ActiveInvoice.Customer.ShopNo))
 	if err := validateShopNo(shopNo); err != nil {
 		signals.ShopNoError = err.Error()
 	}
@@ -399,8 +399,8 @@ func validateLine(value string, isRequired bool) error {
 }
 
 func Line(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -408,9 +408,9 @@ func Line(w http.ResponseWriter, req bunrouter.Request) error {
 		value      string
 		isRequired bool
 	}{
-		"line1": {model.Customer.Line1, true},
-		"line2": {model.Customer.Line2, false},
-		"line3": {model.Customer.Line3, false},
+		"line1": {model.ActiveInvoice.Customer.Line1, true},
+		"line2": {model.ActiveInvoice.Customer.Line2, false},
+		"line3": {model.ActiveInvoice.Customer.Line3, false},
 	}
 
 	endpoint := path.Base(req.URL.Path)
@@ -446,8 +446,8 @@ func validateCity(city string) error {
 }
 
 func City(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -457,7 +457,7 @@ func City(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validateCity(model.Customer.City); err != nil {
+	if err := validateCity(model.ActiveInvoice.Customer.City); err != nil {
 		signals.CityError = "Required"
 	}
 	signals.HasError = !allCustomerValid()
@@ -466,8 +466,8 @@ func City(w http.ResponseWriter, req bunrouter.Request) error {
 }
 
 func State(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -486,8 +486,8 @@ func validatePostalCode(state string, pc uint) error {
 }
 
 func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Customer); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveInvoice.Customer); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -497,13 +497,13 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePostalCode(model.Customer.State, model.Customer.PostalCode); err != nil {
+	if err := validatePostalCode(model.ActiveInvoice.Customer.State, model.ActiveInvoice.Customer.PostalCode); err != nil {
 		signals.PostalCodeError = err.Error()
 	}
 	signals.HasError = !allCustomerValid()
 
-	if model.Customer.State == "Gujarat" {
-		model.Customer.Igst = 0
+	if model.ActiveInvoice.Customer.State == "Gujarat" {
+		model.ActiveInvoice.IgstRate = 0
 	}
 
 	return patchSignal(w, req, signals)
@@ -515,7 +515,7 @@ func PostalCode(w http.ResponseWriter, req bunrouter.Request) error {
 func AllProductValid() bool { return allProductValid() }
 
 func allProductValid() bool {
-	p := model.Product
+	p := model.ActiveItem
 	if validatePsn(p.SerialNumber) != nil {
 		return false
 	}
@@ -550,8 +550,8 @@ func validatePsn(sn string) error {
 }
 
 func SerialNumber(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveItem); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -561,7 +561,7 @@ func SerialNumber(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePsn(model.Product.SerialNumber); err != nil {
+	if err := validatePsn(model.ActiveItem.SerialNumber); err != nil {
 		signals.SerialNumber = err.Error()
 	}
 	signals.ProductHasError = !allProductValid()
@@ -578,8 +578,8 @@ func validatePname(name string) error {
 }
 
 func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveItem); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -589,7 +589,7 @@ func ProductName(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePname(model.Product.Name); err != nil {
+	if err := validatePname(model.ActiveItem.Name); err != nil {
 		signals.ProductNameNumber = err.Error()
 	}
 	signals.ProductHasError = !allProductValid()
@@ -605,8 +605,8 @@ func validateGst(gst float64) error {
 }
 
 func Gst(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveItem); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -616,7 +616,7 @@ func Gst(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validateGst(model.Product.Gst); err != nil {
+	if err := validateGst(model.ActiveItem.Gst); err != nil {
 		signals.GstError = err.Error()
 	}
 	signals.HasError = !allCustomerValid()
@@ -637,8 +637,8 @@ func validatePhsn(hsn string) error {
 }
 
 func Hsn(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveItem); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -648,7 +648,7 @@ func Hsn(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePhsn(model.Product.Hsn); err != nil {
+	if err := validatePhsn(model.ActiveItem.Hsn); err != nil {
 		signals.HsnNumber = err.Error()
 	}
 	signals.ProductHasError = !allProductValid()
@@ -665,8 +665,8 @@ func validatePquan(quantity int) error {
 }
 
 func Quantity(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveItem); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -676,7 +676,7 @@ func Quantity(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePquan(model.Product.Quantity); err != nil {
+	if err := validatePquan(model.ActiveItem.Quantity); err != nil {
 		signals.QuantityNumber = err.Error()
 	}
 	signals.ProductHasError = !allProductValid()
@@ -693,8 +693,8 @@ func validatePsp(price float64) error {
 }
 
 func Rate(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveItem); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -704,7 +704,7 @@ func Rate(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePsp(model.Product.Rate); err != nil {
+	if err := validatePsp(model.ActiveItem.Rate); err != nil {
 		signals.RateNumber = err.Error()
 	}
 	signals.ProductHasError = !allProductValid()
@@ -721,8 +721,8 @@ func validatePdisc(discount float64) error {
 }
 
 func Discount(w http.ResponseWriter, req bunrouter.Request) error {
-	if err := datastar.ReadSignals(req.Request, model.Product); err != nil {
-		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.Customer, err.Error()))
+	if err := datastar.ReadSignals(req.Request, model.ActiveItem); err != nil {
+		logger.Logger.Error(fmt.Sprintf("Failed to ReadSignals %+v with error: %+v", model.ActiveInvoice.Customer, err.Error()))
 		return err
 	}
 
@@ -732,7 +732,7 @@ func Discount(w http.ResponseWriter, req bunrouter.Request) error {
 	}
 	signals := &Signals{}
 
-	if err := validatePdisc(model.Product.Discount); err != nil {
+	if err := validatePdisc(model.ActiveItem.Discount); err != nil {
 		signals.DiscountNumber = err.Error()
 	}
 	signals.ProductHasError = !allProductValid()

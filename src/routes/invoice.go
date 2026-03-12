@@ -32,7 +32,7 @@ func Invoice(fg *bunrouter.Group) {
 			return err
 		}
 
-		model.Customer.GenerateAmounts()
+		model.ActiveInvoice.GenerateAmounts()
 
 		return nil
 	})

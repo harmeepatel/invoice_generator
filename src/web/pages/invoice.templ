@@ -75,10 +75,10 @@ templ header() {
 				</div>
 				<div class={ infoField }>
 					<dt class={ infoLabel }>Remark</dt>
-					if model.Customer.Remark == "" {
+					if model.ActiveInvoice.Customer.Remark == "" {
 						<dd>---</dd>
 					} else {
-						<dd>{ model.Customer.Remark }</dd>
+						<dd>{ model.ActiveInvoice.Customer.Remark }</dd>
 					}
 				</div>
 			</dl>
@@ -87,38 +87,38 @@ templ header() {
 			<section class={ infoContainer, "w-1/2" , bgBorder }>
 				<header class="flex justify-between items-center">
 					<h2 class={ h2 }>To</h2>
-					<span class={ infoCompany }>{ model.Customer.CompanyName }</span>
+					<span class={ infoCompany }>{ model.ActiveInvoice.Customer.CompanyName }</span>
 				</header>
 				<div>
 					<dl class="flex flex-col gap-1">
 						<div class={ infoField, "font-bold" }>
 							<dt class={ infoLabel }>Name</dt>
-							<dd class={ infodd }>{ model.Customer.Name }</dd>
+							<dd class={ infodd }>{ model.ActiveInvoice.Customer.Name }</dd>
 						</div>
 						<div class={ infoField }>
 							<dt class={ infoLabel }>GSTIN</dt>
-							<dd class={ infodd }>{ model.Customer.Gstin }</dd>
+							<dd class={ infodd }>{ model.ActiveInvoice.Customer.Gstin }</dd>
 						</div>
 						<div class={ infoField }>
 							<dt class={ infoLabel }>Email</dt>
-							if model.Customer.Email == "" {
+							if model.ActiveInvoice.Customer.Email == "" {
 								<dd class={ infodd }>---</dd>
 							} else {
-								<dd class={ infodd }>{ model.Customer.Email }</dd>
+								<dd class={ infodd }>{ model.ActiveInvoice.Customer.Email }</dd>
 							}
 						</div>
 						<div class={ infoField }>
 							<dt class={ infoLabel }>Phone</dt>
 							<dd class={ infodd }>
-								+{ model.Customer.PhoneExt }
-								{ model.Customer.Phone }
+								+{ model.ActiveInvoice.Customer.PhoneExt }
+								{ model.ActiveInvoice.Customer.Phone }
 								<br/>
 								<br/>
 							</dd>
 						</div>
 						<address class={ infoField, "not-italic" }>
 							<dt class={ infoLabel }>Address</dt>
-							<dd class={ infodd }>{ model.Customer.Address() }</dd>
+							<dd class={ infodd }>{ model.ActiveInvoice.Customer.Address() }</dd>
 						</address>
 					</dl>
 				</div>
@@ -186,14 +186,14 @@ templ tableRow(idx uint, srnum, name, hsn string, qty int, rate, disc, gst float
 		<td class={ tblRow, bg }>{ util.FormatFloat(rate) }</td>
 		<td class={ tblRow, bg }>
 			{ disc }%
-			<span class="text-xs font-light">[{ util.FormatFloat(model.Customer.Amount.Map[key].DiscAmount) }]</span>
+			<span class="text-xs font-light">[{ util.FormatFloat(model.ActiveInvoice.Amount.Map[key].DiscAmount) }]</span>
 		</td>
 		<td class={ tblRow, bg }>
 			{ gst }%
-			<span class="text-xs font-light">[{ util.FormatFloat(model.Customer.Amount.Map[key].GstAmount) }]</span>
+			<span class="text-xs font-light">[{ util.FormatFloat(model.ActiveInvoice.Amount.Map[key].GstAmount) }]</span>
 		</td>
 		<td class={ tblRow, bg, "rounded-tr-md rounded-br-md" }>
-			{ util.FormatFloat(model.Customer.Amount.Map[key].AfterDisc) }
+			{ util.FormatFloat(model.ActiveInvoice.Amount.Map[key].AfterDisc) }
 		</td>
 	</tr>
 }
@@ -215,7 +215,7 @@ templ table() {
 				</tr>
 			</thead>
 			<tbody>
-				for idx, item := range model.Customer.Products {
+				for idx, item := range model.ActiveInvoice.Items {
 					@tableRow(uint(idx), item.SerialNumber, item.Name, item.Hsn, item.Quantity, item.Rate, item.Discount,
 						item.Gst)
 				}
@@ -256,38 +256,38 @@ templ total() {
 				<dl class="flex flex-col justify-between h-full">
 					<div class={ infoField, "font-bold" }>
 						<dt class="text-base">Sub Total</dt>
-						<dd class={ infodd, "text-base" }>{ util.FormatFloat(model.Customer.Amount.SubTotal) }</dd>
+						<dd class={ infodd, "text-base" }>{ util.FormatFloat(model.ActiveInvoice.Amount.SubTotal) }</dd>
 					</div>
 					<div class={ infoField, "font-bold" }>
 						<dt>GST</dt>
-						if model.Customer.Igst == 0 {
-							<dd class={ infodd }>{ util.FormatFloat(model.Customer.Amount.GstTotal) }</dd>
+						if model.ActiveInvoice.IgstRate == 0 {
+							<dd class={ infodd }>{ util.FormatFloat(model.ActiveInvoice.Amount.GstTotal) }</dd>
 						} else {
-							<dd class={ infodd }>{ model.Customer.Amount.Igst }</dd>
+							<dd class={ infodd }>{ model.ActiveInvoice.Amount.Igst }</dd>
 						}
 					</div>
 					<div class={ infoField }>
 						<dt>CGST</dt>
-						if model.Customer.Igst == 0 {
-							<dd class={ infodd }>{ util.FormatFloat(model.Customer.Amount.Cgst) }</dd>
+						if model.ActiveInvoice.IgstRate == 0 {
+							<dd class={ infodd }>{ util.FormatFloat(model.ActiveInvoice.Amount.Cgst) }</dd>
 						} else {
 							<dd class={ infodd }>---</dd>
 						}
 					</div>
 					<div class={ infoField }>
 						<dt>SGST</dt>
-						if model.Customer.Igst == 0 {
-							<dd class={ infodd }>{ util.FormatFloat(model.Customer.Amount.Sgst) }</dd>
+						if model.ActiveInvoice.IgstRate == 0 {
+							<dd class={ infodd }>{ util.FormatFloat(model.ActiveInvoice.Amount.Sgst) }</dd>
 						} else {
 							<dd class={ infodd }>---</dd>
 						}
 					</div>
 					<div class={ infoField }>
-						<dt>IGST [{ model.Customer.Igst }%]</dt>
-						if model.Customer.Igst == 0 {
+						<dt>IGST [{ util.FormatFloat(model.ActiveInvoice.IgstRate) }%]</dt>
+						if model.ActiveInvoice.IgstRate == 0 {
 							<dd class={ infodd }>---</dd>
 						} else {
-							<dd class={ infodd }>{ model.Customer.Amount.Igst }</dd>
+							<dd class={ infodd }>{ util.FormatFloat(model.ActiveInvoice.Amount.Igst) }</dd>
 						}
 					</div>
 				</dl>
@@ -319,8 +319,8 @@ templ total() {
 				class={ "w-1/2 flex flex-col justify-between items-end p-4 rounded-xl h-[-webkit-fill-available]" ,
             bgBorder }
 			>
-				<span class="text-primary font-semibold">TOTAL</span>
-				<span class="text-2xl font-bold text-primary">₹{ util.FormatFloat(model.Customer.Amount.Total) } </span>
+				<span class="text-primary font-semibold uppercase">total</span>
+				<span class="text-2xl font-bold text-primary break-all">₹{ util.FormatFloat(model.ActiveInvoice.Amount.Total) } </span>
 			</div>
 		</div>
 		<div class="text-right pt-12">
