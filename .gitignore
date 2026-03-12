@@ -5,6 +5,8 @@ go.sum
 
 *_templ.go
 
+*.af
+*~lock~
 
 .logs/
 .air/
