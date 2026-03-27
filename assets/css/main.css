@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@source "../src/**/*.{rs,html,css}";
+
+@font-face {
+    font-family: "RobotoMono";
+    src: url("../fonts/RobotoMono.ttf") format("truetype");
+    font-weight: 50 1000;
+    font-stretch: 20% 200%;
+}
+
+@font-face {
+    font-family: "Cascadia";
+    src: url("/assets/fonts/Cascadia.ttf") format("truetype");
+    font-weight: 50 1000;
+    font-stretch: 20% 200%;
+}
+
+:root {
+    --ratio: 1.2;
+
+    --color-text: black;
+    --bg: #ffeeee;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-text: white;
+        --bg: #141312;
+    }
+}
+
+@theme {
+    --font-sans: "RobotoMono", monospace;
+    --font-cascadia: "Cascadia", monospace;
+
+    --spacing: clamp(2px, 0.5vw, 6px);
+    --text-xs: calc(var(--text-sm) / var(--ratio));
+    --text-sm: calc(var(--text-base) / var(--ratio));
+    --text-base: clamp(0.6rem, 1.1vw, 1rem);
+    --text-lg: calc(var(--text-base) * var(--ratio));
+    --text-xl: calc(var(--text-lg) * var(--ratio));
+    --text-2xl: calc(var(--text-xl) * var(--ratio));
+    --text-3xl: calc(var(--text-2xl) * var(--ratio));
+    --text-4xl: calc(var(--text-3xl) * var(--ratio));
+    --text-5xl: calc(var(--text-4xl) * var(--ratio));
+    --text-6xl: calc(var(--text-5xl) * var(--ratio));
+    --text-7xl: calc(var(--text-6xl) * var(--ratio));
+    --text-8xl: calc(var(--text-7xl) * var(--ratio));
+    --text-9xl: calc(var(--text-8xl) * var(--ratio));
+
+    --radius-sm: calc(var(--radius-base) / var(--ratio));
+    --radius-base: clamp(0.1rem, 0.8vw, 0.8rem);
+    --radius-lg: calc(var(--radius-base) * var(--ratio));
+    --radius-xl: calc(var(--radius-lg) * var(--ratio));
+}
+
+@layer base {
+    html {
+        @apply bg-(--bg) text-(--color-text);
+    }
+
+    input {
+        @apply rounded-(--radius-base);
+        border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent 50%);
+        background: color-mix(in srgb, var(--color-text) 3%, var(--bg));
+    }
+
+    /* { */
+    .join {
+        --join-ss: 0;
+        --join-se: 0;
+        --join-es: 0;
+        --join-ee: 0;
+        align-items: stretch;
+        display: inline-flex
+    }
+
+    .join :where(.join-item) {
+        border-start-start-radius: var(--join-ss, 0);
+        border-start-end-radius: var(--join-se, 0);
+        border-end-end-radius: var(--join-ee, 0);
+        border-end-start-radius: var(--join-es, 0)
+    }
+
+    .join :where(.join-item) * {
+        --join-ss: var(--radius-field);
+        --join-se: var(--radius-field);
+        --join-es: var(--radius-field);
+        --join-ee: var(--radius-field)
+    }
+
+    .join>.join-item:where(:first-child),
+    .join :first-child:not(:last-child) :where(.join-item) {
+        --join-ss: var(--radius-field);
+        --join-se: 0;
+        --join-es: var(--radius-field);
+        --join-ee: 0
+    }
+
+    .join>.join-item:where(:last-child),
+    .join :last-child:not(:first-child) :where(.join-item) {
+        --join-ss: 0;
+        --join-se: var(--radius-field);
+        --join-es: 0;
+        --join-ee: var(--radius-field)
+    }
+
+    .join>.join-item:where(:only-child),
+    .join :only-child :where(.join-item) {
+        --join-ss: var(--radius-field);
+        --join-se: var(--radius-field);
+        --join-es: var(--radius-field);
+        --join-ee: var(--radius-field)
+    }
+
+    .join>:where(:focus, :has(:focus)) {
+        z-index: 1
+    }
+
+    @media (hover:hover) {
+        .join>:where(.btn:hover, :has(.btn:hover)) {
+            isolation: isolate
+        }
+    }
+
+    .join-item:where(:not(:first-child, :disabled, [disabled], .btn-disabled)) {
+        margin-block-start: 0;
+        margin-inline-start: calc(var(--border, 1px)*-1)
+    }
+
+    .join-item:where(:is(:disabled, [disabled], .btn-disabled)) {
+        border-width: var(--border, 1px)0 var(--border, 1px)var(--border, 1px)
+    }
+
+    /* } */
+}
