@@ -96,6 +96,10 @@ type brotliResponseWriter struct {
 	writer *brotli.Writer
 }
 
+var brotliPool = sync.Pool{
+	New: func() any { return brotli.NewWriter(io.Discard) },
+}
+
 func brotliMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "br") {
@@ -106,8 +110,12 @@ func brotliMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Content-Encoding", "br")
 		w.Header().Add("Vary", "Accept-Encoding")
 
-		bw := brotli.NewWriter(w)
-		defer bw.Close()
+		bw := brotliPool.Get().(*brotli.Writer)
+		bw.Reset(w)
+		defer func() {
+			bw.Close()
+			brotliPool.Put(bw)
+		}()
 
 		bwWriter := &brotliResponseWriter{
 			ResponseWriter: w,

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -24,9 +23,6 @@ func notFoundHandler(w http.ResponseWriter, req bunrouter.Request) error {
 	)
 	return nil
 }
-
-//go:embed web/*
-var webFS embed.FS
 
 func newRouter() *bunrouter.Router {
 	router := bunrouter.New(
