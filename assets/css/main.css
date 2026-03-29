@@ -33,7 +33,7 @@
     --font-sans: "RobotoMono", monospace;
     --font-cascadia: "Cascadia", monospace;
 
-    --spacing: clamp(2px, 0.5vw, 6px);
+    --spacing: clamp(2px, 0.5vw, 4px);
     --text-xs: calc(var(--text-sm) / var(--ratio));
     --text-sm: calc(var(--text-base) / var(--ratio));
     --text-base: clamp(0.6rem, 1.1vw, 1rem);
@@ -49,7 +49,7 @@
     --text-9xl: calc(var(--text-8xl) * var(--ratio));
 
     --radius-sm: calc(var(--radius-base) / var(--ratio));
-    --radius-base: clamp(0.1rem, 0.8vw, 0.8rem);
+    --radius-base: clamp(0.1rem, 0.8vw, 0.6rem);
     --radius-lg: calc(var(--radius-base) * var(--ratio));
     --radius-xl: calc(var(--radius-lg) * var(--ratio));
 }
@@ -59,13 +59,14 @@
         @apply bg-(--bg) text-(--color-text);
     }
 
-    input {
+    input,
+    select {
         @apply rounded-(--radius-base);
         border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent 50%);
         background: color-mix(in srgb, var(--color-text) 3%, var(--bg));
     }
 
-    /* { */
+    /* { join classes from daisyui [helps in fields like phone] */
     .join {
         --join-ss: 0;
         --join-se: 0;
@@ -73,44 +74,6 @@
         --join-ee: 0;
         align-items: stretch;
         display: inline-flex
-    }
-
-    .join :where(.join-item) {
-        border-start-start-radius: var(--join-ss, 0);
-        border-start-end-radius: var(--join-se, 0);
-        border-end-end-radius: var(--join-ee, 0);
-        border-end-start-radius: var(--join-es, 0)
-    }
-
-    .join :where(.join-item) * {
-        --join-ss: var(--radius-field);
-        --join-se: var(--radius-field);
-        --join-es: var(--radius-field);
-        --join-ee: var(--radius-field)
-    }
-
-    .join>.join-item:where(:first-child),
-    .join :first-child:not(:last-child) :where(.join-item) {
-        --join-ss: var(--radius-field);
-        --join-se: 0;
-        --join-es: var(--radius-field);
-        --join-ee: 0
-    }
-
-    .join>.join-item:where(:last-child),
-    .join :last-child:not(:first-child) :where(.join-item) {
-        --join-ss: 0;
-        --join-se: var(--radius-field);
-        --join-es: 0;
-        --join-ee: var(--radius-field)
-    }
-
-    .join>.join-item:where(:only-child),
-    .join :only-child :where(.join-item) {
-        --join-ss: var(--radius-field);
-        --join-se: var(--radius-field);
-        --join-es: var(--radius-field);
-        --join-ee: var(--radius-field)
     }
 
     .join>:where(:focus, :has(:focus)) {
@@ -126,10 +89,6 @@
     .join-item:where(:not(:first-child, :disabled, [disabled], .btn-disabled)) {
         margin-block-start: 0;
         margin-inline-start: calc(var(--border, 1px)*-1)
-    }
-
-    .join-item:where(:is(:disabled, [disabled], .btn-disabled)) {
-        border-width: var(--border, 1px)0 var(--border, 1px)var(--border, 1px)
     }
 
     /* } */

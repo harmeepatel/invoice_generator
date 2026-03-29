@@ -39,7 +39,7 @@ pub fn Field(conf: FieldConfig) -> Element {
 
                 span {
                     id: conf.name,
-                    class: "text-error text-base block wrap-break-word max-w-3/5",
+                    class: "text-base block wrap-break-word max-w-3/5",
                 }
             }
 
@@ -48,24 +48,24 @@ pub fn Field(conf: FieldConfig) -> Element {
                     select {
                         id: conf.name,
                         name: conf.name,
-                        class: "select w-full max-w-full text-lg h-auto px-4 py-2",
+                        class: "w-full max-w-full text-lg h-auto px-4 py-2 appearance-none",
                         autocomplete: "address-level1",
 
 
 
                         for state in crate::states::state_names() {
-                            option { selected: state == "Gujarat", value: state }
+                            option { selected: state == "Gujarat", value: state, {state} }
                         }
                     }
                 },
                 "tel" => {
                     let phone_ext = format!("{}Ext", conf.name);
                     rsx! {
-                        div { class: "join",
+                        div { class: "join w-full",
                             select {
                                 id: phone_ext.clone(),
                                 name: phone_ext.clone(),
-                                class: "select join-item max-w-[114px] min-w-[114px] text-lg h-auto px-4 py-2",
+                                class: "join-item text-lg px-4 py-2 rounded-r-none appearance-none",
                                 autocomplete: "tel-country-code",
 
                                 option { value: "91", selected: true, "🇮🇳 +91" }
@@ -75,7 +75,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                                 id: conf.name,
                                 r#type: conf.field_type,
                                 name: conf.name,
-                                class: "input w-full max-w-full text-lg h-auto px-4 py-2 rounded-r-(--radius-field)",
+                                class: "join-item w-full max-w-full text-lg h-auto px-4 py-2 rounded-l-none",
                                 placeholder: conf.placeholder,
                                 autocomplete: "tel-national",
                             }
@@ -87,7 +87,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                         id: conf.name,
                         r#type: conf.field_type,
                         name: conf.name,
-                        class: "input w-full max-w-full text-lg h-auto px-4 py-2",
+                        class: "w-full max-w-full text-lg h-auto px-4 py-2",
                         placeholder: conf.placeholder,
                         autocomplete: get_autocomplete_token(conf.name),
                     }

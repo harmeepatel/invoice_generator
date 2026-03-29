@@ -10,6 +10,8 @@ icon = ["assets/icon.ico"]
 name = "AE"
 default_platform = "desktop"
 out_dir = "dist"
+tailwind_input = "assets/css/main.css"
+tailwind_output = "assets/css/tailwind.css"
 
 [web.app]
 # HTML title tag content
