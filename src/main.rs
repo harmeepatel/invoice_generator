@@ -23,7 +23,29 @@ fn main() {
         .with_always_on_top(false)
         .with_title(config::APP_NAME.to_uppercase());
 
-    let config = Config::default().with_window(window.with_background_color((0, 0, 0, 0)));
+    let roboto = asset!("/assets/fonts/RobotoMono.ttf");
+    let cascadia = asset!("/assets/fonts/Cascadia.ttf");
+    let config = Config::default()
+        .with_window(window.with_background_color((0, 0, 0, 0)))
+        .with_custom_head(format!(
+            r#"
+                <style>
+                    @font-face {{
+                        font-family: "RobotoMono";
+                        src: url({roboto}) format("truetype");
+                        font-weight: 50 1000;
+                        font-stretch: 20% 200%;
+                    }}
+
+                    @font-face {{
+                        font-family: "Cascadia";
+                        src: url({cascadia}) format("truetype");
+                        font-weight: 50 1000;
+                        font-stretch: 20% 200%;
+                    }}
+                </style>
+            "#
+        ));
     dioxus::LaunchBuilder::new().with_cfg(config).launch(App);
 }
 
@@ -38,13 +60,17 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     rsx! {
-        page_index::Index { title: config::APP_NAME.to_uppercase() + " - Home" }
+        layouts::Base {
+            page_index::Index { title: config::APP_NAME.to_uppercase() + " - Home" }
+        }
     }
 }
 
 #[component]
 fn InvoiceView() -> Element {
     rsx! {
-        page_invoice::Index { title: config::APP_NAME.to_uppercase() + " - Invoice" }
+        layouts::Base {
+            page_invoice::Index { title: config::APP_NAME.to_uppercase() + " - Invoice" }
+        }
     }
 }

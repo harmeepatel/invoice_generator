@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::{components, layouts};
+use crate::{components};
 
 // <main role="main" id="main">
 //    <div class="flex items-center justify-between sm:mb-4">
@@ -118,47 +118,45 @@ const PRODUCT_PRICING: &[crate::components::FieldConfig] = &[
 
 #[component]
 pub fn Index(title: String) -> Element {
-    const LEGEND_CLASS: &str = "font-light text-base";
+    const LEGEND_CLASS: &str = "font-light";
     rsx! {
         document::Title { "{title}" }
 
-        layouts::Base {
-            main { class: "max-w-6xl m-auto mb-4 px-4 2xl:px-0",
-                h1 { class: "text-4xl", "Party Information" }
-                section {
-                    div {
-                        id: "party-info",
-                        class: "w-full mb-6 sm:mb-3 flex-col sm:flex-row flex gap-4",
+        main { class: "max-w-6xl m-auto mb-4 p-4",
+            h1 { class: "text-4xl", "Party Information" }
+            section {
+                div {
+                    id: "party-info",
+                    class: "w-full mb-6 sm:mb-3 flex-col sm:flex-row flex gap-4",
 
-                        fieldset { id: "left", class: "w-full min-w-0",
-                            legend { class: "{LEGEND_CLASS}", "Business Details" }
-                            for field in BUSINESS_INFO {
-                                components::Field { conf: *field }
-                            }
-                        }
-
-                        fieldset { id: "right", class: "w-full min-w-0",
-                            legend { class: "{LEGEND_CLASS}", "Billing Address" }
-                            for field in BUSINESS_ADDRESS {
-                                components::Field { conf: *field }
-                            }
+                    fieldset { id: "left", class: "w-full min-w-0",
+                        legend { class: "{LEGEND_CLASS}", "Business Details" }
+                        for field in BUSINESS_INFO {
+                            components::Field { conf: *field }
                         }
                     }
 
-                    fieldset {
-                        id: "product-info",
-                        class: "flex md:gap-4 flex-col md:flex-row",
-
-                        legend { class: "{LEGEND_CLASS}", "Product Details" }
-                        div { class: "flex gap-4",
-                            for field in PRODUCT_INFO {
-                                components::Field { conf: *field }
-                            }
+                    fieldset { id: "right", class: "w-full min-w-0",
+                        legend { class: "{LEGEND_CLASS}", "Billing Address" }
+                        for field in BUSINESS_ADDRESS {
+                            components::Field { conf: *field }
                         }
-                        div { class: "flex gap-4",
-                            for field in PRODUCT_PRICING {
-                                components::Field { conf: *field }
-                            }
+                    }
+                }
+
+                fieldset {
+                    id: "product-info",
+                    class: "flex md:gap-4 flex-col md:flex-row",
+
+                    legend { class: "{LEGEND_CLASS}", "Product Details" }
+                    div { class: "flex gap-4",
+                        for field in PRODUCT_INFO {
+                            components::Field { conf: *field }
+                        }
+                    }
+                    div { class: "flex gap-4",
+                        for field in PRODUCT_PRICING {
+                            components::Field { conf: *field }
                         }
                     }
                 }

@@ -5,10 +5,17 @@ use crate::Route;
 
 #[component]
 pub fn Nav() -> Element {
+    const LINK_CLASS: &str = "px-4 py-2 block hover:bg-(--color-hover)";
     rsx! {
-        nav { style: "display: flex; gap: 16px",
-            Link { to: Route::Home {}, "Home" }
-            Link { to: Route::InvoiceView {}, "Invoice" }
+        nav { class: "sticky top-0 m-auto bg-transparent backdrop-blur-lg z-999",
+            ul { class: "flex",
+                li {
+                    Link { class: "{LINK_CLASS}", to: Route::Home {}, "Home" }
+                }
+                li {
+                    Link { class: "{LINK_CLASS}", to: Route::InvoiceView {}, "Invoice" }
+                }
+            }
         }
     }
 }
@@ -37,10 +44,7 @@ pub fn Field(conf: FieldConfig) -> Element {
 
                 {conf.legend}
 
-                span {
-                    id: conf.name,
-                    class: "text-base block wrap-break-word max-w-3/5",
-                }
+                span { id: conf.name, class: "block wrap-break-word max-w-3/5" }
             }
 
             match conf.field_type {

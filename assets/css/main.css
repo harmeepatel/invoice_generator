@@ -1,25 +1,15 @@
 @import "tailwindcss";
 @source "../src/**/*.{rs,html,css}";
 
-@font-face {
-    font-family: "RobotoMono";
-    src: url("../fonts/RobotoMono.ttf") format("truetype");
-    font-weight: 50 1000;
-    font-stretch: 20% 200%;
-}
-
-@font-face {
-    font-family: "Cascadia";
-    src: url("/assets/fonts/Cascadia.ttf") format("truetype");
-    font-weight: 50 1000;
-    font-stretch: 20% 200%;
-}
 
 :root {
     --ratio: 1.2;
 
     --color-text: black;
     --bg: #ffeeee;
+
+    --color-border: color-mix(in srgb, var(--color-text) 20%, transparent 50%);
+    --color-hover: color-mix(in srgb, var(--color-text) 10%, transparent 50%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,13 +20,13 @@
 }
 
 @theme {
-    --font-sans: "RobotoMono", monospace;
-    --font-cascadia: "Cascadia", monospace;
+    --font-sans: "RobotoMono", serif;
+    --font-cascadia: "Cascadia", serif;
 
     --spacing: clamp(2px, 0.5vw, 4px);
     --text-xs: calc(var(--text-sm) / var(--ratio));
     --text-sm: calc(var(--text-base) / var(--ratio));
-    --text-base: clamp(0.6rem, 1.1vw, 1rem);
+    --text-base: clamp(0.82rem, 1.1vw, 1rem);
     --text-lg: calc(var(--text-base) * var(--ratio));
     --text-xl: calc(var(--text-lg) * var(--ratio));
     --text-2xl: calc(var(--text-xl) * var(--ratio));
@@ -56,40 +46,23 @@
 
 @layer base {
     html {
-        @apply bg-(--bg) text-(--color-text);
+        @apply bg-(--bg) text-(--color-text) text-base;
     }
 
     input,
     select {
         @apply rounded-(--radius-base);
-        border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent 50%);
+        border: 1px solid var(--color-border);
         background: color-mix(in srgb, var(--color-text) 3%, var(--bg));
     }
 
-    /* { join classes from daisyui [helps in fields like phone] */
     .join {
-        --join-ss: 0;
-        --join-se: 0;
-        --join-es: 0;
-        --join-ee: 0;
         align-items: stretch;
         display: inline-flex
-    }
-
-    .join>:where(:focus, :has(:focus)) {
-        z-index: 1
-    }
-
-    @media (hover:hover) {
-        .join>:where(.btn:hover, :has(.btn:hover)) {
-            isolation: isolate
-        }
     }
 
     .join-item:where(:not(:first-child, :disabled, [disabled], .btn-disabled)) {
         margin-block-start: 0;
         margin-inline-start: calc(var(--border, 1px)*-1)
     }
-
-    /* } */
 }

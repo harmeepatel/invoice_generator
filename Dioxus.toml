@@ -21,7 +21,6 @@ title = "AE"
 [web.resource]
 # Additional CSS style files
 style = []
-assets = ["assets/fonts/"]
 
 # Additional JavaScript files
 script = []
