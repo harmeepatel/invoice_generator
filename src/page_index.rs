@@ -1,21 +1,10 @@
 use dioxus::prelude::*;
 
-use crate::{components};
+use crate::components;
 
 // <main role="main" id="main">
-//    <div class="flex items-center justify-between sm:mb-4">
-//        <h1 class="text-4xl">
-//            Party Information
-//        </h1>
-//        if (util.IsDev) {
-//            <button class="btn btn-accent" onclick="clearLocalStorage()">clear local storage</button>
-//        }
-//    </div>
 //    <section id="party-info" class="w-full mb-12">
-//        <form
-//            data-on:submit="@post('/invoice/submit', {contentType: 'form'})"
-//            data-init="@get('/invoice/validate/all', {contentType: 'form'})"
-//        >
+//        <form>
 //            <div class="flex w-full gap-4 mt-4">
 //                <button
 //                    type="submit"
@@ -119,6 +108,8 @@ const PRODUCT_PRICING: &[crate::components::FieldConfig] = &[
 #[component]
 pub fn Index(title: String) -> Element {
     const LEGEND_CLASS: &str = "font-light";
+    let plus_icon = asset!("/assets/media/plus.svg");
+
     rsx! {
         document::Title { "{title}" }
 
@@ -158,6 +149,22 @@ pub fn Index(title: String) -> Element {
                         for field in PRODUCT_PRICING {
                             components::Field { conf: *field }
                         }
+                    }
+                }
+                div { class: "flex w-full gap-4 mt-4",
+                    button {
+                        class: "grow-8 bg-(--color-primary) text-xl disabled:cursor-not-allowed",
+                        onclick: move |_| {
+                            println!("generate btn clicked");
+                        },
+                        "Generate Invoice"
+                    }
+                    button {
+                        class: "grow-2 bg-(--color-primary) disabled:cursor-not-allowed",
+                        onclick: move |_| {
+                            println!("plus");
+                        },
+                        img { class: "m-auto", src: "{plus_icon}" }
                     }
                 }
             }

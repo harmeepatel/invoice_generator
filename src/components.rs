@@ -52,7 +52,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                     select {
                         id: conf.name,
                         name: conf.name,
-                        class: "w-full max-w-full text-lg h-auto px-4 py-2 appearance-none",
+                        class: "w-full max-w-full text-lg h-auto appearance-none",
                         autocomplete: "address-level1",
 
 
@@ -69,7 +69,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                             select {
                                 id: phone_ext.clone(),
                                 name: phone_ext.clone(),
-                                class: "join-item text-lg px-4 py-2 rounded-r-none appearance-none",
+                                class: "join-item text-lg rounded-r-none appearance-none",
                                 autocomplete: "tel-country-code",
 
                                 option { value: "91", selected: true, "🇮🇳 +91" }
@@ -79,7 +79,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                                 id: conf.name,
                                 r#type: conf.field_type,
                                 name: conf.name,
-                                class: "join-item w-full max-w-full text-lg h-auto px-4 py-2 rounded-l-none",
+                                class: "join-item w-full max-w-full text-lg h-auto rounded-l-none",
                                 placeholder: conf.placeholder,
                                 autocomplete: "tel-national",
                             }
@@ -91,7 +91,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                         id: conf.name,
                         r#type: conf.field_type,
                         name: conf.name,
-                        class: "w-full max-w-full text-lg h-auto px-4 py-2",
+                        class: "w-full max-w-full text-lg h-auto",
                         placeholder: conf.placeholder,
                         autocomplete: get_autocomplete_token(conf.name),
                     }
