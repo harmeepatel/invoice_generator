@@ -5,7 +5,7 @@ use crate::Route;
 
 #[component]
 pub fn Nav() -> Element {
-    const LINK_CLASS: &str = "px-4 py-2 block hover:bg-(--color-hover)";
+    const LINK_CLASS: &str = "px-4 py-2 block hover:bg-(--color-hover) hover-fade";
     rsx! {
         nav { class: "sticky top-0 m-auto bg-transparent backdrop-blur-lg z-999",
             ul { class: "flex",
@@ -44,7 +44,11 @@ pub fn Field(conf: FieldConfig) -> Element {
 
                 {conf.legend}
 
-                span { id: conf.name, class: "block wrap-break-word max-w-3/5" }
+                span {
+                    id: conf.name,
+                    class: "block wrap-break-word max-w-3/5 text-error",
+                    "error"
+                }
             }
 
             match conf.field_type {

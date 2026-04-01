@@ -2,54 +2,6 @@ use dioxus::prelude::*;
 
 use crate::components;
 
-// <main role="main" id="main">
-//    <section id="party-info" class="w-full mb-12">
-//        <form>
-//            <div class="flex w-full gap-4 mt-4">
-//                <button
-//                    type="submit"
-//                    class="grow-8 btn btn-primary btn-lg text-xl disabled:cursor-not-allowed"
-//                    data-attr:disabled="$hasError"
-//                    disabled
-//                >
-//                    Generate Invoice
-//                </button>
-//                <button
-//                    class="grow-2 btn btn-primary btn-lg brightness-300 disabled:cursor-not-allowed"
-//                    type="button"
-//                    data-on:click="@post('/product/add')"
-//                    data-target="#products-list"
-//                    data-swap="innerHTML"
-//                    data-attr:disabled="$productHasError"
-//                    disabled
-//                >
-//                    <svg
-//                        xmlns="http://www.w3.org/2000/svg"
-//                        height="24px"
-//                        viewBox="0 -960 960 960"
-//                        width="24px"
-//                        fill="#e3e3e3"
-//                    >
-//                        <path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"></path>
-//                    </svg>
-//                </button>
-//            </div>
-//        </form>
-//    </section>
-//    <section id="product-list" class="overflow-x-auto max-h-[640px] lg:max-h-[1024px]">
-//        <table class="table table-pin-rows table-pin-cols text-balance">
-//            <thead class="text-lg font-light">
-//                @tableHeader()
-//            </thead>
-//            @component.ProductBody()
-//            <tfoot class="text-lg font-light">
-//                @tableHeader()
-//            </tfoot>
-//        </table>
-//    </section>
-//</main>
-// Helper macro to cut down boilerplate
-
 /// Generate components::FieldConfig
 /// ARGS:
 /// field_type
@@ -107,14 +59,14 @@ const PRODUCT_PRICING: &[crate::components::FieldConfig] = &[
 
 #[component]
 pub fn Index(title: String) -> Element {
-    const LEGEND_CLASS: &str = "font-light";
+    const LEGEND_CLASS: &str = "font-light w-fit";
     let plus_icon = asset!("/assets/media/plus.svg");
 
     rsx! {
         document::Title { "{title}" }
 
         main { class: "max-w-6xl m-auto mb-4 p-4",
-            h1 { class: "text-4xl", "Party Information" }
+            h1 { class: "text-4xl mb-4", "Party Information" }
             section {
                 div {
                     id: "party-info",
@@ -153,14 +105,14 @@ pub fn Index(title: String) -> Element {
                 }
                 div { class: "flex w-full gap-4 mt-4",
                     button {
-                        class: "grow-8 bg-(--color-primary) text-xl disabled:cursor-not-allowed",
+                        class: "grow-8 bg-(--color-primary) text-xl disabled:cursor-not-allowed hover-fade",
                         onclick: move |_| {
                             println!("generate btn clicked");
                         },
                         "Generate Invoice"
                     }
                     button {
-                        class: "grow-2 bg-(--color-primary) disabled:cursor-not-allowed",
+                        class: "grow-2 bg-(--color-primary) disabled:cursor-not-allowed hover-fade",
                         onclick: move |_| {
                             println!("plus");
                         },

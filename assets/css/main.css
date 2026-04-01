@@ -8,9 +8,10 @@
     --color-text: black;
     --color-bg: #ffeeee;
     --color-primary: oklch(45% .24 277.023);
-
     --color-border: color-mix(in srgb, var(--color-text) 20%, transparent 50%);
     --color-hover: color-mix(in srgb, var(--color-text) 10%, transparent 50%);
+
+    --duration-hover: 150ms;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,7 +28,7 @@
     --spacing: clamp(2px, 0.5vw, 4px);
     --text-xs: calc(var(--text-sm) / var(--ratio));
     --text-sm: calc(var(--text-base) / var(--ratio));
-    --text-base: clamp(0.82rem, 1.1vw, 1rem);
+    --text-base: clamp(0.8rem, 1vw, 1rem);
     --text-lg: calc(var(--text-base) * var(--ratio));
     --text-xl: calc(var(--text-lg) * var(--ratio));
     --text-2xl: calc(var(--text-xl) * var(--ratio));
@@ -46,12 +47,6 @@
 }
 
 @layer base {
-    * {
-        &:hover {
-            transition: all 300ms;
-        }
-    }
-
     html {
         @apply bg-(--color-bg) text-(--color-text) text-base;
     }
@@ -76,13 +71,25 @@
         }
     }
 
-    .join {
-        align-items: stretch;
-        display: inline-flex
+    legend {
+        @apply brightness-50 pr-4;
     }
+}
 
-    .join-item:where(:not(:first-child, :disabled, [disabled], .btn-disabled)) {
-        margin-block-start: 0;
-        margin-inline-start: calc(var(--border, 1px)*-1)
-    }
+.join {
+    align-items: stretch;
+    display: inline-flex
+}
+
+.join-item:where(:not(:first-child, :disabled, [disabled], .btn-disabled)) {
+    margin-block-start: 0;
+    margin-inline-start: calc(var(--border, 1px)*-1)
+}
+
+.hover-fade {
+    transition: all 150ms ease-in-out;
+}
+
+.text-error {
+    @apply text-base text-red-400;
 }
