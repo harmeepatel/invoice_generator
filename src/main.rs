@@ -5,6 +5,7 @@ mod layouts;
 mod page_index;
 mod page_invoice;
 mod states;
+mod validate;
 
 use dioxus::prelude::*;
 use dioxus_desktop::{Config, LogicalSize, WindowBuilder};

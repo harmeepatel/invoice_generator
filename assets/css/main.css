@@ -10,6 +10,7 @@
     --color-primary: oklch(45% .24 277.023);
     --color-border: color-mix(in srgb, var(--color-text) 20%, transparent 50%);
     --color-hover: color-mix(in srgb, var(--color-text) 10%, transparent 50%);
+    --color-error: text-red-400;
 
     --duration-hover: 150ms;
 }
@@ -91,5 +92,5 @@
 }
 
 .text-error {
-    @apply text-base text-red-400;
+    @apply text-base var(--color-error);
 }

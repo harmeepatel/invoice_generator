@@ -1,7 +1,6 @@
+use crate::Route;
 use dioxus::prelude::*;
 use dioxus_router::components::Link;
-
-use crate::Route;
 
 #[component]
 pub fn Nav() -> Element {
@@ -32,22 +31,47 @@ pub struct FieldConfig {
     pub name: &'static str,
     pub placeholder: &'static str,
     pub legend: &'static str,
+    pub error: Signal<Option<String>>,
 }
 
 #[component]
 pub fn Field(conf: FieldConfig) -> Element {
+    let validate = move |evt: Event<FormData>| {
+        let val = evt.value();
+        let mut err = conf.error;
+        err.set(match conf.name {
+            "name" => crate::validate::name(&val),
+            "companyName" => crate::validate::company_name(&val),
+            "igst" => crate::validate::igst(&val),
+            "gstin" => crate::validate::gstin(&val),
+            "email" => crate::validate::email(&val),
+            "phone" => crate::validate::phone(&val),
+            "remark" => crate::validate::remark(&val),
+            "shopNo" => crate::validate::shop_no(&val),
+            "line1" => crate::validate::line(&val, true),
+            "line2" | "line3" => crate::validate::line(&val, false),
+            "city" => crate::validate::city(&val),
+            "postalCode" => crate::validate::postal_code("", &val), // state TBD
+            "serialNumber" => crate::validate::serial_number(&val),
+            "productName" => crate::validate::product_name(&val),
+            "hsn" => crate::validate::hsn(&val),
+            "gst" => crate::validate::gst(&val),
+            "quantity" => crate::validate::quantity(&val),
+            "rate" => crate::validate::rate(&val),
+            "discount" => crate::validate::discount(&val),
+            _ => None,
+        });
+    };
     rsx! {
         div { class: "min-w-0 pb-3",
             label {
                 class: "py-0 text-xl font-light flex justify-between items-end mb-1",
                 r#for: conf.name,
-
                 {conf.legend}
-
-                span {
-                    id: conf.name,
-                    class: "block wrap-break-word max-w-3/5 text-error",
-                    "error"
+                if let Some(err) = conf.error.read().as_deref() {
+                    span { class: "block wrap-break-word max-w-3/5 text-red-400 text-base",
+                        {err}
+                    }
                 }
             }
 
@@ -58,24 +82,22 @@ pub fn Field(conf: FieldConfig) -> Element {
                         name: conf.name,
                         class: "w-full max-w-full text-lg h-auto appearance-none",
                         autocomplete: "address-level1",
-
-
-
+                        onchange: validate,
                         for state in crate::states::state_names() {
                             option { selected: state == "Gujarat", value: state, {state} }
                         }
                     }
                 },
+
                 "tel" => {
                     let phone_ext = format!("{}Ext", conf.name);
                     rsx! {
-                        div { class: "join w-full",
+                        div { class: "flex w-full",
                             select {
                                 id: phone_ext.clone(),
                                 name: phone_ext.clone(),
-                                class: "join-item text-lg rounded-r-none appearance-none",
+                                class: "text-lg rounded-r-none appearance-none",
                                 autocomplete: "tel-country-code",
-
                                 option { value: "91", selected: true, "🇮🇳 +91" }
                                 option { value: "011", "🇮🇳 011" }
                             }
@@ -83,13 +105,15 @@ pub fn Field(conf: FieldConfig) -> Element {
                                 id: conf.name,
                                 r#type: conf.field_type,
                                 name: conf.name,
-                                class: "join-item w-full max-w-full text-lg h-auto rounded-l-none",
+                                class: "w-full max-w-full text-lg h-auto rounded-l-none",
                                 placeholder: conf.placeholder,
                                 autocomplete: "tel-national",
+                                oninput: validate,
                             }
                         }
                     }
                 }
+
                 _ => rsx! {
                     input {
                         id: conf.name,
@@ -98,6 +122,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                         class: "w-full max-w-full text-lg h-auto",
                         placeholder: conf.placeholder,
                         autocomplete: get_autocomplete_token(conf.name),
+                        oninput: validate,
                     }
                 },
             }
