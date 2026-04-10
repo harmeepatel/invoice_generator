@@ -38,8 +38,7 @@ pub struct FieldConfig {
 pub fn Field(conf: FieldConfig) -> Element {
     let validate = move |evt: Event<FormData>| {
         let val = evt.value();
-        let mut err = conf.error;
-        err.set(match conf.name {
+        conf.error.set(match conf.name {
             "name" => crate::validate::name(&val),
             "companyName" => crate::validate::company_name(&val),
             "igst" => crate::validate::igst(&val),
@@ -52,6 +51,7 @@ pub fn Field(conf: FieldConfig) -> Element {
             "line2" | "line3" => crate::validate::line(&val, false),
             "city" => crate::validate::city(&val),
             "postalCode" => crate::validate::postal_code("", &val), // state TBD
+
             "serialNumber" => crate::validate::serial_number(&val),
             "productName" => crate::validate::product_name(&val),
             "hsn" => crate::validate::hsn(&val),
@@ -92,11 +92,11 @@ pub fn Field(conf: FieldConfig) -> Element {
                 "tel" => {
                     let phone_ext = format!("{}Ext", conf.name);
                     rsx! {
-                        div { class: "flex w-full",
+                        div { class: "flex w-full join",
                             select {
                                 id: phone_ext.clone(),
                                 name: phone_ext.clone(),
-                                class: "text-lg rounded-r-none appearance-none",
+                                class: "join-item text-lg rounded-r-none appearance-none",
                                 autocomplete: "tel-country-code",
                                 option { value: "91", selected: true, "🇮🇳 +91" }
                                 option { value: "011", "🇮🇳 011" }
@@ -105,7 +105,7 @@ pub fn Field(conf: FieldConfig) -> Element {
                                 id: conf.name,
                                 r#type: conf.field_type,
                                 name: conf.name,
-                                class: "w-full max-w-full text-lg h-auto rounded-l-none",
+                                class: "join-item w-full max-w-full text-lg h-auto rounded-l-none",
                                 placeholder: conf.placeholder,
                                 autocomplete: "tel-national",
                                 oninput: validate,

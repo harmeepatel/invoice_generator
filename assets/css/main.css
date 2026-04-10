@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @source "../src/**/*.{rs,html,css}";
 
-
 :root {
     --ratio: 1.2;
 
