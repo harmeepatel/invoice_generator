@@ -1,3 +1,4 @@
+use crate::models::{ACTIVE_INVOICE, ACTIVE_ITEM};
 use crate::Route;
 use dioxus::prelude::*;
 use dioxus_router::components::Link;
@@ -24,7 +25,6 @@ fn get_autocomplete_token(input_name: &str) -> &'static str {
         _ => "off",
     }
 }
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct FieldConfig {
     pub field_type: &'static str,
@@ -38,30 +38,98 @@ pub struct FieldConfig {
 pub fn Field(conf: FieldConfig) -> Element {
     let validate = move |evt: Event<FormData>| {
         let val = evt.value();
-        conf.error.set(match conf.name {
-            "name" => crate::validate::name(&val),
-            "companyName" => crate::validate::company_name(&val),
-            "igst" => crate::validate::igst(&val),
-            "gstin" => crate::validate::gstin(&val),
-            "email" => crate::validate::email(&val),
-            "phone" => crate::validate::phone(&val),
-            "remark" => crate::validate::remark(&val),
-            "shopNo" => crate::validate::shop_no(&val),
-            "line1" => crate::validate::line(&val, true),
-            "line2" | "line3" => crate::validate::line(&val, false),
-            "city" => crate::validate::city(&val),
-            "postalCode" => crate::validate::postal_code("", &val), // state TBD
+        let mut inv = ACTIVE_INVOICE.write();
+        let mut item = ACTIVE_ITEM.write();
 
-            "serialNumber" => crate::validate::serial_number(&val),
-            "productName" => crate::validate::product_name(&val),
-            "hsn" => crate::validate::hsn(&val),
-            "gst" => crate::validate::gst(&val),
-            "quantity" => crate::validate::quantity(&val),
-            "rate" => crate::validate::rate(&val),
-            "discount" => crate::validate::discount(&val),
+        conf.error.set(match conf.name {
+            "name" => crate::validate::name(&val).or_else(|| {
+                inv.customer.name = val.clone();
+                None
+            }),
+            "companyName" => crate::validate::company_name(&val).or_else(|| {
+                inv.customer.company_name = val.clone();
+                None
+            }),
+            "igst" => crate::validate::igst(&val).or_else(|| {
+                inv.igst_rate = val.parse().unwrap_or(0.0);
+                None
+            }),
+            "gstin" => crate::validate::gstin(&val).or_else(|| {
+                inv.customer.gstin = val.clone();
+                None
+            }),
+            "email" => crate::validate::email(&val).or_else(|| {
+                inv.customer.email = val.clone();
+                None
+            }),
+            "phone" => crate::validate::phone(&val).or_else(|| {
+                inv.customer.phone = val.clone();
+                None
+            }),
+            "remark" => crate::validate::remark(&val).or_else(|| {
+                inv.customer.remark = val.clone();
+                None
+            }),
+            "shopNo" => crate::validate::shop_no(&val).or_else(|| {
+                inv.customer.shop_no = val.clone();
+                None
+            }),
+            "line1" => crate::validate::line(&val, true).or_else(|| {
+                inv.customer.line1 = val.clone();
+                None
+            }),
+            "line2" => crate::validate::line(&val, false).or_else(|| {
+                inv.customer.line2 = val.clone();
+                None
+            }),
+            "line3" => crate::validate::line(&val, false).or_else(|| {
+                inv.customer.line3 = val.clone();
+                None
+            }),
+            "city" => crate::validate::city(&val).or_else(|| {
+                inv.customer.city = val.clone();
+                None
+            }),
+            "state" => {
+                inv.customer.state = val.clone();
+                None
+            }
+            "postalCode" => crate::validate::postal_code(&inv.customer.state, &val).or_else(|| {
+                inv.customer.postal_code = val.parse().unwrap_or(0);
+                None
+            }),
+            "serialNumber" => crate::validate::serial_number(&val).or_else(|| {
+                item.serial_number = val.clone();
+                None
+            }),
+            "productName" => crate::validate::product_name(&val).or_else(|| {
+                item.name = val.clone();
+                None
+            }),
+            "hsn" => crate::validate::hsn(&val).or_else(|| {
+                item.hsn = val.clone();
+                None
+            }),
+            "gst" => crate::validate::gst(&val).or_else(|| {
+                item.gst = val.parse().unwrap_or(0.0);
+                None
+            }),
+            "quantity" => crate::validate::quantity(&val).or_else(|| {
+                item.quantity = val.parse().unwrap_or(0);
+                None
+            }),
+            "rate" => crate::validate::rate(&val).or_else(|| {
+                item.rate = val.parse().unwrap_or(0.0);
+                None
+            }),
+            "discount" => crate::validate::discount(&val).or_else(|| {
+                item.discount = val.parse().unwrap_or(0.0);
+                None
+            }),
             _ => None,
         });
     };
+
     rsx! {
         div { class: "min-w-0 pb-3",
             label {

@@ -2,6 +2,7 @@
 mod components;
 mod config;
 mod layouts;
+mod models;
 mod page_index;
 mod page_invoice;
 mod states;

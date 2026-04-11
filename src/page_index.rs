@@ -1,4 +1,7 @@
 use crate::components;
+use crate::models;
+use crate::models::{ACTIVE_INVOICE, ACTIVE_ITEM};
+use dioxus::html::colgroup::span;
 use dioxus::prelude::*;
 
 macro_rules! field {
@@ -97,11 +100,20 @@ pub fn Index(title: String) -> Element {
         field!("number", "gst", "5.0", "GST", gst_err),
     ];
 
+    let is_dev = std::env::var("IS_DEV")
+        .unwrap_or_else(|_| "false".to_string()) // default
+        .parse::<bool>()
+        .unwrap_or(false); // fallback if invalid
     rsx! {
         document::Title { "{title}" }
 
         main { class: "max-w-6xl m-auto mb-4 p-4",
-            h1 { class: "text-4xl mb-4", "Party Information" }
+            div { class: "flex justify-between",
+                h1 { class: "text-4xl mb-4", "Party Information" }
+                if is_dev {
+                    button { onclick: |_| { println!("clear") }, "clear" }
+                }
+            }
             section {
                 div {
                     id: "party-info",
@@ -143,14 +155,15 @@ pub fn Index(title: String) -> Element {
                     button {
                         class: "grow-8 bg-(--color-primary) text-xl disabled:cursor-not-allowed hover-fade",
                         onclick: move |_| {
-                            println!("generate btn clicked");
+                            dbg!(&crate::models::ACTIVE_INVOICE);
                         },
                         "Generate Invoice"
                     }
                     button {
                         class: "grow-2 bg-(--color-primary) disabled:cursor-not-allowed hover-fade",
                         onclick: move |_| {
-                            println!("plus");
+                            ACTIVE_INVOICE.write().items.push(ACTIVE_ITEM.read().clone());
+                            dbg!(&crate::models::ACTIVE_INVOICE);
                         },
                         img { class: "m-auto", src: "{plus_icon}" }
                     }
