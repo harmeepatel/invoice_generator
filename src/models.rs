@@ -37,5 +37,11 @@ pub struct Invoice {
     pub igst_rate: f64,
 }
 
-pub static ACTIVE_INVOICE: GlobalSignal<Invoice> = Signal::global(|| Invoice::default());
+pub static ACTIVE_INVOICE: GlobalSignal<Invoice> = Signal::global(|| Invoice {
+    customer: Customer {
+        state: "Gujarat".to_string(),
+        ..Default::default()
+    },
+    ..Default::default()
+});
 pub static ACTIVE_ITEM: GlobalSignal<InvoiceItem> = Signal::global(|| InvoiceItem::default());

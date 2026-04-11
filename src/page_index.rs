@@ -1,7 +1,6 @@
 use crate::components;
 use crate::models;
 use crate::models::{ACTIVE_INVOICE, ACTIVE_ITEM};
-use dioxus::html::colgroup::span;
 use dioxus::prelude::*;
 
 macro_rules! field {
@@ -42,6 +41,15 @@ pub fn Index(title: String) -> Element {
     let rate_err = use_signal(|| None::<String>);
     let discount_err = use_signal(|| None::<String>);
     let gst_err = use_signal(|| None::<String>);
+
+    let mut postal_err_clone = postal_err;
+    use_effect(move || {
+        let state = ACTIVE_INVOICE.read().customer.state.clone();
+        let pc = ACTIVE_INVOICE.read().customer.postal_code.to_string();
+        if ACTIVE_INVOICE.read().customer.postal_code != 0 {
+            postal_err_clone.set(crate::validate::postal_code(&state, &pc));
+        }
+    });
 
     let business_info = [
         field!("text", "name", "Rohit Patel", "Name", name_err),
@@ -111,7 +119,15 @@ pub fn Index(title: String) -> Element {
             div { class: "flex justify-between",
                 h1 { class: "text-4xl mb-4", "Party Information" }
                 if is_dev {
-                    button { onclick: |_| { println!("clear") }, "clear" }
+                    button {
+                        class: "hover:bg-(--color-hover) hover-fade",
+                        onclick: |_| {
+                            println!("clear");
+                            *ACTIVE_INVOICE.write() = models::Invoice::default();
+                            *ACTIVE_ITEM.write() = models::InvoiceItem::default();
+                        },
+                        "Clear Data"
+                    }
                 }
             }
             section {

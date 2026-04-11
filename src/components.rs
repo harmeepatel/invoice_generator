@@ -152,11 +152,14 @@ pub fn Field(conf: FieldConfig) -> Element {
                         autocomplete: "address-level1",
                         onchange: validate,
                         for state in crate::states::state_names() {
-                            option { selected: state == "Gujarat", value: state, {state} }
+                            option {
+                                selected: state == ACTIVE_INVOICE.read().customer.state.as_str(),
+                                value: state,
+                                {state}
+                            }
                         }
                     }
                 },
-
                 "tel" => {
                     let phone_ext = format!("{}Ext", conf.name);
                     rsx! {
@@ -181,7 +184,6 @@ pub fn Field(conf: FieldConfig) -> Element {
                         }
                     }
                 }
-
                 _ => rsx! {
                     input {
                         id: conf.name,
