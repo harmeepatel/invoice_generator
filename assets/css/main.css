@@ -2,14 +2,14 @@
 @source "../src/**/*.{rs,html,css}";
 
 :root {
-    --ratio: 1.2;
+    --ratio: 1.25;
 
     --color-text: black;
     --color-bg: #ffeeee;
     --color-primary: oklch(45% .24 277.023);
     --color-border: color-mix(in srgb, var(--color-text) 20%, transparent 50%);
     --color-hover: color-mix(in srgb, var(--color-text) 10%, transparent 50%);
-    --color-error: text-red-400;
+    --color-error: red-400;
 
     --duration-hover: 150ms;
 }
@@ -28,7 +28,7 @@
     --spacing: clamp(2px, 0.5vw, 4px);
     --text-xs: calc(var(--text-sm) / var(--ratio));
     --text-sm: calc(var(--text-base) / var(--ratio));
-    --text-base: clamp(0.8rem, 1vw, 1rem);
+    --text-base: clamp(10px, 1vw, 14px);
     --text-lg: calc(var(--text-base) * var(--ratio));
     --text-xl: calc(var(--text-lg) * var(--ratio));
     --text-2xl: calc(var(--text-xl) * var(--ratio));
@@ -91,5 +91,5 @@
 }
 
 .text-error {
-    @apply text-base var(--color-error);
+    @apply text-base text-[var(--color-error)];
 }
