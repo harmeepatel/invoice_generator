@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 mod components;
 mod config;
 mod database;
@@ -7,6 +8,7 @@ mod models;
 mod page_index;
 mod page_invoice;
 mod page_products;
+mod page_settings;
 mod states;
 mod validate;
 
@@ -21,15 +23,21 @@ enum Route {
     InvoiceView {},
     #[route("/products")]
     Products {},
+    #[route("/settings")]
+    Settings {},
 }
 
 fn main() {
     database::initialize().expect("Could not initialize the local database");
+    let app_name = database::settings()
+        .unwrap_or_default()
+        .app_name
+        .to_uppercase();
 
     let window = WindowBuilder::new()
         .with_min_inner_size(LogicalSize::new(160 * 4, 100 * 4))
         .with_always_on_top(false)
-        .with_title(config::APP_NAME.to_uppercase());
+        .with_title(app_name);
 
     let roboto = asset!("/assets/fonts/RobotoMono.ttf");
     let cascadia = asset!("/assets/fonts/Cascadia.ttf");
@@ -57,6 +65,14 @@ fn main() {
     dioxus::LaunchBuilder::new().with_cfg(config).launch(App);
 }
 
+fn page_title(page: &str) -> String {
+    let app_name = database::settings()
+        .unwrap_or_default()
+        .app_name
+        .to_uppercase();
+    format!("{app_name} - {page}")
+}
+
 #[component]
 fn App() -> Element {
     rsx! {
@@ -69,7 +85,7 @@ fn App() -> Element {
 fn Home() -> Element {
     rsx! {
         layouts::Base {
-            page_index::Index { title: config::APP_NAME.to_uppercase() + " - Home" }
+            page_index::Index { title: page_title("Home") }
         }
     }
 }
@@ -78,7 +94,7 @@ fn Home() -> Element {
 fn InvoiceView() -> Element {
     rsx! {
         layouts::Base {
-            page_invoice::Index { title: config::APP_NAME.to_uppercase() + " - Invoice" }
+            page_invoice::Index { title: page_title("Invoice") }
         }
     }
 }
@@ -87,7 +103,16 @@ fn InvoiceView() -> Element {
 fn Products() -> Element {
     rsx! {
         layouts::Base {
-            page_products::Index { title: config::APP_NAME.to_uppercase() + " - Products" }
+            page_products::Index { title: page_title("Products") }
+        }
+    }
+}
+
+#[component]
+fn Settings() -> Element {
+    rsx! {
+        layouts::Base {
+            page_settings::Index { title: page_title("Settings") }
         }
     }
 }

@@ -1,15 +1,36 @@
 pub const APP_NAME: &str = "AE";
 
-pub const COMPANY_NAME: &str = "Achal Enterprise";
-pub const COMPANY_OWNER: &str = "Rohit Patel";
-pub const COMPANY_GSTIN: &str = "24AAZPP2696Q1ZE";
-pub const COMPANY_EMAIL: &str = "achalenterprise@yahoo.com";
-pub const COMPANY_PHONE_1: &str = "+91 95588 90077";
-pub const COMPANY_PHONE_2: &str = "+91 70963 04530";
-pub const COMPANY_ADDRESS: &str =
-    "G.F.-40, Chanakya Plaza, Nr. Swagat-3, New C.G. Road, Chandkheda, Ahmedabad, GUJARAT - 382424";
+#[derive(Clone, Debug, PartialEq)]
+pub struct AppSettings {
+    pub app_name: String,
+    pub company_name: String,
+    pub company_owner: String,
+    pub company_gstin: String,
+    pub company_email: String,
+    pub company_phone_1: String,
+    pub company_phone_2: String,
+    pub company_address: String,
+    pub bank_name: String,
+    pub bank_branch: String,
+    pub bank_account: String,
+    pub bank_ifsc: String,
+}
 
-pub const BANK_NAME: &str = "ICICI Bank Ltd.";
-pub const BANK_BRANCH: &str = "New C.G. Road, Chandkheda";
-pub const BANK_ACCOUNT: &str = "062505500142";
-pub const BANK_IFSC: &str = "ICIC0000625";
+impl Default for AppSettings {
+    fn default() -> Self {
+        Self {
+            app_name: APP_NAME.into(),
+            company_name: "Achal Enterprise".into(),
+            company_owner: "Rohit Patel".into(),
+            company_gstin: "24AAZPP2696Q1ZE".into(),
+            company_email: "achalenterprise@yahoo.com".into(),
+            company_phone_1: "+91 95588 90077".into(),
+            company_phone_2: "+91 70963 04530".into(),
+            company_address: "G.F.-40, Chanakya Plaza, Nr. Swagat-3, New C.G. Road, Chandkheda, Ahmedabad, GUJARAT - 382424".into(),
+            bank_name: "ICICI Bank Ltd.".into(),
+            bank_branch: "New C.G. Road, Chandkheda".into(),
+            bank_account: "062505500142".into(),
+            bank_ifsc: "ICIC0000625".into(),
+        }
+    }
+}

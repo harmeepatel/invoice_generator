@@ -17,6 +17,9 @@ pub fn Nav() -> Element {
                 li {
                     Link { class: LINK_CLASS, to: Route::Products {}, "Products" }
                 }
+                li {
+                    Link { class: LINK_CLASS, to: Route::Settings {}, "Settings" }
+                }
             }
         }
     }

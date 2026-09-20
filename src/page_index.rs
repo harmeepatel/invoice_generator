@@ -183,8 +183,7 @@ fn InvoiceField(conf: FieldConfig) -> Element {
                 crate::validate::quantity(&value_text)
             }
             FieldKind::Discount => {
-                item.discount_basis_points =
-                    crate::validate::percent_to_basis_points(&value_text);
+                item.discount_basis_points = crate::validate::percent_to_basis_points(&value_text);
                 crate::validate::discount(&value_text)
             }
         };
@@ -295,11 +294,15 @@ fn rounded_percentage(value_paise: i128, basis_points: i64) -> i128 {
 }
 
 #[component]
-fn TableHeader() -> Element {
-    let trash_icon = asset!("/assets/media/trash.svg");
+fn TableHeader(border_top: bool) -> Element {
+    let class = if border_top {
+        "border-t-1 border-white/5 hover:bg-white/5"
+    } else {
+        "border-b-1 border-white/5 hover:bg-white/5"
+    };
     rsx! {
-        tr {
-            th { "#" }
+        tr { class,
+            th { class: "px-2", "#" }
             td { "Serial #" }
             td { "Name" }
             td { "HSN" }
@@ -307,16 +310,7 @@ fn TableHeader() -> Element {
             td { "Rate ₹" }
             td { "Discount %" }
             td { "Gst %" }
-            th { class: "w-px text-center align-middle",
-                button {
-                    class: "mx-auto p-0 w-8 h-8 lg:w-12 lg:h-12 flex items-center justify-center opacity-40 cursor-not-allowed",
-                    disabled: true,
-                    img {
-                        src: "{trash_icon}",
-                        class: "block w-4 h-4 lg:w-6 lg:h-6",
-                    }
-                }
-            }
+            th { class: "w-px py-4 text-center align-middle" }
         }
     }
 }
@@ -339,11 +333,18 @@ fn ProductRow(idx: usize, item: models::InvoiceItem, on_delete: EventHandler<usi
     let discount_amount = models::format_paise(discount_paise);
     let gst = models::format_percentage(gst_basis_points);
     let gst_amount = models::format_paise(gst_paise);
+
+    let tr_class = if idx & 1 == 0 {
+        "bg-white/5 hover:bg-black/40"
+    } else {
+        "hover:bg-black/40"
+    };
+
     rsx! {
-        tr {
+        tr { class: tr_class,
             th { "{idx}" }
             td { "{item.serial_number}" }
-            td { "{item.name}" }
+            td { class: "max-w-[256px]", "{item.name}" }
             td { "{item.hsn}" }
             td { "{quantity}" }
             td { "{rate}" }
@@ -355,7 +356,7 @@ fn ProductRow(idx: usize, item: models::InvoiceItem, on_delete: EventHandler<usi
                 "{gst} "
                 span { class: "text-xs text-gray-500", "[{gst_amount}]" }
             }
-            td { class: "w-px text-center align-middle",
+            td { class: "w-px py-4 px-2 text-center align-middle",
                 button {
                     class: "mx-auto p-0 w-8 h-8 lg:w-12 lg:h-12 flex items-center justify-center hover-fade",
                     onclick: move |_| on_delete.call(idx),
@@ -394,8 +395,8 @@ pub fn Index(title: String) -> Element {
     let mut qty_err = use_signal(|| None::<String>);
     let mut discount_err = use_signal(|| None::<String>);
     let mut generate_message = use_signal(|| None::<(bool, String)>);
-    let mut product_form_revision = use_signal(|| 0_u64);
-    let product_form_key = *product_form_revision.read();
+    let mut product_form_reset_key = use_signal(|| 0_u64);
+    let product_form_key = *product_form_reset_key.read();
 
     let mut postal_err_clone = postal_err;
     use_effect(move || {
@@ -534,7 +535,7 @@ pub fn Index(title: String) -> Element {
     rsx! {
         document::Title { "{title}" }
 
-        main { class: "max-w-6xl m-auto mb-4 p-4",
+        main { class: "max-w-7xl m-auto mb-4 p-4",
             div { class: "flex justify-between",
                 h1 { class: "text-4xl mb-4", "Party Information" }
                 if is_dev {
@@ -542,10 +543,11 @@ pub fn Index(title: String) -> Element {
                         button {
                             class: "hover:bg-(--color-hover) hover-fade",
                             onclick: move |_| {
+                                crate::database::clear_products().expect("Could not clear database!");
                                 *ACTIVE_INVOICE.write() = models::Invoice::default();
                                 *ACTIVE_ITEM.write() = models::InvoiceItem::default();
                                 generate_message.set(None);
-                                *product_form_revision.write() += 1;
+                                *product_form_reset_key.write() += 1;
                             },
                             "Clear Data"
                         }
@@ -607,7 +609,7 @@ pub fn Index(title: String) -> Element {
                                 qty_err.set(None);
                                 discount_err.set(None);
                                 generate_message.set(None);
-                                *product_form_revision.write() += 1;
+                                *product_form_reset_key.write() += 1;
                             },
                             "Fill Dummy Data"
                         }
@@ -730,15 +732,20 @@ pub fn Index(title: String) -> Element {
                     button {
                         class: "grow-2 bg-(--color-primary) disabled:cursor-not-allowed hover-fade",
                         onclick: move |_| {
-                            let item = ACTIVE_ITEM.read().clone();
+                            let mut item = ACTIVE_ITEM.read().clone();
                             let quantity_error = match item.quantity {
                                 Some(quantity) if quantity > 0 => None,
                                 _ => Some("Required".into()),
                             };
+
+                            if item.discount_basis_points.is_none() {
+                                item.discount_basis_points = Some(0);
+                            }
                             let discount_error = match item.discount_basis_points {
                                 Some(discount) if discount <= 10_000 => None,
                                 _ => Some("Invalid".into()),
                             };
+
                             let selected_product = item
                                 .product_id
                                 .and_then(|id| {
@@ -771,7 +778,7 @@ pub fn Index(title: String) -> Element {
                             if is_valid {
                                 ACTIVE_INVOICE.write().items.push(item);
                                 *ACTIVE_ITEM.write() = models::InvoiceItem::default();
-                                *product_form_revision.write() += 1;
+                                *product_form_reset_key.write() += 1;
                             }
                         },
                         img { class: "m-auto", src: "{plus_icon}" }
@@ -786,7 +793,9 @@ pub fn Index(title: String) -> Element {
 
                 section { class: "overflow-x-auto max-h-[640px] lg:max-h-[1024px] mt-6",
                     table { class: "w-full table-pin-rows table-pin-cols text-balance",
-                        thead { class: "text-lg font-light", TableHeader {} }
+                        thead { class: "text-lg font-light",
+                            TableHeader { border_top: false }
+                        }
                         tbody { class: "text-base text-gray-300",
                             for (idx, item) in ACTIVE_INVOICE.read().items.iter().enumerate() {
                                 ProductRow {
@@ -799,7 +808,9 @@ pub fn Index(title: String) -> Element {
                                 }
                             }
                         }
-                        tfoot { class: "text-lg font-light", TableHeader {} }
+                        tfoot { class: "text-lg font-light",
+                            TableHeader { border_top: true }
+                        }
                     }
                 }
             }

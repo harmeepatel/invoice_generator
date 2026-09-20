@@ -20,10 +20,11 @@ pub fn generate(invoice: &Invoice) -> Result<PathBuf, String> {
     let file_date = now.format("%Y-%m-%d").to_string();
     let year = now.format("%Y").to_string();
     let month = now.format("%m").to_string();
-    let html = preview_html(invoice)?;
+    let settings = crate::database::settings()?;
+    let html = invoice_html_for(invoice, &settings)?;
     let pdf = render_pdf(&html)?;
 
-    let output_dir = invoice_directory(&year, &month)?;
+    let output_dir = invoice_directory(&settings.app_name, &year, &month)?;
     fs::create_dir_all(&output_dir).map_err(|error| error.to_string())?;
     let customer_name = safe_file_name(&invoice.customer.name);
     let path = available_invoice_path(&output_dir, &customer_name, &file_date);
@@ -32,13 +33,24 @@ pub fn generate(invoice: &Invoice) -> Result<PathBuf, String> {
 }
 
 pub fn preview_html(invoice: &Invoice) -> Result<String, String> {
+    let settings = crate::database::settings()?;
+    invoice_html_for(invoice, &settings)
+}
+
+fn invoice_html_for(invoice: &Invoice, settings: &config::AppSettings) -> Result<String, String> {
     validate_invoice(invoice)?;
 
     let now = Local::now();
     let invoice_number = now.format("%Y%m%d%H%M%S").to_string();
     let date = now.format("%d-%m-%Y").to_string();
     let due_date = (now + Duration::days(15)).format("%Y-%m-%d").to_string();
-    Ok(invoice_html(invoice, &invoice_number, &date, &due_date))
+    Ok(invoice_html(
+        invoice,
+        settings,
+        &invoice_number,
+        &date,
+        &due_date,
+    ))
 }
 
 fn render_pdf(html: &str) -> Result<Vec<u8>, String> {
@@ -51,7 +63,13 @@ fn render_pdf(html: &str) -> Result<Vec<u8>, String> {
         .map_err(|error| error.to_string())
 }
 
-fn invoice_html(invoice: &Invoice, invoice_number: &str, date: &str, due_date: &str) -> String {
+fn invoice_html(
+    invoice: &Invoice,
+    settings: &config::AppSettings,
+    invoice_number: &str,
+    date: &str,
+    due_date: &str,
+) -> String {
     let amounts = invoice
         .items
         .iter()
@@ -76,7 +94,10 @@ fn invoice_html(invoice: &Invoice, invoice_number: &str, date: &str, due_date: &
     );
     let customer = &invoice.customer;
     let customer_phone = format!("{} {}", customer.phone_ext, customer.phone);
-    let company_phone = format!("{} / {}", config::COMPANY_PHONE_1, config::COMPANY_PHONE_2);
+    let company_phone = format!(
+        "{} / {}",
+        settings.company_phone_1, settings.company_phone_2
+    );
     let logo = format!(
         "data:image/png;base64,{}",
         STANDARD.encode(include_bytes!("../assets/icon.png"))
@@ -123,6 +144,8 @@ fn invoice_html(invoice: &Invoice, invoice_number: &str, date: &str, due_date: &
 .invoice .label { color: #898b92; font-size: 7.5pt; }
 .invoice .value { min-width: 0; text-align: right; overflow-wrap: anywhere; }
 .invoice .strong { font-weight: 700; }
+.invoice .indent { padding-left: 12pt; }
+.invoice .dim { opacity: 64%; }
 .invoice .parties {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -180,7 +203,8 @@ fn invoice_html(invoice: &Invoice, invoice_number: &str, date: &str, due_date: &
     font-weight: 700;
     text-transform: uppercase;
 }
-.invoice .terms ol { margin: 0; padding-left: 14pt; color: #6f7178; font-size: 6.7pt; }
+.invoice .terms { height: min-content; margin: auto 0; }
+.invoice .terms ol { margin: 0; padding-left: 14pt; color: #6f7178; font-size: 6.7pt; list-style: decimal; }
 .invoice .terms li { margin: 2pt 0; padding-left: 2pt; }
 .invoice .total-row { display: flex; justify-content: space-between; gap: 12pt; margin: 5pt 0; }
 .invoice .summary-bottom {
@@ -251,12 +275,12 @@ fn invoice_html(invoice: &Invoice, invoice_number: &str, date: &str, due_date: &
         info_row("Email", value_or_dash(&customer.email), false),
         info_row("Phone", &customer_phone, false),
         escape_html(&customer_address(invoice)),
-        escape_html(config::COMPANY_NAME),
-        info_row("Name", config::COMPANY_OWNER, true),
-        info_row("GSTIN", config::COMPANY_GSTIN, false),
-        info_row("Email", config::COMPANY_EMAIL, false),
+        escape_html(&settings.company_name),
+        info_row("Name", &settings.company_owner, true),
+        info_row("GSTIN", &settings.company_gstin, false),
+        info_row("Email", &settings.company_email, false),
         info_row("Phone", &company_phone, false),
-        escape_html(config::COMPANY_ADDRESS),
+        escape_html(&settings.company_address),
     );
 
     html.push_str(
@@ -278,10 +302,10 @@ fn invoice_html(invoice: &Invoice, invoice_number: &str, date: &str, due_date: &
             html,
             r#"<tr>
   <td>{}</td><td>{}</td><td>{}</td><td>{}</td>
-  <td class="number">{}</td><td class="number">{}</td>
+  <td class="number">{}</td><td class="number">&#8377;{}</td>
   <td class="number">{}% <span class="muted">[{}]</span></td>
   <td class="number">{}% <span class="muted">[{}]</span></td>
-  <td class="number">{}</td>
+  <td class="number">&#8377;{}</td>
 </tr>
 "#,
             index + 1,
@@ -325,17 +349,17 @@ fn invoice_html(invoice: &Invoice, invoice_number: &str, date: &str, due_date: &
   <div class="signature">{}</div>
 </section>
 </main>"#,
-        total_row("Sub Total", &money(subtotal), true),
-        total_row("GST", &money(tax_total), true),
-        total_row("CGST", &cgst_text, false),
-        total_row("SGST", &sgst_text, false),
-        total_row(&igst_label, &igst_text, false),
-        info_row("Bank", config::BANK_NAME, false),
-        info_row("Branch", config::BANK_BRANCH, false),
-        info_row("A/C", config::BANK_ACCOUNT, false),
-        info_row("IFSC", config::BANK_IFSC, false),
+        total_row("Sub Total", &money(subtotal), true, false, false),
+        total_row("GST", &money(tax_total), true, false, false),
+        total_row("CGST", &cgst_text, false, true, true),
+        total_row("SGST", &sgst_text, false, true, true),
+        total_row(&igst_label, &igst_text, false, false, false),
+        info_row("Bank", &settings.bank_name, false),
+        info_row("Branch", &settings.bank_branch, false),
+        info_row("A/C", &settings.bank_account, false),
+        info_row("IFSC", &settings.bank_ifsc, false),
         money(total),
-        escape_html(config::COMPANY_NAME),
+        escape_html(&settings.company_name),
     );
 
     html
@@ -351,13 +375,25 @@ fn info_row(label: &str, value: &str, strong: bool) -> String {
     )
 }
 
-fn total_row(label: &str, value: &str, strong: bool) -> String {
-    let class = if strong {
-        "total-row strong"
-    } else {
-        "total-row"
+fn total_row(label: &str, value: &str, strong: bool, indent: bool, dim: bool) -> String {
+    let mut class: String = String::from("total-row");
+
+    if strong {
+        class.push_str(" strong");
+    }
+    if indent {
+        class.push_str(" indent");
     };
-    let rs = if value == "---" { "" } else { "&#8377;" };
+    if dim {
+        class.push_str(" dim");
+    };
+
+    let rs = if value == "---" {
+        class.push_str(" dim");
+        ""
+    } else {
+        "&#8377;"
+    };
 
     format!(
         "<div class=\"{}\"><span>{}</span><span>{}{}</span></div>",
@@ -453,14 +489,14 @@ fn customer_address(invoice: &Invoice) -> String {
     parts.join(", ")
 }
 
-fn invoice_directory(year: &str, month: &str) -> Result<PathBuf, String> {
+fn invoice_directory(app_name: &str, year: &str, month: &str) -> Result<PathBuf, String> {
     let user_dirs =
         UserDirs::new().ok_or_else(|| "Could not locate your Documents folder".to_string())?;
     let base = user_dirs
         .document_dir()
         .unwrap_or_else(|| user_dirs.home_dir());
     Ok(base
-        .join(format!("{} Invoices", config::APP_NAME))
+        .join(format!("{} Invoices", app_name.trim()))
         .join(year)
         .join(month))
 }

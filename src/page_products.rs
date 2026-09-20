@@ -83,6 +83,7 @@ fn product_from_form(form: &ProductForm) -> Product {
 
 #[component]
 fn InventoryRow(
+    idx: usize,
     product: Product,
     on_edit: EventHandler<Product>,
     on_delete: EventHandler<i64>,
@@ -92,15 +93,21 @@ fn InventoryRow(
     let edit_product = product.clone();
     let product_id = product.id;
 
+    let tr_class = if idx & 1 == 0 {
+        "hover:bg-black/40"
+    } else {
+        "bg-white/5 hover:bg-black/40"
+    };
+
     rsx! {
-        tr {
-            td { "{product.serial_number}" }
-            td { class: "max-w-sm", "{product.name}" }
+        tr { class: tr_class,
+            td { class: "px-2", "{product.serial_number}" }
+            td { class: "max-w-[300px]", "{product.name}" }
             td { "{product.hsn}" }
-            td { "₹{rate}" }
+            td { class: "px-4", "₹{rate}" }
             td { "{gst}%" }
             td { "{product.stock_quantity}" }
-            td { class: "whitespace-nowrap text-right",
+            td { class: "p-2 whitespace-nowrap text-right",
                 button {
                     class: "mr-2 hover:bg-(--color-hover) hover-fade",
                     onclick: move |_| on_edit.call(edit_product.clone()),
@@ -126,7 +133,7 @@ pub fn Index(title: String) -> Element {
     rsx! {
         document::Title { "{title}" }
 
-        main { class: "max-w-6xl m-auto mb-4 p-4",
+        main { class: "max-w-7xl m-auto mb-4 p-4",
             h1 { class: "text-4xl mb-4", "Products" }
 
             section { class: "grid grid-cols-1 md:grid-cols-3 gap-4 mb-4",
@@ -273,20 +280,21 @@ pub fn Index(title: String) -> Element {
 
             section { class: "overflow-x-auto",
                 table { class: "w-full text-balance",
-                    thead { class: "text-lg font-light",
-                        tr {
-                            th { "Serial #" }
+                    thead { class: "text-lg text-justify font-light",
+                        tr { class: "border-b-1 border-white/5",
+                            th { class: "p-2", "Serial #" }
                             th { "Name" }
                             th { "HSN" }
-                            th { "Rate" }
+                            th { class: "px-4", "Rate" }
                             th { "GST" }
                             th { "Stock" }
                             th {}
                         }
                     }
                     tbody {
-                        for product in products.read().iter().cloned() {
+                        for (idx, product) in products.read().iter().cloned().enumerate() {
                             InventoryRow {
+                                idx,
                                 key: "{product.id}",
                                 product,
                                 on_edit: move |product| {
