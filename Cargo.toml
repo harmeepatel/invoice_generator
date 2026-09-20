@@ -10,6 +10,10 @@ edition = "2021"
 chrono = "0.4.44"
 dioxus-desktop = "0.7.*"
 dioxus = { version = "0.7.*", features = ["router", "fullstack"] }
+directories = "6.0"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+ironpress = "1.7.0"
+base64 = "0.23.1"
 
 [features]
 default = ["desktop"]

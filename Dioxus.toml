@@ -4,7 +4,7 @@ publisher = "Harmee Patel"
 copyright = "2026 Harmee Patel"
 category = "Productivity"
 short_description = "Invoice and Stock management for Achal Enterprise"
-icon = ["assets/icon.ico"]
+icon = ["assets/icon.png"]
 
 [application]
 name = "AE"

@@ -17,6 +17,48 @@ fn is_all_letters(s: &str) -> bool {
     !s.is_empty() && s.chars().all(|c| c.is_alphabetic() || c.is_whitespace())
 }
 
+fn parse_scaled_decimal(val: &str, decimal_places: u32) -> Option<i64> {
+    let val = val.trim();
+    let mut parts = val.split('.');
+    let whole = parts.next()?;
+    let fraction = parts.next().unwrap_or("");
+
+    if parts.next().is_some()
+        || (whole.is_empty() && fraction.is_empty())
+        || !whole.bytes().all(|b| b.is_ascii_digit())
+        || !fraction.bytes().all(|b| b.is_ascii_digit())
+        || fraction.len() > decimal_places as usize
+    {
+        return None;
+    }
+
+    let scale = 10_i64.pow(decimal_places);
+    let whole = if whole.is_empty() {
+        0
+    } else {
+        whole.parse::<i64>().ok()?
+    };
+    let mut fraction_value = if fraction.is_empty() {
+        0
+    } else {
+        fraction.parse::<i64>().ok()?
+    };
+
+    for _ in fraction.len()..decimal_places as usize {
+        fraction_value = fraction_value.checked_mul(10)?;
+    }
+
+    whole.checked_mul(scale)?.checked_add(fraction_value)
+}
+
+pub fn money_to_paise(val: &str) -> Option<i64> {
+    parse_scaled_decimal(val, 2)
+}
+
+pub fn percent_to_basis_points(val: &str) -> Option<i64> {
+    parse_scaled_decimal(val, 2)
+}
+
 // --- customer ---
 
 pub fn name(val: &str) -> Option<String> {
@@ -34,60 +76,56 @@ pub fn company_name(val: &str) -> Option<String> {
 }
 
 pub fn igst(val: &str) -> Option<String> {
-    match val.trim().parse::<f64>() {
-        Ok(v) if v >= 0.0 && v <= 40.0 => None,
-        Ok(_) => Some("Must be 0% - 40%".into()),
-        Err(_) => Some("Must be 0% - 40%".into()),
+    match percent_to_basis_points(val) {
+        Some(v) if v <= 4_000 => None,
+        _ => Some("Must be 0% - 40%".into()),
     }
 }
 
 pub fn gstin(val: &str) -> Option<String> {
     let s = val.trim().to_uppercase();
 
-    let validate_pan = |pan: &str| -> Option<String> {
-        match pan.len() {
-            0 => return Some("Required".into()),
-            n if n != 10 => return Some("PAN must be exactly 10 characters".into()),
-            _ => {}
-        }
-        let chars: Vec<char> = pan.chars().collect();
-        if !chars[..5].iter().all(|c| c.is_ascii_uppercase()) {
+    if s.is_empty() {
+        return Some("Required".into());
+    }
+    if !s.is_ascii() || s.len() != 15 {
+        return Some("GSTIN must be 15 ASCII characters".into());
+    }
+
+    let bytes = s.as_bytes();
+    let pan = &bytes[2..12];
+    let validate_pan = |pan: &[u8]| -> Option<String> {
+        if !pan[..5].iter().all(|c| c.is_ascii_uppercase()) {
             return Some("First 5 characters of PAN must be alphabetic".into());
         }
-        if !"PCFHATGLJ".contains(chars[3]) {
+        if !b"PCFHATGLJ".contains(&pan[3]) {
             return Some("Invalid 4th character [P, C, F, H, A, T, G, L, J]".into());
         }
-        if !chars[5..9].iter().all(|c| c.is_ascii_digit()) {
-            return Some("Characters 7–10 must be numeric".into());
+        if !pan[5..9].iter().all(|c| c.is_ascii_digit()) {
+            return Some("Characters 6–9 of PAN must be numeric".into());
         }
-        if &pan[5..9] == "0000" {
+        if &pan[5..9] == b"0000" {
             return Some("Numeric portion must be between 0001 and 9999".into());
         }
-        if !chars[9].is_ascii_uppercase() {
+        if !pan[9].is_ascii_uppercase() {
             return Some("Last character must be alphabetic".into());
         }
         None
     };
 
-    let chars: Vec<char> = s.chars().collect();
-    match s.len() {
-        0 => return Some("Required".into()),
-        n if n != 15 => return Some("GSTIN must be 15 characters".into()),
-        _ => {}
-    }
-    if !chars[0].is_ascii_digit() || !chars[1].is_ascii_digit() {
+    if !bytes[0].is_ascii_digit() || !bytes[1].is_ascii_digit() {
         return Some("GSTIN has an invalid state code".into());
     }
-    if let Some(e) = validate_pan(&s[2..12]) {
+    if let Some(e) = validate_pan(pan) {
         return Some(e);
     }
-    if !chars[12].is_ascii_digit() && !chars[12].is_ascii_uppercase() {
+    if !bytes[12].is_ascii_alphanumeric() {
         return Some("GSTIN has an invalid registration number".into());
     }
-    if chars[13] != 'Z' {
+    if bytes[13] != b'Z' {
         return Some("GSTIN has an invalid format".into());
     }
-    if !chars[14].is_ascii_alphanumeric() {
+    if !bytes[14].is_ascii_alphanumeric() {
         return Some("GSTIN has an invalid last character".into());
     }
     None
@@ -115,7 +153,7 @@ pub fn phone(val: &str) -> Option<String> {
     match s.len() {
         0 => Some("Required".into()),
         _ if !is_all_digits(&s) => Some("Letters not allowed".into()),
-        n if n > 10 => Some("Must be exactly 10 digits".into()),
+        n if n != 10 => Some("Must be exactly 10 digits".into()),
         _ => match s.chars().next().unwrap() {
             '6'..='9' => None,
             _ => Some("Should start with 6 - 9".into()),
@@ -214,8 +252,8 @@ pub fn hsn(val: &str) -> Option<String> {
 }
 
 pub fn gst(val: &str) -> Option<String> {
-    match val.trim().parse::<f64>() {
-        Ok(v) if v >= 0.0 && v <= 40.0 => None,
+    match percent_to_basis_points(val) {
+        Some(v) if v <= 4_000 => None,
         _ => Some("Must be 0% - 40%".into()),
     }
 }
@@ -228,15 +266,15 @@ pub fn quantity(val: &str) -> Option<String> {
 }
 
 pub fn rate(val: &str) -> Option<String> {
-    match val.trim().parse::<f64>() {
-        Ok(v) if v > 0.0 => None,
+    match money_to_paise(val) {
+        Some(v) if v > 0 => None,
         _ => Some("Invalid".into()),
     }
 }
 
 pub fn discount(val: &str) -> Option<String> {
-    match val.trim().parse::<f64>() {
-        Ok(v) if v >= 0.0 && v <= 100.0 => None,
+    match percent_to_basis_points(val) {
+        Some(v) if v <= 10_000 => None,
         _ => Some("Invalid".into()),
     }
 }

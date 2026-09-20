@@ -1,10 +1,12 @@
-#[allow(dead_code)]
 mod components;
 mod config;
+mod database;
+mod invoice_pdf;
 mod layouts;
 mod models;
 mod page_index;
 mod page_invoice;
+mod page_products;
 mod states;
 mod validate;
 
@@ -17,9 +19,13 @@ enum Route {
     Home {},
     #[route("/invoice")]
     InvoiceView {},
+    #[route("/products")]
+    Products {},
 }
 
 fn main() {
+    database::initialize().expect("Could not initialize the local database");
+
     let window = WindowBuilder::new()
         .with_min_inner_size(LogicalSize::new(160 * 4, 100 * 4))
         .with_always_on_top(false)
@@ -73,6 +79,15 @@ fn InvoiceView() -> Element {
     rsx! {
         layouts::Base {
             page_invoice::Index { title: config::APP_NAME.to_uppercase() + " - Invoice" }
+        }
+    }
+}
+
+#[component]
+fn Products() -> Element {
+    rsx! {
+        layouts::Base {
+            page_products::Index { title: config::APP_NAME.to_uppercase() + " - Products" }
         }
     }
 }
